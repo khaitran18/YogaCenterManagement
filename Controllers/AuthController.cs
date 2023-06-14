@@ -1,5 +1,5 @@
 ﻿using Application.Command;
-using Application.Dto;
+using Application.Common.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

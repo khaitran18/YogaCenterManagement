@@ -12,9 +12,11 @@ using Application.Interfaces;
 using Application.Service;
 using MediatR;
 using Application.Command;
-using Application.Dto;
 using Application.Command.Handler;
 using Infrastructure.Service.Mapper;
+using Application.Query;
+using Application.Common.Dto;
+using Application.Query.Handler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +69,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
 //REMEMBER TO ADD COMMAND, QUERY, HANDLER
 builder.Services.AddScoped<IRequestHandler<AuthCommand, AuthResponseDto>, AuthHandler>();
+builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, ClassNotificationDto>, ClassNotificationHandler>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 //config mapper

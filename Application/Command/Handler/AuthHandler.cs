@@ -1,4 +1,4 @@
-﻿using Application.Dto;
+﻿using Application.Common.Dto;
 using Application.Interfaces;
 using Application.Service;
 using MediatR;

@@ -15,9 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Service\" />
     <Folder Include="Common\Mapping\" />
-    <Folder Include="Query\Handler\" />
   </ItemGroup>
 
   <ItemGroup>
