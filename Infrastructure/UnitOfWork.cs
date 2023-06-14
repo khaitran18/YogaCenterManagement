@@ -2,6 +2,8 @@
 using Infrastructure.Data;
 using Application.Interfaces;
 using Infrastructure.Repositories;
+using Domain.Interface;
+using Infrastructure.Repository;
 
 namespace Infrastructure
 {
@@ -9,7 +11,7 @@ namespace Infrastructure
     {
         private readonly YGCContext _context;
         private readonly IMapper _mapper;
-        //private IAccountRepository _accountRepository;
+        private IUserRepository _userRepository;
 
         public UnitOfWork(YGCContext context, IMapper mapper)
         {
@@ -17,7 +19,7 @@ namespace Infrastructure
             _mapper = mapper;
         }
 
-        //public IAccountRepository AccountRepository => _accountRepository ??= new AccountRepository(_context, _mapper);
+        public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context, _mapper);
 
         public void Dispose()
         {

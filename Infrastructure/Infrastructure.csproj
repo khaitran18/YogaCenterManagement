@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="Service\Mapper\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,7 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
-    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -15,10 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Command\Handler\" />
-    <Folder Include="Dto\" />
+    <Folder Include="Common\Service\" />
     <Folder Include="Common\Mapping\" />
     <Folder Include="Query\Handler\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

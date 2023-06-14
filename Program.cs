@@ -9,6 +9,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Infrastructure.Services;
 using Application.Interfaces;
+using Application.Service;
+using MediatR;
+using Application.Command;
+using Application.Dto;
+using Application.Command.Handler;
+using Infrastructure.Service.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +27,11 @@ var _issuer = builder.Configuration["Jwt:Issuer"];
 var _audience = builder.Configuration["Jwt:Audience"];
 var _expirtyMinutes = builder.Configuration["Jwt:ExpiryMinutes"];
 
+//services cors
+builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+{
+    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
 
 // Configuration for token
 builder.Services.AddAuthentication(x =>
@@ -45,7 +56,7 @@ builder.Services.AddAuthentication(x =>
 
     };
 });
-builder.Services.AddSingleton<ITokenGenerator>(new TokenGenerator(_key, _issuer, _audience, _expirtyMinutes));
+builder.Services.AddSingleton<ITokenService>(new TokenService(_key, _issuer, _audience, _expirtyMinutes));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -55,11 +66,13 @@ builder.Services.AddDbContext<YGCContext>(options => options.UseSqlServer(
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
 //REMEMBER TO ADD COMMAND, QUERY, HANDLER
-//builder.Services.AddScoped<IRequestHandler<AuthCommand, AuthResponseDto>, AuthHandler>();
+builder.Services.AddScoped<IRequestHandler<AuthCommand, AuthResponseDto>, AuthHandler>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+//config mapper
 var mapperConfig = new MapperConfiguration(cfg =>
 {
-    //cfg.AddProfile<VideoMappingProfile>();
+    cfg.AddProfile<UserMapper>();
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
@@ -74,7 +87,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("corsapp");
 app.UseAuthorization();
 
 app.MapControllers();
