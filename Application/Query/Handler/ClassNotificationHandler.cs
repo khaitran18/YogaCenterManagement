@@ -16,13 +16,20 @@ namespace Application.Query.Handler
 
         public async Task<ClassNotificationDto> Handle(ClassNotificationQuery request, CancellationToken cancellationToken)
         {
+            try
+            {
                 ClassNotificationDto dto = new ClassNotificationDto();
                 if (await _unitOfWork.ClassRepository.CheckSlotInClass(request.classId, request.slotId))
                 {
                     dto.content = await _unitOfWork.ClassRepository.GetClassNotificationByClassIdAndSlotId(request.classId, request.slotId);
                     return dto;
                 }
-                else throw new NotFoundException("Schedule for class is not found");  
+                else throw new NotFoundException("Schedule for class is not found");
+            }
+            catch(Exception e)
+            {
+                throw new Exception();
+            }
         }
     }
 }

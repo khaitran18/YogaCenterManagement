@@ -1,22 +1,26 @@
-using AutoMapper;
-using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Infrastructure;
 using System.Reflection;
-using Infrastructure.Repositories;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Infrastructure.Services;
-using Application.Interfaces;
-using Application.Service;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using MediatR;
+using FluentValidation;
+using Infrastructure;
+using Infrastructure.Data;
+using Infrastructure.Service.Mapper;
+using Infrastructure.Services;
+using Infrastructure.Repositories;
 using Application.Command;
 using Application.Command.Handler;
-using Infrastructure.Service.Mapper;
+using Application.Common.Behaviour;
+using Application.Interfaces;
+using Application.Service;
 using Application.Query;
 using Application.Common.Dto;
 using Application.Query.Handler;
+using Application.Common.Validation;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,15 +71,23 @@ builder.Services.AddDbContext<YGCContext>(options => options.UseSqlServer(
 ));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
-//REMEMBER TO ADD COMMAND, QUERY, HANDLER
 builder.Services.AddScoped<IRequestHandler<AuthCommand, AuthResponseDto>, AuthHandler>();
 builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, ClassNotificationDto>, ClassNotificationHandler>();
+builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,Task>, CreateNotificationHandler>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+// Validator
+builder.Services.AddScoped<IValidator<AuthCommand>, AuthCommandValidator>();
+builder.Services.AddScoped<IValidator<CreateNotificationCommand>, CreateNotificationCommandValidator>();
+
+//Behaviour registration
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
 //config mapper
 var mapperConfig = new MapperConfiguration(cfg =>
 {
     cfg.AddProfile<UserMapper>();
+    cfg.AddProfile<ScheduleMapper>();
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

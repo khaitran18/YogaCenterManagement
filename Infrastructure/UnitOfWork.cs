@@ -13,6 +13,7 @@ namespace Infrastructure
         private readonly IMapper _mapper;
         private IUserRepository _userRepository;
         private IClassRepository _classRepository;
+        private IScheduleRepository _scheduleRepository;
 
         public UnitOfWork(YGCContext context, IMapper mapper)
         {
@@ -22,7 +23,7 @@ namespace Infrastructure
 
         public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context, _mapper);
         public IClassRepository ClassRepository => _classRepository ??= new ClassRepository(_context, _mapper);
-
+        public IScheduleRepository ScheduleRepository => _scheduleRepository ??= new ScheduleRepository(_context, _mapper);
         public void Dispose()
         {
             _context.Dispose();

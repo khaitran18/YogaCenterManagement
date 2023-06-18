@@ -4,6 +4,7 @@ using Domain.Model;
 using Infrastructure.Data;
 using Infrastructure.DataModels;
 using Infrastructure.Repositories;
+using Ordering.Application.Common.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,28 @@ namespace Infrastructure.Repository
         {
             _context = context;
             _mapper = mapper;
+        }
+
+        public async Task<bool> CheckLecturerAuthority(int scheduleid, int userId)
+        {
+            try
+            {
+                Schedule? schedule = _context.Schedules.FirstOrDefault(s => s.Id == scheduleid);
+                if (schedule != null)
+                {
+                    Class? @class = _context.Classes.FirstOrDefault(c => (c.ClassId == schedule.ClassId) && (c.LecturerId == userId));
+                    if (@class != null) return await Task.FromResult(true);
+                    else {
+                        throw new BadRequestException("Invalid credential");
+                        return await Task.FromResult(false);
+                    }
+                }
+                else throw new NotFoundException("Schedule not found");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<bool> CheckSlotInClass(int classId, int slotId)

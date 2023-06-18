@@ -12,5 +12,6 @@ namespace Domain.Interface
     {
         public Task<string> GetClassNotificationByClassIdAndSlotId(int classId, int slotId);
         public Task<bool> CheckSlotInClass(int classId, int slotId);
+        public Task<bool> CheckLecturerAuthority(int scheduleid, int userId);
     }
 }
