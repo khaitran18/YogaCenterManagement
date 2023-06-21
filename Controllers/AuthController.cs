@@ -3,6 +3,7 @@ using Application.Common.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Api;
 
 namespace Api.Controllers
 {
@@ -21,7 +22,13 @@ namespace Api.Controllers
         [ProducesDefaultResponseType(typeof(AuthResponseDto))]
         public async Task<IActionResult> Login([FromBody] AuthCommand command)
         {
-            return Ok(await _mediator.Send(command));
+            var response = await _mediator.Send(command);
+            if (!response.Error) return Ok(response);
+            else
+            {
+                var i = new ErrorHandling(response.Exception);
+                return i;
+            }
         }
         //[HttpPost("signup")]
         //public async Task<IActionResult> Signup([FromBody] SignUpCommand command)

@@ -1,11 +1,12 @@
 ﻿using Application.Common.Dto;
 using Application.Interfaces;
 using MediatR;
-using Ordering.Application.Common.Exceptions;
+using Application.Common.Exceptions;
+using Application.Common;
 
 namespace Application.Query.Handler
 {
-    public class ClassNotificationHandler : IRequestHandler<ClassNotificationQuery, ClassNotificationDto>
+    public class ClassNotificationHandler : IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -14,21 +15,32 @@ namespace Application.Query.Handler
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ClassNotificationDto> Handle(ClassNotificationQuery request, CancellationToken cancellationToken)
+        public async Task<BaseResponse<ClassNotificationDto>> Handle(ClassNotificationQuery request, CancellationToken cancellationToken)
         {
+            BaseResponse<ClassNotificationDto> response = new BaseResponse<ClassNotificationDto>();
             try
             {
-                ClassNotificationDto dto = new ClassNotificationDto();
                 if (await _unitOfWork.ClassRepository.CheckSlotInClass(request.classId, request.slotId))
                 {
-                    dto.content = await _unitOfWork.ClassRepository.GetClassNotificationByClassIdAndSlotId(request.classId, request.slotId);
-                    return dto;
+                    string content = await _unitOfWork.ClassRepository.GetClassNotificationByClassIdAndSlotId(request.classId, request.slotId);
+                    response.Result = new ClassNotificationDto
+                    {
+                        content = content,
+                    };
                 }
-                else throw new NotFoundException("Schedule for class is not found");
+                else
+                {
+                    response.Error = true;
+                    response.Exception = new NotFoundException("Schedule for class is not found");
+                }
+                return response;
             }
             catch(Exception e)
             {
-                throw new Exception();
+                response.Error = true;
+                response.Exception = e;
+                response.Message = e.Message;
+                return response;
             }
         }
     }

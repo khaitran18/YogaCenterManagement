@@ -20,7 +20,7 @@ using Application.Query;
 using Application.Common.Dto;
 using Application.Query.Handler;
 using Application.Common.Validation;
-
+using Application.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,9 +71,9 @@ builder.Services.AddDbContext<YGCContext>(options => options.UseSqlServer(
 ));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
-builder.Services.AddScoped<IRequestHandler<AuthCommand, AuthResponseDto>, AuthHandler>();
-builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, ClassNotificationDto>, ClassNotificationHandler>();
-builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,Task>, CreateNotificationHandler>();
+builder.Services.AddScoped<IRequestHandler<AuthCommand, BaseResponse<AuthResponseDto>>, AuthHandler>();
+builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>, ClassNotificationHandler>();
+builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 // Validator

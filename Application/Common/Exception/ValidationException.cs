@@ -1,7 +1,7 @@
 ﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 
-namespace Ordering.Application.Common.Exceptions
+namespace Application.Common.Exceptions
 {
     public class ValidationException : Exception
     {

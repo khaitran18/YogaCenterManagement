@@ -4,7 +4,7 @@ using Domain.Model;
 using Infrastructure.Data;
 using Infrastructure.DataModels;
 using Infrastructure.Repositories;
-using Ordering.Application.Common.Exceptions;
+using Application.Common.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,17 +32,17 @@ namespace Infrastructure.Repository
                 if (schedule != null)
                 {
                     Class? @class = _context.Classes.FirstOrDefault(c => (c.ClassId == schedule.ClassId) && (c.LecturerId == userId));
-                    if (@class != null) return await Task.FromResult(true);
+                    if (@class != null) 
+                        return await Task.FromResult(true);
                     else {
-                        throw new BadRequestException("Invalid credential");
                         return await Task.FromResult(false);
                     }
                 }
                 else throw new NotFoundException("Schedule not found");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                throw e;
             }
         }
 

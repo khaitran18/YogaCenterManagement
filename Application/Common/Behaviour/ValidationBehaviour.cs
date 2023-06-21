@@ -8,7 +8,7 @@ namespace Application.Common.Behaviour
         private readonly IEnumerable<IValidator<TRequest>> _validators;
         public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators) => _validators = validators;
 
-        public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             var validationFailures = _validators
             .Select(validator => validator.Validate(request))
@@ -19,9 +19,10 @@ namespace Application.Common.Behaviour
             if (validationFailures.Any())
             {
                 var error = string.Join("\r\n", validationFailures);
-                throw new FluentValidation.ValidationException(error);
+                Application.Common.Exceptions.ValidationException exception = new Application.Common.Exceptions.ValidationException();
+                return (TResponse)Activator.CreateInstance(typeof(TResponse), true, error, exception);
             }
-            return next();
+            return await next();
         }
     }
 }

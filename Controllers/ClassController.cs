@@ -26,27 +26,34 @@ namespace Api.Controllers
         [ProducesDefaultResponseType(typeof(ClassNotificationDto))]
         public async Task<IActionResult> ClassNotification([FromQuery]ClassNotificationQuery query)
         {
-            return Ok(await _mediator.Send(query));
+                var response = await _mediator.Send(query);
+                if (!response.Error) return Ok(response);
+                else
+                {
+                    var i = new ErrorHandling(response.Exception);
+                    return i;
+                }  
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Roles = "Lecturer,Staff,Admin")]
         [HttpPost("notification/{id}")]
         [ProducesDefaultResponseType(typeof(ClassNotificationDto))]
-        public async Task<IActionResult> ClassNotification([FromHeader] string? Authorization,[FromRoute] int id,[FromBody]CreateNotificationCommand command)
+        public async Task<IActionResult> ClassNotification(
+            [FromHeader] string? Authorization
+            ,[FromRoute] int id
+            ,[FromBody]CreateNotificationCommand command)
         {
-            try
-            {
                 command.token = Authorization;
                 command.scheduleid = id;
-                await _mediator.Send(command);
-                return Ok();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            
+                var response = await _mediator.Send(command);
+                if (!response.Error) 
+                    return Ok(response);
+                else
+                {
+                    var i = new ErrorHandling(response.Exception);
+                    return i;
+                }
         }
     }
 }

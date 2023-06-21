@@ -24,20 +24,28 @@ namespace Infrastructure.Repository
 
         public async Task<int> CheckAccountAsync(string username, string password)
         {
-            var acc = _context.Users.FirstOrDefault(a => a.UserName.Equals(username));
-            if (acc != null)
+            try
             {
-                if (acc.Password.Equals(password))
+                var acc = _context.Users.FirstOrDefault(a => a.UserName.Equals(username));
+                if (acc != null)
                 {
-                    //if (acc.EmailVerify == true)
-                    //{
-                    //    return await Task.FromResult(acc.Id);
-                    //}
-                    //else return await Task.FromResult(0);
-                    return await Task.FromResult(acc.Uid);
+                    if (acc.Password.Equals(password))
+                    {
+                        //if (acc.EmailVerify == true)
+                        //{
+                        //    return await Task.FromResult(acc.Id);
+                        //}
+                        //else return await Task.FromResult(0);
+                        return await Task.FromResult(acc.Uid);
+                    }
                 }
+                return await Task.FromResult(-1);
             }
-            return await Task.FromResult(-1);
+            catch (Exception)
+            {
+                return await Task.FromResult(-1);
+            }
+            
         }
 
         public async Task<(int userId, string UserName, string role)> GetAccountDetailsByIdAsync(int id)

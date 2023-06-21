@@ -4,7 +4,6 @@ using Domain.Model;
 using Infrastructure.Data;
 using Infrastructure.DataModels;
 using Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository
 {
@@ -29,13 +28,16 @@ namespace Infrastructure.Repository
                 {
                     schedule.DailyNote = notification;
                     //_context.Entry(schedule).State = EntityState.Modified;
-                    UpdateAsync(_mapper.Map<ScheduleModel>(schedule));
+                    //await UpdateAsync(_mapper.Map<ScheduleModel>(schedule));
                 }
                 model = _mapper.Map<ScheduleModel>(schedule);
                 _context.SaveChanges();
                 return await Task.FromResult(model);
             }
-            catch{ throw new Exception("Error in adding new daily note"); }
+            catch
+            { 
+                throw new Exception("Error in adding new daily note"); 
+            }
         }
     }
 }
