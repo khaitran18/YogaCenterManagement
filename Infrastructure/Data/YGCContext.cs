@@ -3,24 +3,22 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Infrastructure.DataModels;
-using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Data
 {
     public partial class YGCContext : DbContext
     {
-        private readonly IConfiguration _configuration;
         public YGCContext()
         {
         }
 
-        public YGCContext(DbContextOptions<YGCContext> options, IConfiguration configuration)
+        public YGCContext(DbContextOptions<YGCContext> options)
             : base(options)
         {
-            _configuration = configuration;
         }
 
         public virtual DbSet<AvailableDate> AvailableDates { get; set; } = null!;
+        public virtual DbSet<ChangeClassRequest> ChangeClassRequests { get; set; } = null!;
         public virtual DbSet<Class> Classes { get; set; } = null!;
         public virtual DbSet<DateOfWeek> DateOfWeeks { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
@@ -34,8 +32,8 @@ namespace Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                string connectionString = _configuration.GetConnectionString("YGC");
-                optionsBuilder.UseSqlServer(connectionString);
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("server =(local); database = YGC ;uid=sa;pwd=123456789;TrustServerCertificate=True");
             }
         }
 
@@ -63,7 +61,42 @@ namespace Infrastructure.Data
                 entity.HasOne(d => d.Slot)
                     .WithMany()
                     .HasForeignKey(d => d.SlotId)
-                    .HasConstraintName("FK__Available__slot___300424B4");
+                    .HasConstraintName("FK__Available__slot___3A81B327");
+            });
+
+            modelBuilder.Entity<ChangeClassRequest>(entity =>
+            {
+                entity.HasKey(e => e.RequestId)
+                    .HasName("PK__ChangeCl__18D3B90FAB62976F");
+
+                entity.Property(e => e.RequestId).HasColumnName("request_id");
+
+                entity.Property(e => e.ClassId).HasColumnName("class_id");
+
+                entity.Property(e => e.Content)
+                    .HasMaxLength(500)
+                    .HasColumnName("content");
+
+                entity.Property(e => e.IsApproved).HasColumnName("is_approved");
+
+                entity.Property(e => e.RequestClassId).HasColumnName("request_class_id");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.HasOne(d => d.Class)
+                    .WithMany(p => p.ChangeClassRequestClasses)
+                    .HasForeignKey(d => d.ClassId)
+                    .HasConstraintName("FK__ChangeCla__class__3B75D760");
+
+                entity.HasOne(d => d.RequestClass)
+                    .WithMany(p => p.ChangeClassRequestRequestClasses)
+                    .HasForeignKey(d => d.RequestClassId)
+                    .HasConstraintName("FK__ChangeCla__reque__52593CB8");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ChangeClassRequests)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__ChangeCla__user___3C69FB99");
             });
 
             modelBuilder.Entity<Class>(entity =>
@@ -91,11 +124,13 @@ namespace Infrastructure.Data
             modelBuilder.Entity<DateOfWeek>(entity =>
             {
                 entity.HasKey(e => e.DayId)
-                    .HasName("PK__DateOfWe__8B516ABBDB037D7D");
+                    .HasName("PK__DateOfWe__8B516ABB7F2E9CA2");
 
                 entity.ToTable("DateOfWeek");
 
-                entity.Property(e => e.DayId).HasColumnName("day_id");
+                entity.Property(e => e.DayId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("day_id");
 
                 entity.Property(e => e.Day)
                     .HasMaxLength(30)
@@ -154,7 +189,9 @@ namespace Infrastructure.Data
 
             modelBuilder.Entity<Role>(entity =>
             {
-                entity.Property(e => e.RoleId).HasColumnName("role_id");
+                entity.Property(e => e.RoleId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("role_id");
 
                 entity.Property(e => e.RoleName)
                     .HasMaxLength(20)
@@ -181,18 +218,18 @@ namespace Infrastructure.Data
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Schedules)
                     .HasForeignKey(d => d.ClassId)
-                    .HasConstraintName("FK__Schedule__class___3A81B327");
+                    .HasConstraintName("FK__Schedule__class___4316F928");
 
                 entity.HasOne(d => d.Slot)
                     .WithMany(p => p.Schedules)
                     .HasForeignKey(d => d.SlotId)
-                    .HasConstraintName("FK__Schedule__slot_i__3B75D760");
+                    .HasConstraintName("FK__Schedule__slot_i__440B1D61");
             });
 
             modelBuilder.Entity<StudySlot>(entity =>
             {
                 entity.HasKey(e => e.SlotId)
-                    .HasName("PK__StudySlo__971A01BB95A393F6");
+                    .HasName("PK__StudySlo__971A01BB229BD5A6");
 
                 entity.ToTable("StudySlot");
 
@@ -207,10 +244,10 @@ namespace Infrastructure.Data
                     .UsingEntity<Dictionary<string, object>>(
                         "StudySlotDay",
                         l => l.HasOne<DateOfWeek>().WithMany().HasForeignKey("DayId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__StudySlot__day_i__2E1BDC42"),
-                        r => r.HasOne<StudySlot>().WithMany().HasForeignKey("SlotId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__StudySlot__slot___2D27B809"),
+                        r => r.HasOne<StudySlot>().WithMany().HasForeignKey("SlotId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__StudySlot__slot___45F365D3"),
                         j =>
                         {
-                            j.HasKey("SlotId", "DayId").HasName("PK__StudySlo__3FAF171003942FE4");
+                            j.HasKey("SlotId", "DayId").HasName("PK__StudySlo__3FAF17102EA82550");
 
                             j.ToTable("StudySlotDay");
 
@@ -223,7 +260,7 @@ namespace Infrastructure.Data
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Uid)
-                    .HasName("PK__Users__DD701264886CF1AD");
+                    .HasName("PK__Users__DD701264B374D8F6");
 
                 entity.Property(e => e.Uid).HasColumnName("uid");
 
@@ -234,6 +271,8 @@ namespace Infrastructure.Data
                 entity.Property(e => e.FullName)
                     .HasMaxLength(50)
                     .HasColumnName("full_name");
+
+                entity.Property(e => e.IsVerified).HasColumnName("is_verified");
 
                 entity.Property(e => e.Password)
                     .HasMaxLength(500)
@@ -261,11 +300,11 @@ namespace Infrastructure.Data
                     .WithMany(p => p.Students)
                     .UsingEntity<Dictionary<string, object>>(
                         "Enrollment",
-                        l => l.HasOne<Class>().WithMany().HasForeignKey("ClassId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__Enrollmen__class__37A5467C"),
+                        l => l.HasOne<Class>().WithMany().HasForeignKey("ClassId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__Enrollmen__class__3E52440B"),
                         r => r.HasOne<User>().WithMany().HasForeignKey("StudentId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__Enrollmen__stude__36B12243"),
                         j =>
                         {
-                            j.HasKey("StudentId", "ClassId").HasName("PK__Enrollme__55EC410211EB7C3A");
+                            j.HasKey("StudentId", "ClassId").HasName("PK__Enrollme__55EC4102536F4D2E");
 
                             j.ToTable("Enrollment");
 
