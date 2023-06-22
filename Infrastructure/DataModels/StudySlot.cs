@@ -7,6 +7,7 @@ namespace Infrastructure.DataModels
     {
         public StudySlot()
         {
+            AvailableDates = new HashSet<AvailableDate>();
             Schedules = new HashSet<Schedule>();
             Days = new HashSet<DateOfWeek>();
         }
@@ -15,6 +16,7 @@ namespace Infrastructure.DataModels
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
 
+        public virtual ICollection<AvailableDate> AvailableDates { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
 
         public virtual ICollection<DateOfWeek> Days { get; set; }

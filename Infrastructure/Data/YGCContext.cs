@@ -41,26 +41,29 @@ namespace Infrastructure.Data
         {
             modelBuilder.Entity<AvailableDate>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.LecturerId, e.SlotId })
+                    .HasName("PK__Availabl__7DA07AAAAFCDBABB");
 
                 entity.ToTable("AvailableDate");
-
-                entity.Property(e => e.Date)
-                    .HasColumnType("datetime")
-                    .HasColumnName("date");
 
                 entity.Property(e => e.LecturerId).HasColumnName("lecturer_id");
 
                 entity.Property(e => e.SlotId).HasColumnName("slot_id");
 
+                entity.Property(e => e.Date)
+                    .HasColumnType("datetime")
+                    .HasColumnName("date");
+
                 entity.HasOne(d => d.Lecturer)
-                    .WithMany()
+                    .WithMany(p => p.AvailableDates)
                     .HasForeignKey(d => d.LecturerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Available__lectu__30F848ED");
 
                 entity.HasOne(d => d.Slot)
-                    .WithMany()
+                    .WithMany(p => p.AvailableDates)
                     .HasForeignKey(d => d.SlotId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Available__slot___3A81B327");
             });
 

@@ -7,6 +7,7 @@ namespace Infrastructure.DataModels
     {
         public User()
         {
+            AvailableDates = new HashSet<AvailableDate>();
             ChangeClassRequests = new HashSet<ChangeClassRequest>();
             Classes = new HashSet<Class>();
             FeedbackLecturers = new HashSet<Feedback>();
@@ -25,6 +26,7 @@ namespace Infrastructure.DataModels
         public bool IsVerified { get; set; }
 
         public virtual Role? Role { get; set; }
+        public virtual ICollection<AvailableDate> AvailableDates { get; set; }
         public virtual ICollection<ChangeClassRequest> ChangeClassRequests { get; set; }
         public virtual ICollection<Class> Classes { get; set; }
         public virtual ICollection<Feedback> FeedbackLecturers { get; set; }
