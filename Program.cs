@@ -21,6 +21,8 @@ using Application.Common.Dto;
 using Application.Query.Handler;
 using Application.Common.Validation;
 using Application.Common;
+using Microsoft.OpenApi.Models;
+using Application.Common.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,7 +67,34 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddSingleton<ITokenService>(new TokenService(_key, _issuer, _audience, _expirtyMinutes));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Description = "Bearer Authentication with JWT Token",
+        Type = SecuritySchemeType.Http
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            new List<string>()
+        }
+    });
+});
+
+
 builder.Services.AddDbContext<YGCContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("YGC")
 ));
@@ -73,7 +102,10 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
 builder.Services.AddScoped<IRequestHandler<AuthCommand, BaseResponse<AuthResponseDto>>, AuthHandler>();
 builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>, ClassNotificationHandler>();
+builder.Services.AddScoped<IRequestHandler<AvailableDateQuery, BaseResponse<IEnumerable<AvailableDateDto>>>, AvailableDateHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
+builder.Services.AddScoped<IRequestHandler<CreateStudySlotCommand,BaseResponse<StudySlotDto>>, CreateStudySlotHandler>();
+builder.Services.AddScoped<IRequestHandler<AddAvailableDateCommand,BaseResponse<IEnumerable<AvailableDateDto>>>, AddAvailableDateHandler>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 // Validator
@@ -88,6 +120,9 @@ var mapperConfig = new MapperConfiguration(cfg =>
 {
     cfg.AddProfile<UserMapper>();
     cfg.AddProfile<ScheduleMapper>();
+    cfg.AddProfile<StudySlotMapper>();
+    cfg.AddProfile<AvailableDateMapper>();
+    cfg.AddProfile<AvailableDateProfile>();
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

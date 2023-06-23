@@ -11,5 +11,8 @@ namespace Domain.Interface
     public interface IScheduleRepository : IBaseRepository<ScheduleModel>
     {
         public Task<ScheduleModel> CreateNotification(int id, string notification);
+        public Task<StudySlotModel> CreateSlot(TimeSpan startTime, TimeSpan endTime, List<int> dateIds);
+        public Task<IEnumerable<AvailableDateModel>> AddAvailableDate(int lecturerId, List<int> slotIds);
+        public Task<IEnumerable<AvailableDateModel>> GetAvailableDatesBySlotId(int slotId);
     }
 }

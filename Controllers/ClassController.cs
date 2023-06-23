@@ -24,15 +24,15 @@ namespace Api.Controllers
         // GET: api/<ClassController>
         [HttpGet("notification")]
         [ProducesDefaultResponseType(typeof(ClassNotificationDto))]
-        public async Task<IActionResult> ClassNotification([FromQuery]ClassNotificationQuery query)
+        public async Task<IActionResult> ClassNotification([FromQuery] ClassNotificationQuery query)
         {
-                var response = await _mediator.Send(query);
-                if (!response.Error) return Ok(response);
-                else
-                {
-                    var i = new ErrorHandling(response.Exception);
-                    return i;
-                }  
+            var response = await _mediator.Send(query);
+            if (!response.Error) return Ok(response);
+            else
+            {
+                var i = new ErrorHandling(response.Exception);
+                return i;
+            }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -41,19 +41,72 @@ namespace Api.Controllers
         [ProducesDefaultResponseType(typeof(ClassNotificationDto))]
         public async Task<IActionResult> ClassNotification(
             [FromHeader] string? Authorization
-            ,[FromRoute] int id
-            ,[FromBody]CreateNotificationCommand command)
+            , [FromRoute] int id
+            , [FromBody] CreateNotificationCommand command)
         {
-                command.token = Authorization;
-                command.scheduleid = id;
-                var response = await _mediator.Send(command);
-                if (!response.Error) 
-                    return Ok(response);
-                else
-                {
-                    var i = new ErrorHandling(response.Exception);
-                    return i;
-                }
+            command.token = Authorization;
+            command.scheduleid = id;
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var i = new ErrorHandling(response.Exception);
+                return i;
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "Staff,Admin,Lecturer")]
+        [HttpPost("slot")]
+        [ProducesDefaultResponseType(typeof(StudySlotDto))]
+        public async Task<IActionResult> CreateStudySlot(
+                [FromHeader] string? Authorization
+                , [FromBody] CreateStudySlotCommand command)
+        {
+            command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var i = new ErrorHandling(response.Exception);
+                return i;
+            }
+        }
+
+        [HttpPost("availabledate")]
+        public async Task<IActionResult> AddAvailableDate(
+        //[FromHeader] string? Authorization
+        //, 
+        [FromBody] AddAvailableDateCommand command)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var i = new ErrorHandling(response.Exception);
+                return i;
+            }
+        }
+
+        [HttpGet("availabledate/{slotId}")]
+        public async Task<IActionResult> GetAvailableDateBySlotId([FromRoute] int slotId)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(new AvailableDateQuery { SlotId = slotId});
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var i = new ErrorHandling(response.Exception);
+                return i;
+            }
         }
     }
 }
