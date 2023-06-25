@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Api;
+using Application.Common;
 
 namespace Api.Controllers
 {
@@ -26,14 +27,28 @@ namespace Api.Controllers
             if (!response.Error) return Ok(response);
             else
             {
-                var i = new ErrorHandling(response.Exception);
-                return i;
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
-        //[HttpPost("signup")]
-        //public async Task<IActionResult> Signup([FromBody] SignUpCommand command)
-        //{
-        //    return Ok(await _mediator.Send(command));
-        //}
+        [HttpPost("signup")]
+        public async Task<IActionResult> Signup([FromBody] SignUpCommand command)
+        {
+            var response = await _mediator.Send(command);
+            if (!response.Error) return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception> 
+                { 
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
     }
 }

@@ -12,5 +12,7 @@ namespace Domain.Interface
     {
         Task<int> CheckAccountAsync(string username, string password);
         Task<(int userId, string UserName, string role)> GetAccountDetailsByIdAsync(int id);
+        Task<bool> ExistUserName(string userName);
+        Task<bool> Create(string userName, string password, string phone, string fullName, string address);
     }
 }

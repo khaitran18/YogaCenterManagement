@@ -1,4 +1,5 @@
 ﻿using Application.Command;
+using Application.Common;
 using Application.Common.Dto;
 using Application.Query;
 using MediatR;
@@ -30,8 +31,12 @@ namespace Api.Controllers
             if (!response.Error) return Ok(response);
             else
             {
-                var i = new ErrorHandling(response.Exception);
-                return i;
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
 
@@ -51,8 +56,12 @@ namespace Api.Controllers
                 return Ok(response);
             else
             {
-                var i = new ErrorHandling(response.Exception);
-                return i;
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
 
@@ -71,8 +80,12 @@ namespace Api.Controllers
                 return Ok(response);
             else
             {
-                var i = new ErrorHandling(response.Exception);
-                return i;
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
 
@@ -89,8 +102,12 @@ namespace Api.Controllers
                 return Ok(response);
             else
             {
-                var i = new ErrorHandling(response.Exception);
-                return i;
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
 
@@ -104,8 +121,12 @@ namespace Api.Controllers
                 return Ok(response);
             else
             {
-                var i = new ErrorHandling(response.Exception);
-                return i;
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
     }

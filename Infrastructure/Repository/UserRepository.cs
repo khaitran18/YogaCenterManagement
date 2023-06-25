@@ -48,6 +48,42 @@ namespace Infrastructure.Repository
             
         }
 
+        public async Task<bool> Create(string userName, string password, string phone, string fullName, string address)
+        {
+            try
+            {
+                User user = new User
+                {
+                    Address = address,
+                    FullName = fullName,
+                    Password = password,
+                    Phone = phone,
+                    UserName = userName,
+                    RoleId = 1
+                };
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> ExistUserName(string userName)
+        {
+            try
+            {
+                return await Task.FromResult(_context.Users.Any(u => u.UserName.Equals(userName)));
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            
+        }
+
         public async Task<(int userId, string UserName, string role)> GetAccountDetailsByIdAsync(int id)
         {
             User? account = _context.Users.FirstOrDefault(a => a.Uid == id);

@@ -23,6 +23,7 @@ using Application.Common.Validation;
 using Application.Common;
 using Microsoft.OpenApi.Models;
 using Application.Common.Mapping;
+using static Infrastructure.Services.MailService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -106,8 +107,12 @@ builder.Services.AddScoped<IRequestHandler<AvailableDateQuery, BaseResponse<IEnu
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateStudySlotCommand,BaseResponse<StudySlotDto>>, CreateStudySlotHandler>();
 builder.Services.AddScoped<IRequestHandler<AddAvailableDateCommand,BaseResponse<IEnumerable<AvailableDateDto>>>, AddAvailableDateHandler>();
+builder.Services.AddScoped<IRequestHandler<SignUpCommand,BaseResponse<bool>>, SignUpHandler>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
+//Service
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
+builder.Services.AddTransient<IMailService, MailService>();
 // Validator
 builder.Services.AddScoped<IValidator<AuthCommand>, AuthCommandValidator>();
 builder.Services.AddScoped<IValidator<CreateNotificationCommand>, CreateNotificationCommandValidator>();

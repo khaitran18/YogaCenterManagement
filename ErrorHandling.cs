@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Common.Exceptions;
+using Application.Common;
 
 namespace Api
 {
-    public class ErrorHandling : IActionResult
+    public class ErrorHandling<TResponse> : IActionResult
     {
-        private readonly Exception _exception;
+        private readonly BaseResponse<TResponse> _exception;
 
-        public ErrorHandling(Exception e)
+        public ErrorHandling(BaseResponse<TResponse> e)
         {
             _exception = e;
         }
@@ -16,25 +17,25 @@ namespace Api
         {
             var objectResult = new ObjectResult(new
             {
-                Message = "An error occurred.",
+                Message = _exception.Message,
                 StatusCode = 500 // Set the desired HTTP status code
             });
-            if (_exception is BadRequestException badreq)
+            if (_exception.Exception is BadRequestException badreq)
             {
                 objectResult.StatusCode = 400;
                 objectResult.Value = _exception.Message;
             }
-            if (_exception is ForbiddenAccessException forbid)
+            if (_exception.Exception is ForbiddenAccessException forbid)
             {
                 objectResult.StatusCode = 403;
                 objectResult.Value = _exception.Message;
             }
-            if (_exception is NotFoundException notfound)
+            if (_exception.Exception is NotFoundException notfound)
             {
                 objectResult.StatusCode = 404;
                 objectResult.Value = _exception.Message;
             }
-            if (_exception is ValidationException validate)
+            if (_exception.Exception is ValidationException validate)
             {
                 objectResult.StatusCode = 400;
                 objectResult.Value = _exception.Message;
