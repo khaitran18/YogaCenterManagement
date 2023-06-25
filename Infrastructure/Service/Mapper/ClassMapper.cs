@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Service.Mapper
 {
-    public class ScheduleMapper : Profile
+    public class ClassMapper : Profile
     {
-        public ScheduleMapper()
+        public ClassMapper()
         {
-            CreateMap<Schedule, ScheduleModel>().ReverseMap();
+            CreateMap<Class, ClassModel>().ReverseMap();
         }
     }
 }

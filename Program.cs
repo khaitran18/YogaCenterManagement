@@ -104,6 +104,7 @@ builder.Services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
 builder.Services.AddScoped<IRequestHandler<AuthCommand, BaseResponse<AuthResponseDto>>, AuthHandler>();
 builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>, ClassNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<AvailableDateQuery, BaseResponse<IEnumerable<AvailableDateDto>>>, AvailableDateHandler>();
+builder.Services.AddScoped<IRequestHandler<GetClassByIdQuery, BaseResponse<ClassDto>>, GetClassByIdHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateStudySlotCommand,BaseResponse<StudySlotDto>>, CreateStudySlotHandler>();
 builder.Services.AddScoped<IRequestHandler<AddAvailableDateCommand,BaseResponse<IEnumerable<AvailableDateDto>>>, AddAvailableDateHandler>();
@@ -124,10 +125,15 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBeh
 var mapperConfig = new MapperConfiguration(cfg =>
 {
     cfg.AddProfile<UserMapper>();
+    cfg.AddProfile<UserProfile>();
     cfg.AddProfile<ScheduleMapper>();
+    cfg.AddProfile<ScheduleProfile>();
     cfg.AddProfile<StudySlotMapper>();
+    cfg.AddProfile<StudySlotProfile>();
     cfg.AddProfile<AvailableDateMapper>();
     cfg.AddProfile<AvailableDateProfile>();
+    cfg.AddProfile<ClassMapper>();
+    cfg.AddProfile<ClassProfile>();
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

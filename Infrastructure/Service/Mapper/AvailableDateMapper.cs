@@ -13,8 +13,7 @@ namespace Infrastructure.Service.Mapper
     {
         public AvailableDateMapper()
         {
-            CreateMap<AvailableDate, AvailableDateModel>();
-            CreateMap<AvailableDateModel, AvailableDate>();
+            CreateMap<AvailableDate, AvailableDateModel>().ReverseMap();
         }
     }
 }

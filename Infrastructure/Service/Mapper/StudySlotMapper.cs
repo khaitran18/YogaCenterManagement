@@ -15,7 +15,6 @@ namespace Infrastructure.Service.Mapper
         {
             CreateMap<StudySlot, StudySlotModel>()
                     .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Days.Select(d => d.Day).ToList()));
-
         }
     }
 }

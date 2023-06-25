@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Model
+namespace Application.Common.Dto
 {
-    public class ScheduleModel
+    public class ScheduleDto
     {
         public int Id { get; set; }
         public int? ClassId { get; set; }
         public int? SlotId { get; set; }
         public DateTime Date { get; set; }
-        public string? DailyNote { get; set; }
-        public StudySlotModel Slot { get; set; }
+        public string DailyNote { get; set; }
+        public StudySlotDto Slot { get; set; }
     }
 }

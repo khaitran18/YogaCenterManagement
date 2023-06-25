@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository
 {
@@ -49,6 +50,31 @@ namespace Infrastructure.Repository
         public async Task<bool> CheckSlotInClass(int classId, int slotId)
         {
             return await Task.FromResult(_context.Schedules.Any(s => s.ClassId == classId && s.SlotId == slotId));
+        }
+
+        public async Task<ClassModel> GetClassById(int classId)
+        {
+            try
+            {
+                var entityClass = await _context.Classes
+                    .Include(c => c.Schedules)
+                        .ThenInclude(s => s.Slot)
+                    .Include(s => s.Lecturer)
+                    .Include(c => c.Students)
+                    .FirstOrDefaultAsync(c => c.ClassId == classId);
+
+                if (entityClass == null)
+                {
+                    throw new NotFoundException("Class not found");
+                }
+
+                ClassModel classModel = _mapper.Map<ClassModel>(entityClass);
+                return classModel;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<string?> GetClassNotificationByClassIdAndSlotId(int classId, int slotId)

@@ -13,8 +13,7 @@ namespace Infrastructure.Service.Mapper
     {
         public UserMapper()
         {
-            CreateMap<User, UserModel>();
-            CreateMap<UserModel, User>();
+            CreateMap<User, UserModel>().ReverseMap();
         }
     }
 }

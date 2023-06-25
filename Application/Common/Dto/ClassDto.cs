@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Model
+namespace Application.Common.Dto
 {
-    public class ClassModel
+    public class ClassDto
     {
         public int ClassId { get; set; }
         public string ClassName { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int? LecturerId { get; set; }
-        public UserModel? Lecturer { get; set; }
-        public List<UserModel> Students { get; set; }
-        public List<ScheduleModel> Schedules { get; set; }
+        public UserDto? Lecturer { get; set; }
+        public List<UserDto> Students { get; set; }
+        public List<ScheduleDto> Schedules { get; set; }
     }
 }

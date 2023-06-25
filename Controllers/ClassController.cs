@@ -22,6 +22,24 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("{classId}")]
+        [ProducesDefaultResponseType(typeof(ClassDto))]
+        public async Task<IActionResult> GetClassById([FromRoute] int classId)
+        {
+            var response = await _mediator.Send(new GetClassByIdQuery { ClassId = classId });
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
         // GET: api/<ClassController>
         [HttpGet("notification")]
         [ProducesDefaultResponseType(typeof(ClassNotificationDto))]
