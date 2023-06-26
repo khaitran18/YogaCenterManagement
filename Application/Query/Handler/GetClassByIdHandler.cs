@@ -22,12 +22,28 @@ namespace Application.Query.Handler
         {
             BaseResponse<ClassDto> response = new BaseResponse<ClassDto>();
 
-            var classModel = await _unitOfWork.ClassRepository.GetClassById(request.ClassId);
-            var classDto = _mapper.Map<ClassDto>(classModel);
-            response.Result = classDto;
-            response.Message = "Get class successfully!";
+            try
+            {
+                var classModel = await _unitOfWork.ClassRepository.GetClassById(request.ClassId);
+                var classDto = _mapper.Map<ClassDto>(classModel);
+                response.Result = classDto;
+                response.Message = "Get class successfully!";
+            }
+            catch (NotFoundException ex)
+            {
+                response.Error = true;
+                response.Message = ex.Message;
+                response.Exception = ex;
+            }
+            catch (Exception ex)
+            {
+                response.Error = true;
+                response.Message = ex.Message;
+                response.Exception = ex;
+            }
 
             return response;
         }
+
     }
 }

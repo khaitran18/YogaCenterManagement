@@ -18,6 +18,8 @@ namespace Infrastructure.DataModels
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int? LecturerId { get; set; }
+        public double Price { get; set; }
+        public int ClassCapacity { get; set; }
 
         public virtual User? Lecturer { get; set; }
         public virtual ICollection<ChangeClassRequest> ChangeClassRequestClasses { get; set; }
