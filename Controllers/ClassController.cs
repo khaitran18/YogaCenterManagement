@@ -2,6 +2,7 @@
 using Application.Common;
 using Application.Common.Dto;
 using Application.Query;
+using Domain.Model;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -27,6 +28,24 @@ namespace Api.Controllers
         public async Task<IActionResult> GetClassById([FromRoute] int classId)
         {
             var response = await _mediator.Send(new GetClassByIdQuery { ClassId = classId });
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpGet]
+        [ProducesDefaultResponseType(typeof(BaseResponse<PaginatedResult<ClassDto>>))]
+        public async Task<IActionResult> GetClasses([FromQuery] GetClassesQuery query)
+        {
+            var response = await _mediator.Send(query);
             if (!response.Error)
                 return Ok(response);
             else

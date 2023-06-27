@@ -77,6 +77,78 @@ namespace Infrastructure.Repository
             }
         }
 
+        public async Task<(List<ClassModel>, int)> GetClasses(string? searchKeyword, string? sortBy, DateTime? startingFromDate, int? durationMonths, string? classCapacity, int page, int pageSize)
+        {
+            IQueryable<Class> query = _context.Classes
+                .Include(c => c.Schedules)
+                .Include(c => c.Lecturer);
+
+            // Search
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                query = query.Where(c => c.ClassName.Contains(searchKeyword));
+            }
+
+            // Starting from date filter
+            if (startingFromDate.HasValue)
+            {
+                query = query.Where(c => c.StartDate >= startingFromDate.Value);
+            }
+
+            // Duration filter
+            if (durationMonths.HasValue)
+            {
+                DateTime endDate = DateTime.Now.AddMonths(durationMonths.Value);
+                query = query.Where(c => c.EndDate <= endDate);
+            }
+
+            // Class capacity filter
+            if (!string.IsNullOrEmpty(classCapacity))
+            {
+                if (classCapacity == "<15")
+                {
+                    query = query.Where(c => c.ClassCapacity < 15);
+                }
+                else if (classCapacity == "15-25")
+                {
+                    query = query.Where(c => c.ClassCapacity >= 15 && c.ClassCapacity <= 25);
+                }
+                else if (classCapacity == ">25")
+                {
+                    query = query.Where(c => c.ClassCapacity > 25);
+                }
+            }
+
+            // Sorting
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                switch (sortBy.ToLower())
+                {
+                    case "classname":
+                        query = query.OrderBy(c => c.ClassName);
+                        break;
+                    case "classname_desc":
+                        query = query.OrderByDescending(c => c.ClassName);
+                        break;
+                    case "price":
+                        query = query.OrderBy(c => c.Price);
+                        break;
+                    case "price_desc":
+                        query = query.OrderByDescending(c => c.Price);
+                        break;
+                }
+            }
+
+            int totalCount = await query.CountAsync();
+
+            query = query.Skip((page - 1) * pageSize).Take(pageSize);
+
+            List<ClassModel> classes = await query.Select(c => _mapper.Map<ClassModel>(c)).ToListAsync();
+
+            return (classes, totalCount);
+        }
+
+
         public async Task<string?> GetClassNotificationByClassIdAndSlotId(int classId, int slotId)
         {
             Schedule? sch = _context.Schedules.FirstOrDefault(s => (s.ClassId == classId) && (s.SlotId == slotId));
