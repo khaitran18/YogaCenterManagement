@@ -10,6 +10,7 @@ namespace Domain.Interface
 {
     public interface IClassRepository : IBaseRepository<ClassModel>
     {
+        public Task<ClassModel> CreateClassSchedule(string name, double price, int capacity, DateTime startDate, DateTime endDate, List<int> dateIds);
         public Task<string> GetClassNotificationByClassIdAndSlotId(int classId, int slotId);
         public Task<bool> CheckSlotInClass(int classId, int slotId);
         public Task<bool> CheckLecturerAuthority(int scheduleid, int userId);

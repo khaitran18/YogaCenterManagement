@@ -41,6 +41,30 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "Staff,Admin,Lecturer")]
+        [HttpPost]
+        [ProducesDefaultResponseType(typeof(ClassDto))]
+        public async Task<IActionResult> CreateClass(
+                [FromHeader] string? Authorization
+                , [FromBody] CreateClassCommand command)
+        {
+            command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
         [HttpGet]
         [ProducesDefaultResponseType(typeof(BaseResponse<PaginatedResult<ClassDto>>))]
         public async Task<IActionResult> GetClasses([FromQuery] GetClassesQuery query)
@@ -166,5 +190,7 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
+
+        
     }
 }

@@ -25,6 +25,53 @@ namespace Infrastructure.Repository
             _mapper = mapper;
         }
 
+        public async Task<ClassModel> CreateClassSchedule(string name, double price, int capacity, DateTime startDate, DateTime endDate, List<int> dateIds)
+        {
+            Class newClass = new Class();
+            try
+            {
+                newClass = new Class()
+                {
+                    ClassName = name,
+                    Price = price,
+                    ClassCapacity = capacity,
+                    StartDate = startDate,
+                    EndDate = endDate,
+                };
+                _context.Classes.Add(newClass);
+                await _context.SaveChangesAsync();
+                var newClassWithEmptySchedules = _context.Classes.OrderByDescending(c => c.ClassId).FirstOrDefault();
+                //return class with empty if no day is selected 
+                if(dateIds.Count() == 0)
+                {
+                    return _mapper.Map<ClassModel>(newClassWithEmptySchedules);
+                }
+                //auto generate schedules for the class
+                for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                {
+                    int selectedDay = (int)date.DayOfWeek;
+                    if (dateIds.Contains(selectedDay))
+                    {
+                        StudySlot studySlot = _context.StudySlots.First(s => s.Days.Where(d => d.DayId == selectedDay).Any());
+                        Schedule schedule = new Schedule()
+                        {
+                            ClassId = newClassWithEmptySchedules.ClassId,
+                            SlotId = studySlot.SlotId,
+                            Date = date,
+                        };
+                        _context.Schedules.Add(schedule);
+                    }
+                }
+                await _context.SaveChangesAsync();
+                var newClassWithSchedules = _context.Classes.Single(c => c.ClassId == newClassWithEmptySchedules.ClassId);
+                return _mapper.Map<ClassModel>(newClassWithSchedules);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public async Task<bool> CheckLecturerAuthority(int scheduleid, int userId)
         {
             try
