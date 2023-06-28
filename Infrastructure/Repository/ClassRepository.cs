@@ -47,11 +47,6 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<bool> CheckSlotInClass(int classId, int slotId)
-        {
-            return await Task.FromResult(_context.Schedules.Any(s => s.ClassId == classId && s.SlotId == slotId));
-        }
-
         public async Task<ClassModel> GetClassById(int classId)
         {
             try
@@ -77,10 +72,5 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<string?> GetClassNotificationByClassIdAndSlotId(int classId, int slotId)
-        {
-            Schedule? sch = _context.Schedules.FirstOrDefault(s => (s.ClassId == classId) && (s.SlotId == slotId));
-            return await Task.FromResult(sch.DailyNote);
-        }
     }
 }

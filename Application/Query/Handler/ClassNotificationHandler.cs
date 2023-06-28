@@ -20,9 +20,9 @@ namespace Application.Query.Handler
             BaseResponse<ClassNotificationDto> response = new BaseResponse<ClassNotificationDto>();
             try
             {
-                if (await _unitOfWork.ClassRepository.CheckSlotInClass(request.classId, request.slotId))
+                if (await _unitOfWork.ScheduleRepository.ExistSchedule(request.scheduleId))
                 {
-                    string content = await _unitOfWork.ClassRepository.GetClassNotificationByClassIdAndSlotId(request.classId, request.slotId);
+                    string content = await _unitOfWork.ScheduleRepository.GetNotification(request.scheduleId);
                     response.Result = new ClassNotificationDto
                     {
                         content = content,
@@ -31,7 +31,9 @@ namespace Application.Query.Handler
                 else
                 {
                     response.Error = true;
-                    response.Exception = new NotFoundException("Schedule for class is not found");
+                    response.Exception = new NotFoundException();
+                    response.Message = "Schedule not found";
+
                 }
                 return response;
             }
