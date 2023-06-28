@@ -1,9 +1,11 @@
-﻿using AutoMapper;
+﻿using Application.Common.Exceptions;
+using AutoMapper;
 using Domain.Interface;
 using Domain.Model;
 using Infrastructure.Data;
 using Infrastructure.DataModels;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,6 +71,72 @@ namespace Infrastructure.Repository
                 throw e;
             }
             return await Task.FromResult(true);
+        }
+
+        public async Task<UserModel> EditProfile(UserModel user)
+        {
+            try
+            {
+                var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Uid == user.Uid);
+
+                if (existingUser != null)
+                {
+                    existingUser.FullName = user.FullName;
+                    existingUser.Address = user.Address;
+                    existingUser.Phone = user.Phone;
+
+                    return _mapper.Map<UserModel>(existingUser);
+                }
+                else
+                {
+                    throw new NotFoundException("User not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<UserModel> EditUser(UserModel user)
+        {
+            try
+            {
+                var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Uid == user.Uid);
+
+                if (existingUser != null)
+                {
+                    existingUser.FullName = user.FullName;
+                    existingUser.Address = user.Address;
+                    existingUser.Phone = user.Phone;
+                    existingUser.UserName = user.UserName;
+                    existingUser.Password = user.Password;
+                    existingUser.RoleId = user.RoleId;
+
+                    return _mapper.Map<UserModel>(existingUser);
+                }
+                else
+                {
+                    throw new NotFoundException("User not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<UserModel>> GetAll()
+        {
+            try
+            {
+                var users = await _context.Users.ToListAsync();
+                return _mapper.Map<List<UserModel>>(users);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<bool> ExistUserName(string userName)

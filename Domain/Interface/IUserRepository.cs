@@ -14,5 +14,8 @@ namespace Domain.Interface
         Task<(int userId, string UserName, string role)> GetAccountDetailsByIdAsync(int id);
         Task<bool> ExistUserName(string userName);
         Task<bool> Create(string userName, string password, string phone, string fullName, string address);
+        Task<UserModel> EditProfile(UserModel user);
+        Task<UserModel> EditUser(UserModel user);
+        Task<List<UserModel>> GetAll();
     }
 }

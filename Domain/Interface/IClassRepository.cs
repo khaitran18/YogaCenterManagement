@@ -12,5 +12,6 @@ namespace Domain.Interface
     {
         public Task<bool> CheckLecturerAuthority(int scheduleid, int userId);
         public Task<ClassModel> GetClassById(int classId);
+        public Task<(List<ClassModel>, int)> GetClasses(string? searchKeyword, string? sortBy, DateTime? startingFromDate, int? durationMonths, string? classCapacity, int page, int pageSize);
     }
 }

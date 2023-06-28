@@ -7,6 +7,6 @@ namespace Application.Interfaces
         IUserRepository UserRepository { get; }
         IClassRepository ClassRepository { get; }
         IScheduleRepository ScheduleRepository { get; }
-        void Save();
+        Task Save();
     }
 }

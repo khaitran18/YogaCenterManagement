@@ -26,12 +26,12 @@ namespace Infrastructure
         public IScheduleRepository ScheduleRepository => _scheduleRepository ??= new ScheduleRepository(_context, _mapper);
         public void Dispose()
         {
-            _context.Dispose();
+            _context.DisposeAsync();
         }
 
-        public void Save()
+        public async Task Save()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
