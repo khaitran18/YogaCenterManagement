@@ -5,7 +5,6 @@ namespace Application.Query
 {
     public class ClassNotificationQuery : IRequest<BaseResponse<ClassNotificationDto>>
     {
-        public int classId { get; set; }
-        public int slotId { get; set; }
+        public int scheduleId { get; set; }
     }
 }
