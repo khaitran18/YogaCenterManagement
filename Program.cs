@@ -105,6 +105,7 @@ builder.Services.AddScoped<IRequestHandler<AuthCommand, BaseResponse<AuthRespons
 builder.Services.AddScoped<IRequestHandler<EditProfileCommand, BaseResponse<UserDto>>, EditProfileHandler>();
 builder.Services.AddScoped<IRequestHandler<EditUserCommand, BaseResponse<UserDto>>, EditUserHandler>();
 builder.Services.AddScoped<IRequestHandler<GetUsersQuery, BaseResponse<List<UserDto>>>, GetUsersHandler>();
+builder.Services.AddScoped<IRequestHandler<DisableUserCommand, BaseResponse<UserDto>>, DisableUserHandler>();
 builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>, ClassNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<AvailableDateQuery, BaseResponse<IEnumerable<AvailableDateDto>>>, AvailableDateHandler>();
 builder.Services.AddScoped<IRequestHandler<GetClassByIdQuery, BaseResponse<ClassDto>>, GetClassByIdHandler>();

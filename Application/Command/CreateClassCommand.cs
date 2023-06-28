@@ -12,11 +12,11 @@ namespace Application.Command
     public class CreateClassCommand : IRequest<BaseResponse<ClassDto>>
     {
         public string? token { get; set; }
-        public string ClassName { get; set; }
+        public string ClassName { get; set; } = null!;
         public double Price { get; set; }
         public int ClassCapacity { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string SelectedDayOfWeek { get; set; }
+        public string SelectedDayOfWeek { get; set; } = null!;
     }
 }

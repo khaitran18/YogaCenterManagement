@@ -139,6 +139,30 @@ namespace Infrastructure.Repository
             }
         }
 
+        public async Task<UserModel> DisableUser(int userId, string reason)
+        {
+            try
+            {
+                var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Uid == userId);
+
+                if (existingUser != null)
+                {
+                    existingUser.IsDisabled = true;
+                    existingUser.DisabledReason = reason;
+
+                    return _mapper.Map<UserModel>(existingUser);
+                }
+                else
+                {
+                    throw new NotFoundException("User not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<bool> ExistUserName(string userName)
         {
             try

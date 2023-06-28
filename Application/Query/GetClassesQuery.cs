@@ -4,6 +4,7 @@ using Domain.Model;
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace Application.Query
         public DateTime? StartingFromDate { get; set; }
         public int? DurationMonths { get; set; }
         public string? ClassCapacity { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 6;
     }
 }

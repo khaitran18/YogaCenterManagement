@@ -82,5 +82,26 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(errorResponse);
             }
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "Staff,Admin")]
+        [HttpPut("disable/{id}")]
+        [ProducesDefaultResponseType(typeof(UserDto))]
+        public async Task<IActionResult> DisableUser(int id, [FromBody] DisableUserCommand command)
+        {
+            command.UserId = id;
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var errorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(errorResponse);
+            }
+        }
     }
 }

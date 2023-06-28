@@ -23,11 +23,11 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("{classId}")]
+        [HttpGet("{id}")]
         [ProducesDefaultResponseType(typeof(ClassDto))]
-        public async Task<IActionResult> GetClassById([FromRoute] int classId)
+        public async Task<IActionResult> GetClassById([FromRoute] int id)
         {
-            var response = await _mediator.Send(new GetClassByIdQuery { ClassId = classId });
+            var response = await _mediator.Send(new GetClassByIdQuery { ClassId = id });
             if (!response.Error)
                 return Ok(response);
             else
