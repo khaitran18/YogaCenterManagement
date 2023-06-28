@@ -9,7 +9,7 @@ namespace Infrastructure.Data
 {
     public partial class YGCContext : DbContext
     {
-        private readonly IConfiguration _configuration; 
+        private readonly IConfiguration _configuration;
         public YGCContext()
         {
         }
@@ -35,7 +35,6 @@ namespace Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("server =spellsmarty.database.windows.net ;uid=spellsmarty; database = YGC;pwd=Spell$marty1;TrustServerCertificate=True");
                 optionsBuilder.UseSqlServer(_configuration.GetConnectionString("YGC"));
             }
         }
@@ -280,6 +279,11 @@ namespace Infrastructure.Data
 
                 entity.Property(e => e.DisabledReason).HasColumnName("disabled_reason");
 
+                entity.Property(e => e.Email)
+                    .HasMaxLength(320)
+                    .IsUnicode(false)
+                    .HasColumnName("email");
+
                 entity.Property(e => e.FullName)
                     .HasMaxLength(50)
                     .HasColumnName("full_name");
@@ -304,6 +308,11 @@ namespace Infrastructure.Data
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("user_name");
+
+                entity.Property(e => e.VerificationToken)
+                    .HasMaxLength(36)
+                    .HasColumnName("verification_token")
+                    .IsFixedLength();
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Users)
