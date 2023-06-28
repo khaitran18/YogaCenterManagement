@@ -102,6 +102,9 @@ builder.Services.AddDbContext<YGCContext>(options => options.UseSqlServer(
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
 builder.Services.AddScoped<IRequestHandler<AuthCommand, BaseResponse<AuthResponseDto>>, AuthHandler>();
+builder.Services.AddScoped<IRequestHandler<EditProfileCommand, BaseResponse<UserDto>>, EditProfileHandler>();
+builder.Services.AddScoped<IRequestHandler<EditUserCommand, BaseResponse<UserDto>>, EditUserHandler>();
+builder.Services.AddScoped<IRequestHandler<GetUsersQuery, BaseResponse<List<UserDto>>>, GetUsersHandler>();
 builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>, ClassNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<AvailableDateQuery, BaseResponse<IEnumerable<AvailableDateDto>>>, AvailableDateHandler>();
 builder.Services.AddScoped<IRequestHandler<GetClassByIdQuery, BaseResponse<ClassDto>>, GetClassByIdHandler>();
@@ -150,7 +153,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseCors("corsapp");
+
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();

@@ -66,7 +66,7 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [ProducesDefaultResponseType(typeof(BaseResponse<PaginatedResult<ClassDto>>))]
+        [ProducesDefaultResponseType(typeof(PaginatedResult<ClassDto>))]
         public async Task<IActionResult> GetClasses([FromQuery] GetClassesQuery query)
         {
             var response = await _mediator.Send(query);
