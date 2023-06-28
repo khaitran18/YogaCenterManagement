@@ -15,5 +15,10 @@ namespace Domain.Model
         public string? Address { get; set; }
         public string? Phone { get; set; }
         public int? RoleId { get; set; }
+        public bool IsVerified { get; set; }
+        public bool IsDisabled { get; set; }
+        public string? DisabledReason { get; set; }
+        public string? VerificationToken { get; set; }
+        public string Email { get; set; } = null!;
     }
 }

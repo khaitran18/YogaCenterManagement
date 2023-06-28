@@ -50,18 +50,23 @@ namespace Infrastructure.Repository
             
         }
 
-        public async Task<bool> Create(string userName, string password, string phone, string fullName, string address)
+        public async Task<UserModel> Create(string userName, string password, string phone, string fullName, string address, string email)
         {
+            User user = new User();
             try
             {
-                User user = new User
+                Guid uid = Guid.NewGuid();
+                string uidString = uid.ToString();
+                user = new User
                 {
-                    Address = address,
-                    FullName = fullName,
-                    Password = password,
-                    Phone = phone,
                     UserName = userName,
-                    RoleId = 1
+                    Password = password,
+                    FullName = fullName,
+                    Address = address,
+                    Phone = phone,
+                    Email = email,
+                    RoleId = 1,
+                    VerificationToken = uidString
                 };
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
@@ -70,7 +75,7 @@ namespace Infrastructure.Repository
             {
                 throw e;
             }
-            return await Task.FromResult(true);
+            return await Task.FromResult(_mapper.Map<UserModel>(user));
         }
 
         public async Task<UserModel> EditProfile(UserModel user)
@@ -186,6 +191,28 @@ namespace Infrastructure.Repository
                 , acc.UserName
                 , role)
                 );
+        }
+
+        public async Task<bool> VerifyToken(string token)
+        {
+            try
+            {
+                User u = _context.Users.FirstOrDefault(u => u.VerificationToken.Equals(token));
+                if (u != null) 
+                {
+                    u.IsVerified = true;
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new Exception("Invalid credential");
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return true;
         }
     }
 }

@@ -26,6 +26,8 @@ namespace Infrastructure.DataModels
         public bool IsVerified { get; set; }
         public bool IsDisabled { get; set; }
         public string? DisabledReason { get; set; }
+        public string? VerificationToken { get; set; }
+        public string Email { get; set; } = null!;
 
         public virtual Role? Role { get; set; }
         public virtual ICollection<AvailableDate> AvailableDates { get; set; }
