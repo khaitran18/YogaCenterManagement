@@ -275,9 +275,13 @@ namespace Infrastructure.Data
                     .HasMaxLength(150)
                     .HasColumnName("address");
 
+                entity.Property(e => e.DisabledReason).HasColumnName("disabled_reason");
+
                 entity.Property(e => e.FullName)
                     .HasMaxLength(50)
                     .HasColumnName("full_name");
+
+                entity.Property(e => e.IsDisabled).HasColumnName("is_disabled");
 
                 entity.Property(e => e.IsVerified).HasColumnName("is_verified");
 

@@ -24,6 +24,8 @@ namespace Infrastructure.DataModels
         public string? Phone { get; set; }
         public int? RoleId { get; set; }
         public bool IsVerified { get; set; }
+        public bool IsDisabled { get; set; }
+        public string? DisabledReason { get; set; }
 
         public virtual Role? Role { get; set; }
         public virtual ICollection<AvailableDate> AvailableDates { get; set; }
