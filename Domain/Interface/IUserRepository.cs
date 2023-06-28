@@ -17,6 +17,8 @@ namespace Domain.Interface
         Task<UserModel> EditProfile(UserModel user);
         Task<UserModel> EditUser(UserModel user);
         Task<List<UserModel>> GetAll();
-        Task<UserModel> DisableUser(int userId, string reason);
+        Task<UserModel> DisableUser(int id, string reason);
+        Task<int> CreateFeedback(FeedbackModel feedback);
+        Task<bool> IsUserLecturer(int id);
     }
 }

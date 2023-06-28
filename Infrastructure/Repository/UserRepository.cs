@@ -139,11 +139,11 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<UserModel> DisableUser(int userId, string reason)
+        public async Task<UserModel> DisableUser(int id, string reason)
         {
             try
             {
-                var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Uid == userId);
+                var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Uid == id);
 
                 if (existingUser != null)
                 {
@@ -186,6 +186,40 @@ namespace Infrastructure.Repository
                 , acc.UserName
                 , role)
                 );
+        }
+
+        public async Task<int> CreateFeedback(FeedbackModel feedback)
+        {
+            try
+            {
+                var feedbackEntity = _mapper.Map<Feedback>(feedback);
+                await _context.Feedbacks.AddAsync(feedbackEntity);
+                await _context.SaveChangesAsync();
+                return feedbackEntity.FeedbackId;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> IsUserLecturer(int id)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.Uid == id);
+                if (user != null && user.Role!.RoleName == "Lecturer")
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

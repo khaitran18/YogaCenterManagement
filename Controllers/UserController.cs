@@ -103,5 +103,29 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(errorResponse);
             }
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "User")]
+        [HttpPost("feedback")]
+        [ProducesDefaultResponseType(typeof(FeedbackDto))]
+        public async Task<IActionResult> CreateFeedback([FromBody] CreateFeedbackCommand command)
+        {
+            var authorization = HttpContext.Request.Headers["Authorization"].ToString();
+            command.Token = authorization;
+            var response = await _mediator.Send(command);
+
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var errorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(errorResponse);
+            }
+        }
+
     }
 }

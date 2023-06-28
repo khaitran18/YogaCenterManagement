@@ -4,11 +4,11 @@ using Infrastructure.DataModels;
 
 namespace Infrastructure.Service.Mapper
 {
-    public class ScheduleMapper : Profile
+    public class FeedbackMapper : Profile
     {
-        public ScheduleMapper()
+        public FeedbackMapper()
         {
-            CreateMap<Schedule, ScheduleModel>().ReverseMap();
+            CreateMap<Feedback, FeedbackModel>().ReverseMap();
         }
     }
 }

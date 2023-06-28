@@ -106,6 +106,7 @@ builder.Services.AddScoped<IRequestHandler<EditProfileCommand, BaseResponse<User
 builder.Services.AddScoped<IRequestHandler<EditUserCommand, BaseResponse<UserDto>>, EditUserHandler>();
 builder.Services.AddScoped<IRequestHandler<GetUsersQuery, BaseResponse<List<UserDto>>>, GetUsersHandler>();
 builder.Services.AddScoped<IRequestHandler<DisableUserCommand, BaseResponse<UserDto>>, DisableUserHandler>();
+builder.Services.AddScoped<IRequestHandler<CreateFeedbackCommand, BaseResponse<FeedbackDto>>, CreateFeedbackHandler>();
 builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>, ClassNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<AvailableDateQuery, BaseResponse<IEnumerable<AvailableDateDto>>>, AvailableDateHandler>();
 builder.Services.AddScoped<IRequestHandler<GetClassByIdQuery, BaseResponse<ClassDto>>, GetClassByIdHandler>();
@@ -140,6 +141,8 @@ var mapperConfig = new MapperConfiguration(cfg =>
     cfg.AddProfile<AvailableDateProfile>();
     cfg.AddProfile<ClassMapper>();
     cfg.AddProfile<ClassProfile>();
+    cfg.AddProfile<FeedbackMapper>();
+    cfg.AddProfile<FeedbackProfile>();
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
