@@ -22,5 +22,6 @@ namespace Domain.Interface
         Task<int> CreateFeedback(FeedbackModel feedback);
         Task<bool> IsUserLecturer(int id);
         Task<bool> IsUserAdmin(int id);
+        Task<(List<FeedbackModel>, int)> GetFeedbacks(int id, bool isLecturer, string? sortBy, int page, int pageSize);
     }
 }

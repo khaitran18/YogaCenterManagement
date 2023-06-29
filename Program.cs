@@ -107,6 +107,7 @@ builder.Services.AddScoped<IRequestHandler<EditUserCommand, BaseResponse<UserDto
 builder.Services.AddScoped<IRequestHandler<GetUsersQuery, BaseResponse<PaginatedResult<UserDto>>>, GetUsersHandler>();
 builder.Services.AddScoped<IRequestHandler<DisableUserCommand, BaseResponse<UserDto>>, DisableUserHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateFeedbackCommand, BaseResponse<FeedbackDto>>, CreateFeedbackHandler>();
+builder.Services.AddScoped<IRequestHandler<GetFeedbacksQuery, BaseResponse<PaginatedResult<FeedbackDto>>>, GetFeedbacksHandler>();
 builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>, ClassNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<AvailableDateQuery, BaseResponse<IEnumerable<AvailableDateDto>>>, AvailableDateHandler>();
 builder.Services.AddScoped<IRequestHandler<GetClassByIdQuery, BaseResponse<ClassDto>>, GetClassByIdHandler>();

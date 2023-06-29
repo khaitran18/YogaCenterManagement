@@ -128,5 +128,26 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "Staff,Admin,Lecturer")]
+        [HttpGet("feedback")]
+        [ProducesDefaultResponseType(typeof(PaginatedResult<FeedbackDto>))]
+        public async Task<IActionResult> GetFeedbacks([FromQuery] GetFeedbacksQuery query)
+        {
+            var authorization = HttpContext.Request.Headers["Authorization"].ToString();
+            query.Token = authorization;
+            var response = await _mediator.Send(query);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var errorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(errorResponse);
+            }
+        }
     }
 }

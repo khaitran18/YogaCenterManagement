@@ -48,7 +48,7 @@ namespace Infrastructure.Repository
             {
                 return await Task.FromResult(-1);
             }
-            
+
         }
 
         public async Task<UserModel> Create(string userName, string password, string phone, string fullName, string address, string email)
@@ -157,7 +157,7 @@ namespace Infrastructure.Repository
                 query = query.Where(u => u.IsVerified == verified.Value);
             }
 
-            // Sorting
+            // Sort
             if (!string.IsNullOrEmpty(sortBy))
             {
                 switch (sortBy.ToLower())
@@ -218,7 +218,7 @@ namespace Infrastructure.Repository
             {
                 throw;
             }
-            
+
         }
 
         public async Task<(int userId, string UserName, string role)> GetAccountDetailsByIdAsync(int id)
@@ -238,7 +238,7 @@ namespace Infrastructure.Repository
             try
             {
                 User? u = _context.Users.FirstOrDefault(u => u.VerificationToken!.Equals(token));
-                if (u != null) 
+                if (u != null)
                 {
                     u.IsVerified = true;
                     await _context.SaveChangesAsync();
@@ -306,6 +306,46 @@ namespace Infrastructure.Repository
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public async Task<(List<FeedbackModel>, int)> GetFeedbacks(int id, bool isLecturer, string? sortBy, int page, int pageSize)
+        {
+            IQueryable<Feedback> query = _context.Feedbacks.AsQueryable();
+
+            if (isLecturer)
+            {
+                query = query
+                    .Where(f => f.LecturerId == id)
+                    .Select(f => new Feedback { Content = f.Content });
+            }
+            else
+            {
+                query = query.Include(f => f.Student).Include(f => f.Lecturer);
+            }
+
+            // Sort
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                switch (sortBy.ToLower())
+                {
+                    case "time":
+                        query = query.OrderBy(f => f.Time);
+                        break;
+                    case "time_desc":
+                        query = query.OrderByDescending(f => f.Time);
+                        break;
+                }
+            }
+
+            var totalCount = await query.CountAsync();
+
+            // Pagination
+            query = query.Skip((page - 1) * pageSize).Take(pageSize);
+
+            var feedbacks = await query.ToListAsync();
+            var feedbackModels = _mapper.Map<List<FeedbackModel>>(feedbacks);
+
+            return (feedbackModels, totalCount);
         }
     }
 }
