@@ -16,10 +16,11 @@ namespace Domain.Interface
         Task<UserModel> Create(string userName, string password, string phone, string fullName, string address, string email);
         Task<UserModel> EditProfile(UserModel user);
         Task<UserModel> EditUser(UserModel user);
-        Task<List<UserModel>> GetAll();
+        public Task<(List<UserModel>, int)> GetUsers(List<int>? roleIds, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isAdmin);
         Task<bool> VerifyToken(string token);
         Task<UserModel> DisableUser(int id, string reason);
         Task<int> CreateFeedback(FeedbackModel feedback);
         Task<bool> IsUserLecturer(int id);
+        Task<bool> IsUserAdmin(int id);
     }
 }

@@ -10,6 +10,6 @@ namespace Application.Command
 {
     public record class VerifyEmailCommand : IRequest<BaseResponse<bool>>
     {
-        public string t { get; set; }
+        public string t { get; set; } = null!;
     }
 }

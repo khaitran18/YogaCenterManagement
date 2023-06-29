@@ -104,7 +104,7 @@ builder.Services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
 builder.Services.AddScoped<IRequestHandler<AuthCommand, BaseResponse<AuthResponseDto>>, AuthHandler>();
 builder.Services.AddScoped<IRequestHandler<EditProfileCommand, BaseResponse<UserDto>>, EditProfileHandler>();
 builder.Services.AddScoped<IRequestHandler<EditUserCommand, BaseResponse<UserDto>>, EditUserHandler>();
-builder.Services.AddScoped<IRequestHandler<GetUsersQuery, BaseResponse<List<UserDto>>>, GetUsersHandler>();
+builder.Services.AddScoped<IRequestHandler<GetUsersQuery, BaseResponse<PaginatedResult<UserDto>>>, GetUsersHandler>();
 builder.Services.AddScoped<IRequestHandler<DisableUserCommand, BaseResponse<UserDto>>, DisableUserHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateFeedbackCommand, BaseResponse<FeedbackDto>>, CreateFeedbackHandler>();
 builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>, ClassNotificationHandler>();

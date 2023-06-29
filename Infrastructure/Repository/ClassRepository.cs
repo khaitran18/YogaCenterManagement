@@ -1,15 +1,10 @@
-﻿using AutoMapper;
+﻿using Application.Common.Exceptions;
+using AutoMapper;
 using Domain.Interface;
 using Domain.Model;
 using Infrastructure.Data;
 using Infrastructure.DataModels;
 using Infrastructure.Repositories;
-using Application.Common.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository
@@ -41,8 +36,12 @@ namespace Infrastructure.Repository
                 _context.Classes.Add(newClass);
                 await _context.SaveChangesAsync();
                 var newClassWithEmptySchedules = _context.Classes.OrderByDescending(c => c.ClassId).FirstOrDefault();
+                if (newClassWithEmptySchedules == null)
+                {
+                    throw new Exception("Failed to retrieve the newly created class.");
+                }
                 //return class with empty if no day is selected 
-                if(dateIds.Count() == 0)
+                if (dateIds.Count() == 0)
                 {
                     return _mapper.Map<ClassModel>(newClassWithEmptySchedules);
                 }
@@ -66,9 +65,9 @@ namespace Infrastructure.Repository
                 var newClassWithSchedules = _context.Classes.Single(c => c.ClassId == newClassWithEmptySchedules.ClassId);
                 return _mapper.Map<ClassModel>(newClassWithSchedules);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -80,17 +79,18 @@ namespace Infrastructure.Repository
                 if (schedule != null)
                 {
                     Class? @class = _context.Classes.FirstOrDefault(c => (c.ClassId == schedule.ClassId) && (c.LecturerId == userId));
-                    if (@class != null) 
+                    if (@class != null)
                         return await Task.FromResult(true);
-                    else {
+                    else
+                    {
                         return await Task.FromResult(false);
                     }
                 }
                 else throw new NotFoundException("Schedule not found");
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
         }
 
@@ -193,8 +193,15 @@ namespace Infrastructure.Repository
 
         public async Task<string?> GetClassNotificationByClassIdAndSlotId(int classId, int slotId)
         {
-            Schedule? sch = _context.Schedules.FirstOrDefault(s => (s.ClassId == classId) && (s.SlotId == slotId));
-            return await Task.FromResult(sch.DailyNote);
+            try
+            {
+                Schedule? sch = _context.Schedules.FirstOrDefault(s => s.ClassId == classId && s.SlotId == slotId);
+                return await Task.FromResult(sch?.DailyNote);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

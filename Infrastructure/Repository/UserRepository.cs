@@ -1,4 +1,5 @@
-﻿using Application.Common.Exceptions;
+﻿using Application.Common.Dto;
+using Application.Common.Exceptions;
 using AutoMapper;
 using Domain.Interface;
 using Domain.Model;
@@ -71,9 +72,9 @@ namespace Infrastructure.Repository
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
             return await Task.FromResult(_mapper.Map<UserModel>(user));
         }
@@ -131,18 +132,57 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<List<UserModel>> GetAll()
+        public async Task<(List<UserModel>, int)> GetUsers(List<int>? roleIds, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isAdmin)
         {
-            try
+            IQueryable<User> query = _context.Users.Include(u => u.Role).AsQueryable();
+
+            // Filtering
+            if (!isAdmin)
             {
-                var users = await _context.Users.ToListAsync();
-                return _mapper.Map<List<UserModel>>(users);
+                query = query.Where(u => u.Role!.RoleName == "User" || u.Role.RoleName == "Lecturer");
             }
-            catch (Exception ex)
+
+            if (roleIds != null && roleIds.Any())
             {
-                throw new Exception(ex.Message);
+                query = query.Where(u => roleIds.Contains((int)u.RoleId!));
             }
+
+            if (disabled.HasValue)
+            {
+                query = query.Where(u => u.IsDisabled == disabled.Value);
+            }
+
+            if (verified.HasValue)
+            {
+                query = query.Where(u => u.IsVerified == verified.Value);
+            }
+
+            // Sorting
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                switch (sortBy.ToLower())
+                {
+                    case "name":
+                        query = query.OrderBy(u => u.FullName);
+                        break;
+                    case "name_desc":
+                        query = query.OrderByDescending(u => u.FullName);
+                        break;
+                }
+            }
+
+            var totalCount = await query.CountAsync();
+
+            // Pagination
+            query = query.Skip((page - 1) * pageSize).Take(pageSize);
+
+            var users = await query.ToListAsync();
+
+            var userModels = _mapper.Map<List<UserModel>>(users);
+
+            return (userModels, totalCount);
         }
+
 
         public async Task<UserModel> DisableUser(int id, string reason)
         {
@@ -174,9 +214,9 @@ namespace Infrastructure.Repository
             {
                 return await Task.FromResult(_context.Users.Any(u => u.UserName.Equals(userName)));
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
             
         }
@@ -185,7 +225,7 @@ namespace Infrastructure.Repository
         {
             User? account = _context.Users.FirstOrDefault(a => a.Uid == id);
             UserModel acc = _mapper.Map<UserModel>(account);
-            string role = _context.Roles.FirstOrDefault(p => p.RoleId == acc.RoleId).RoleName;
+            string role = _context.Roles.FirstOrDefault(p => p.RoleId == acc.RoleId)!.RoleName;
             return await Task.FromResult(
                 (acc.Uid
                 , acc.UserName
@@ -197,7 +237,7 @@ namespace Infrastructure.Repository
         {
             try
             {
-                User u = _context.Users.FirstOrDefault(u => u.VerificationToken.Equals(token));
+                User? u = _context.Users.FirstOrDefault(u => u.VerificationToken!.Equals(token));
                 if (u != null) 
                 {
                     u.IsVerified = true;
@@ -208,9 +248,9 @@ namespace Infrastructure.Repository
                     throw new Exception("Invalid credential");
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
             return true;
         }
@@ -238,6 +278,25 @@ namespace Infrastructure.Repository
                     .Include(u => u.Role)
                     .FirstOrDefaultAsync(u => u.Uid == id);
                 if (user != null && user.Role!.RoleName == "Lecturer")
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> IsUserAdmin(int id)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.Uid == id);
+                if (user != null && user.Role!.RoleName == "Admin")
                 {
                     return true;
                 }

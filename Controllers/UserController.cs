@@ -65,10 +65,11 @@ namespace Api.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Roles = "Staff,Admin")]
         [HttpGet]
-        [ProducesDefaultResponseType(typeof(List<UserDto>))]
-        public async Task<IActionResult> GetUsers()
+        [ProducesDefaultResponseType(typeof(PaginatedResult<UserDto>))]
+        public async Task<IActionResult> GetUsers([FromQuery] GetUsersQuery query)
         {
-            var query = new GetUsersQuery();
+            var authorization = HttpContext.Request.Headers["Authorization"].ToString();
+            query.Token = authorization;
             var response = await _mediator.Send(query);
             if (!response.Error)
                 return Ok(response);
