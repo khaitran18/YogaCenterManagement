@@ -2,6 +2,7 @@
 using Application.Common;
 using Application.Common.Dto;
 using Application.Query;
+using Domain.Model;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -22,11 +23,53 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("{classId}")]
+        [HttpGet("{id}")]
         [ProducesDefaultResponseType(typeof(ClassDto))]
-        public async Task<IActionResult> GetClassById([FromRoute] int classId)
+        public async Task<IActionResult> GetClassById([FromRoute] int id)
         {
-            var response = await _mediator.Send(new GetClassByIdQuery { ClassId = classId });
+            var response = await _mediator.Send(new GetClassByIdQuery { ClassId = id });
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "Staff,Admin,Lecturer")]
+        [HttpPost]
+        [ProducesDefaultResponseType(typeof(ClassDto))]
+        public async Task<IActionResult> CreateClass(
+                [FromHeader] string? Authorization
+                , [FromBody] CreateClassCommand command)
+        {
+            command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpGet]
+        [ProducesDefaultResponseType(typeof(PaginatedResult<ClassDto>))]
+        public async Task<IActionResult> GetClasses([FromQuery] GetClassesQuery query)
+        {
+            var response = await _mediator.Send(query);
             if (!response.Error)
                 return Ok(response);
             else
@@ -204,5 +247,6 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
+        
     }
 }

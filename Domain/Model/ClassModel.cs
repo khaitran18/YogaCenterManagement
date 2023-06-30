@@ -10,6 +10,8 @@ namespace Domain.Model
     {
         public int ClassId { get; set; }
         public string ClassName { get; set; }
+        public double Price { get; set; }
+        public int ClassCapacity { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int? LecturerId { get; set; }

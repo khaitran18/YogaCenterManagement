@@ -8,6 +8,6 @@ namespace Application.Command
     {
         public string? token { get; set; }
         public int scheduleid { get; set; }
-        public string content { get; set; }
+        public string content { get; set; } = null!;
     }
 }

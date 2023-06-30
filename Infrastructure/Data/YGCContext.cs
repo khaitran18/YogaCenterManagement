@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Infrastructure.DataModels;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Data
 {
     public partial class YGCContext : DbContext
     {
+        private readonly IConfiguration _configuration;
         public YGCContext()
         {
         }
 
-        public YGCContext(DbContextOptions<YGCContext> options)
+        public YGCContext(DbContextOptions<YGCContext> options, IConfiguration configuration)
             : base(options)
         {
+            _configuration = configuration;
         }
 
         public virtual DbSet<AvailableDate> AvailableDates { get; set; } = null!;
@@ -32,8 +35,7 @@ namespace Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server =spellsmarty.database.windows.net ;uid=spellsmarty; database = YGC;pwd=Spell$marty1;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer(_configuration.GetConnectionString("YGC"));
             }
         }
 
@@ -275,9 +277,18 @@ namespace Infrastructure.Data
                     .HasMaxLength(150)
                     .HasColumnName("address");
 
+                entity.Property(e => e.DisabledReason).HasColumnName("disabled_reason");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(320)
+                    .IsUnicode(false)
+                    .HasColumnName("email");
+
                 entity.Property(e => e.FullName)
                     .HasMaxLength(50)
                     .HasColumnName("full_name");
+
+                entity.Property(e => e.IsDisabled).HasColumnName("is_disabled");
 
                 entity.Property(e => e.IsVerified).HasColumnName("is_verified");
 
@@ -297,6 +308,11 @@ namespace Infrastructure.Data
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("user_name");
+
+                entity.Property(e => e.VerificationToken)
+                    .HasMaxLength(36)
+                    .HasColumnName("verification_token")
+                    .IsFixedLength();
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Users)

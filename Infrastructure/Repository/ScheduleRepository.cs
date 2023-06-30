@@ -144,5 +144,30 @@ namespace Infrastructure.Repository
         }
         #endregion
 
+        public async Task<bool> ExistSchedule(int scheduleId)
+        {
+            try
+            {
+                bool c = _context.Schedules.Any(s => s.Id == scheduleId);
+                return await Task.FromResult(c);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task<string> GetNotification(int scheduleId)
+        {
+            try
+            {
+                string result = _context.Schedules.FirstOrDefaultAsync(s => s.Id == scheduleId).Result.DailyNote;
+                return result;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }
