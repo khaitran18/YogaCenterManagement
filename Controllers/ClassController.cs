@@ -147,5 +147,62 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
+
+        [HttpPost("changeclass")]
+        public async Task<IActionResult> CreateChangeClassRequest([FromBody] CreateChangeRequestCommand command)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpGet("changeclass")]
+        public async Task<IActionResult> GetChangeClassRequests()
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(new GetChangeClassRequestsQuery());
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpPut("changeclass")]
+        public async Task<IActionResult> UpdateApprovalStatus([FromBody] UpdateApprovalStatusCommand command)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
     }
 }

@@ -33,9 +33,10 @@ namespace Infrastructure.Repository
                 if (schedule != null)
                 {
                     Class? @class = _context.Classes.FirstOrDefault(c => (c.ClassId == schedule.ClassId) && (c.LecturerId == userId));
-                    if (@class != null) 
+                    if (@class != null)
                         return await Task.FromResult(true);
-                    else {
+                    else
+                    {
                         return await Task.FromResult(false);
                     }
                 }
@@ -82,5 +83,155 @@ namespace Infrastructure.Repository
             Schedule? sch = _context.Schedules.FirstOrDefault(s => (s.ClassId == classId) && (s.SlotId == slotId));
             return await Task.FromResult(sch.DailyNote);
         }
+
+        #region Create a student change class request
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fromClassId">Id of the student current class</param>
+        /// <param name="studentId">Student Id make request</param>
+        /// <param name="toClassId">Id of the class that student want to change</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<ClassModel> RequestChangeClass(int fromClassId, int studentId, int toClassId, string content)
+        {
+            var classModel = new ClassModel();
+            try
+            {
+                var fromClass = await _context.Classes.Include(fc => fc.Students).FirstOrDefaultAsync(fc => fc.ClassId == fromClassId);
+                var isMatchSchedule = await IsMatchSchedule(fromClassId, toClassId);
+                if (isMatchSchedule)
+                {
+                    if (fromClass != null)
+                    {
+                        if (fromClass.Students.FirstOrDefault(st => st.Uid == studentId) != null)
+                        {
+                            _context.ChangeClassRequests.Add(new ChangeClassRequest
+                            {
+                                UserId = studentId,
+                                ClassId = fromClassId,
+                                RequestClassId = toClassId,
+                                Content = content
+                            });
+                            await _context.SaveChangesAsync();
+
+                            var requestClass = await _context.Classes.FindAsync(toClassId);
+
+                            classModel = _mapper.Map<ClassModel>(requestClass);
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error when create request change class");
+            }
+            return classModel;
+        }
+        #endregion
+
+        #region Get all class change requests
+        /// <summary>
+        /// Get all class change requests
+        /// </summary>
+        /// <returns>List of change class requests</returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<IEnumerable<ChangeClassRequestModel>> GetChangeClassRequests()
+        {
+            var classRequestModels = new List<ChangeClassRequestModel>();
+            try
+            {
+                var classRequests = await _context.ChangeClassRequests.ToListAsync();
+                classRequestModels = _mapper.Map<List<ChangeClassRequestModel>>(classRequests);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in get all class change requests");
+            }
+            return classRequestModels;
+        }
+        #endregion
+
+        #region Update approval status of a change class request
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="requestId">Id of the request</param>
+        /// <param name="isApproved">Approve status for the request</param>
+        /// <returns>True if success; False if unsuccess</returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<bool> UpdateApprovalStatus(int requestId, bool isApproved)
+        {
+            try
+            {
+                var changeRequest = await _context.ChangeClassRequests.FindAsync(requestId);
+
+                if (changeRequest != null)
+                {
+                    changeRequest.IsApproved = isApproved;
+                    await _context.SaveChangesAsync();
+                    if (isApproved)
+                    {
+                        var classFound = await _context.Classes.FindAsync(changeRequest.RequestClassId);
+
+                        if (classFound != null)
+                        {
+                            var student = await _context.Users.FirstOrDefaultAsync(st => st.Uid == changeRequest.UserId);
+
+                            if (student != null)
+                            {
+                                var originalClass = await _context.Classes.Include(c => c.Students).FirstOrDefaultAsync(oc => oc.ClassId == changeRequest.ClassId);
+                                 
+                                if (originalClass != null)
+                                {
+                                    originalClass.Students.Remove(student);
+                                    classFound.Students.Add(student);
+                                    await _context.SaveChangesAsync();
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                throw new Exception("Error when updating approval status");
+            }
+        }
+        #endregion
+
+        #region Check similarity of 2 class schedule
+        private async Task<bool> IsMatchSchedule(int fromClassId, int toClassId)
+        {
+            try
+            {
+                var fromClass = await _context.Classes.Include(fc => fc.Schedules).FirstOrDefaultAsync(fc => fc.ClassId == fromClassId);
+                var toClass = await _context.Classes.Include(tc => tc.Schedules).FirstOrDefaultAsync(tc => tc.ClassId == toClassId);
+                if(fromClass != null && toClass != null)
+                {
+                    if(fromClass.StartDate == toClass.StartDate && fromClass.EndDate == toClass.EndDate)
+                    {
+                        if(fromClass.Schedules.Count == toClass.Schedules.Count)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in IsMatchSchedule");
+            }
+            return false;
+        }
+        #endregion
     }
 }

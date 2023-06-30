@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Application.Command
 {
-    public class CreateStudySlotCommand : IRequest<BaseResponse<StudySlotDto>>
-    {
-        public string? token { get; set; }
-        public TimeSpan startTime { get; set; }
+        public class CreateStudySlotCommand : IRequest<BaseResponse<StudySlotDto>>
+        {
+            public string? token { get; set; }
+            public TimeSpan startTime { get; set; }
             
-        public TimeSpan endTime { get; set; }
-        public List<int> dateIds { get; set; } = new List<int>();
-    }
+            public TimeSpan endTime { get; set; }
+            public List<int> dateIds { get; set; } = new List<int>();
+        }
 }
