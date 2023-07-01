@@ -33,6 +33,16 @@ namespace Application.Command.Handler
                     authResponse.Error = true;
                     authResponse.Exception = new BadRequestException("Email not verify");
                 }
+                else if(userId == -2)
+                {
+                    authResponse.Error = true;
+                    authResponse.Exception = new BadRequestException("User not found");
+                }
+                else if(userId == -3)
+                {
+                    authResponse.Error = true;
+                    authResponse.Exception = new BadRequestException("User is banned");
+                }
                 else
                 {
                     var (id, username, plan) = await _unitOfWork.UserRepository.GetAccountDetailsByIdAsync(userId);

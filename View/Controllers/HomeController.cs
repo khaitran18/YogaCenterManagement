@@ -19,7 +19,7 @@ namespace View.Controllers
             if (requestHeaders.ContainsKey("Authorization"))
             {
                 var headerValue = requestHeaders["Authorization"].ToString();
-                Console.WriteLine("Header value of Authorization:"+headerValue);
+                Console.WriteLine("Header value of Authorization:" + headerValue);
             }
             return View();
         }

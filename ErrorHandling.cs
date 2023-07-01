@@ -40,6 +40,7 @@ namespace Api
                 objectResult.StatusCode = 400;
                 objectResult.Value = _exception.Message;
             }
+            if (_exception.Message == null) objectResult.Value = _exception.Exception.Message;
             await objectResult.ExecuteResultAsync(context);
         }
     }

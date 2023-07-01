@@ -33,19 +33,17 @@ namespace View.Controllers
             var json = JsonSerializer.Serialize(loginDto);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(loginUrl, content);
-
+            var resultJson = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
             if (response.IsSuccessStatusCode)
             {
-                var resultJson = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                };
                 var loginResult = JsonSerializer.Deserialize<BaseResponse<AuthResponseDto>>(resultJson, options);
 
                 // Set token to header
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResult?.Result.Token);
-
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",loginResult?.Result.Token);
                 // Check authority
                 TempData["Success"] = "Login success";
                 if (loginResult.Result.Role.Equals("User"))
@@ -64,12 +62,17 @@ namespace View.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
+                else
+                {
+                    return View();
+                }
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else
             {
-                TempData["Error"] = "Wrong username or password";
+                var error = JsonSerializer.Deserialize<string>(resultJson, options);
+                TempData["Error"] = string.Join("\n", error);
+                return View();
             }
-            return View(loginDto);
         }
 
         [HttpGet("signup")]
@@ -91,15 +94,25 @@ namespace View.Controllers
             {
                 PropertyNameCaseInsensitive = true,
             };
-            var result = JsonSerializer.Deserialize<BaseResponse<UserDto>>(resultJson, options);
-            if (result.Error)
+            if (response.IsSuccessStatusCode)
             {
-                return View(result.Message);
+                var result = JsonSerializer.Deserialize<BaseResponse<UserDto>>(resultJson, options);
+                if (result.Error)
+                {
+                    TempData["Error"] = await response.Content.ReadAsStringAsync();
+                    return View(result.Message);
+                }
+                else
+                {
+                    TempData["Success"] = "Check email to verify your account";
+                    return RedirectToAction("Index", "Home");
+                }
             }
             else
             {
-                TempData["Success"] = "Check email to verify your account";
-                return RedirectToAction("Index", "Home");
+                var error = JsonSerializer.Deserialize<string>(resultJson, options);
+                TempData["Error"] = string.Join("\n", error);
+                return View();
             }
         }
     }
