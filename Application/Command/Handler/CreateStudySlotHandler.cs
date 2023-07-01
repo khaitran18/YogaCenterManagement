@@ -3,6 +3,7 @@ using Application.Common.Dto;
 using Application.Common.Exceptions;
 using Application.Interfaces;
 using Application.Service;
+using AutoMapper;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,12 @@ namespace Application.Command.Handler
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenService _tokenServices;
-        public CreateStudySlotHandler(IUnitOfWork unitOfWork, ITokenService tokenServices)
+        private readonly IMapper _mapper;
+        public CreateStudySlotHandler(IUnitOfWork unitOfWork, ITokenService tokenServices, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _tokenServices = tokenServices;
+            _mapper = mapper;
         }
         public async Task<BaseResponse<StudySlotDto>> Handle(CreateStudySlotCommand request, CancellationToken cancellationToken)
         {
@@ -32,7 +35,7 @@ namespace Application.Command.Handler
                 if (claims != null)
                 {
                     var studySlot = await _unitOfWork.ScheduleRepository.CreateSlot(request.startTime, request.endTime, request.dateIds);
-                    response.Result = new StudySlotDto { StartTime = studySlot.StartTime, EndTime = studySlot.EndTime, Day = studySlot.Day };
+                    response.Result = new StudySlotDto { StartTime = studySlot.StartTime, EndTime = studySlot.EndTime, Day = _mapper.Map<List<DayDto>>(studySlot.Day) };
                 }
                 else
                 {
