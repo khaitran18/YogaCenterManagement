@@ -3,6 +3,7 @@ using Application.Common.Dto;
 using Application.Common.Exceptions;
 using Application.Interfaces;
 using Application.Service;
+using AutoMapper;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,12 @@ namespace Application.Command.Handler
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenService _tokenServices;
-        public AddAvailableDateHandler(IUnitOfWork unitOfWork, ITokenService tokenServices)
+        private readonly IMapper _mapper;
+        public AddAvailableDateHandler(IUnitOfWork unitOfWork, ITokenService tokenServices, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _tokenServices = tokenServices;
+            _mapper = mapper;
         }
         public async Task<BaseResponse<IEnumerable<AvailableDateDto>>> Handle(AddAvailableDateCommand request, CancellationToken cancellationToken)
         {
@@ -35,7 +38,7 @@ namespace Application.Command.Handler
                     var availableDateDtos = new List<AvailableDateDto>();
                     foreach (var availableDateModel in availableDateModels)
                     {
-                        availableDateDtos.Add(new AvailableDateDto { LecturerId = availableDateModel.LecturerId, SlotId = availableDateModel.SlotId, Slot = new StudySlotDto { StartTime = availableDateModel.Slot.StartTime, EndTime = availableDateModel.Slot.EndTime, Day = availableDateModel.Slot.Day} });
+                        availableDateDtos.Add(new AvailableDateDto { LecturerId = availableDateModel.LecturerId, SlotId = availableDateModel.SlotId, Slot = new StudySlotDto { StartTime = availableDateModel.Slot.StartTime, EndTime = availableDateModel.Slot.EndTime, Day = _mapper.Map<List<DayDto>>(availableDateModel.Slot.Day) } });
                     }
                     response.Result = availableDateDtos;
                 }

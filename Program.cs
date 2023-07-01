@@ -153,6 +153,7 @@ var mapperConfig = new MapperConfiguration(cfg =>
     cfg.AddProfile<FeedbackProfile>();
     cfg.AddProfile<PaymentMapper>();
     cfg.AddProfile<PaymentProfile>();
+    cfg.AddProfile<DayProfile>();
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
