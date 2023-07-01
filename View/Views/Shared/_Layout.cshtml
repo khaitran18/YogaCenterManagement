@@ -1,49 +1,136 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
+
+<!-- Mirrored from duruthemes.com/demo/html/yogaguru/classes-page.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 29 Jun 2023 14:34:21 GMT -->
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - View</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="~/images/favicon.png" />
+    <title>YOGAGURU</title>
+    <link href="~/css/bootstrap.min.css" rel=stylesheet>
+    <link href="~/css/style.css" rel="stylesheet">
+    <link href="~/css/animate.css" rel="stylesheet">
+    <link href="~/css/themify-icons.css" rel="stylesheet">
+    <link href="~/modules/slick/slick.css" rel="stylesheet">
+    <link href="~/modules/slick/slick-theme.css" rel="stylesheet">
+    <link href="~/modules/magnific-popup/magnific-popup.css" rel="stylesheet"> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-144098545-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-144098545-1');
+    </script>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">View</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+    <!-- Page Preloader -->
+    <div id="yg-page-loading" class="yg-pageloading">
+        <div class="yg-pageloading-inner">
+            <h1>YOGAGURU</h1> 
+        </div>
+    </div>
+    <!-- Mouse cursor -->
+    <div class="mouse-cursor cursor-outer"></div>
+    <div class="mouse-cursor cursor-inner"></div>
+    <!-- Navigation Overlay -->
+    <div class="yg-nav-overlay yg-nav-overlay-closed">
+        <div class="yg-nav-overlay-inner">
+            <div class="yg-nav-overlay-menu-wrapper">
+                <div class="yg-nav-overlay-menu-wrapper-inner">
+                    <ul class="yg-nav-overlay-main-nav">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a class="active" href="classes.html">Classes</a></li>
+                        <li><a href="schedule.html">Schedule</a></li>
+                        <li><a href="pricing.html">Pricing</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
                     </ul>
+                    <a href="classes-page.html#" class="yg-nav-overlay-close" id="yg-nav-overlay-close"> <span></span>
+                        <svg x="0px" y="0px" width="54px" height="54px" viewBox="0 0 54 54">
+                            <circle fill="transparent" stroke="#000000" stroke-width="1" cx="27" cy="27" r="25" stroke-dasharray="157 157" stroke-dashoffset="157"></circle>
+                        </svg>
+                    </a>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
+        </div>
+    </div>
+
+    <div id="page-wrapper">
+        <!-- Header start -->
+        <header>
+            <div class="yg-header-navbar yg-sticky-header">
+                <div class="container yg-navbar-container">
+                    <!-- Logo -->
+                    <div class="yg-logo-container">
+                        <div class="yg-site-logo">
+                            <a class="yg-logo-anch" href="index.html"><h2>YOGAGURU</h2></a>
+                        </div>
+                    </div>
+                    <!-- Hamburger Menu -->
+                    <div class="yg-hamburger-menu">
+                        <a href="classes-page.html#" class="yg-hamburger-trigger"> <span></span> <span></span> <span></span> </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+        
+        <!-- Footer -->
+        <footer>
+            <div class="container yg-footer-container">
+                <div class="row">
+                    <div class="col-md-8 col-sm-8">
+                        <ul class="yg-footer-list">
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="classes.html">Classes</a></li>
+                            <li><a href="schedule.html">Schedule</a></li>
+                            <li><a href="pricing.html">Pricing</a></li>
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                        <ul class="yg-social-icons">
+                            <li class="yg-social-icons-item">
+                                <a class="yg-social-link" href="index.html#"> <span class="yg-social-icon ti-twitter-alt"></span> </a>
+                            </li>
+                            <li class="yg-social-icons-item">
+                                <a class="yg-social-link" href="index.html#"> <span class="yg-social-icon ti-instagram"></span> </a>
+                            </li>
+                            <li class="yg-social-icons-item">
+                                <a class="yg-social-link" href="index.html#"> <span class="yg-social-icon ti-facebook"></span> </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <div class="yg-separator"></div>
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <p class="yg-copyright">Copyright &copy; 2022. <span>Yogaguru</span> All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - View - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/plugins/jquery-3.3.1.min.js"></script>
+    <script src="~/js/plugins/bootstrap.min.js"></script>
+    <script src="~/js/plugins/modernizr-2.6.2.min.js"></script>
+    <script src="~/js/plugins/jquery.waypoints.min.js"></script>
+    <script src="~/modules/slick/slick.js"></script>
+    <script src="~/modules/magnific-popup/jquery.magnific-popup.js"></script>
+    <script src="~/modules/masonry/masonry.pkgd.min.js"></script>
+    <script src="~/js/script.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
