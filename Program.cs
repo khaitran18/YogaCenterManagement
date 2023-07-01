@@ -151,6 +151,8 @@ var mapperConfig = new MapperConfiguration(cfg =>
     cfg.AddProfile<ChangeClassRequestProfile>();
     cfg.AddProfile<FeedbackMapper>();
     cfg.AddProfile<FeedbackProfile>();
+    cfg.AddProfile<PaymentMapper>();
+    cfg.AddProfile<PaymentProfile>();
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

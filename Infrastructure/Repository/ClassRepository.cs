@@ -353,5 +353,41 @@ namespace Infrastructure.Repository
             return false;
         }
         #endregion
+
+        #region Enroll student to a class
+        public async Task<PaymentModel> StudentEnrollToClass(PaymentModel paymentModel)
+        {
+            try
+            {
+                var payment = _mapper.Map<Payment>(paymentModel);
+                _context.Payments.Add(payment);
+                await _context.SaveChangesAsync();
+
+                var classId = paymentModel.ClassId;
+                var studentId = paymentModel.StudentId;
+                if (classId != null && studentId != null)
+                {
+                    var @class = await _context.Classes.FindAsync(classId);
+                    var student = await _context.Users.FindAsync(studentId);
+
+                    if (@class != null && student != null)
+                    {
+                        @class.Students.Add(student);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                // Map the created payment back to the PaymentModel
+                var createdPaymentModel = _mapper.Map<PaymentModel>(payment);
+
+                return createdPaymentModel;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        #endregion
     }
 }

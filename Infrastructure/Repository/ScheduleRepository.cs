@@ -82,6 +82,50 @@ namespace Infrastructure.Repository
         }
         #endregion
 
+        #region Delete study slot by slot id
+        public async Task<bool> DeleteStudySlot(int studySlotId)
+        {
+            var check = false;
+            try
+            {
+                var existStudySlot = await _context.StudySlots.FindAsync(studySlotId);
+                if(existStudySlot != null)
+                {
+                    _context.StudySlots.Remove(existStudySlot);
+                    await _context.SaveChangesAsync();
+                    check = true;
+
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in delete study slot");
+            }
+            return check;
+        }
+        #endregion
+
+        #region Update Study Slot
+        public async Task<bool> UpdateStudySlot(StudySlotModel studySlot)
+        {
+            var check = false;
+            try
+            {
+                var studySlotData = _mapper.Map<StudySlot>(studySlot);
+                _context.StudySlots.Update(studySlotData);
+                await _context.SaveChangesAsync();
+                check = true;
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in update study slot");
+            }
+            return check;
+        }
+        #endregion
+
         #region Add lecturer free slots
         /// <summary>
         /// Add lecturer free slots
@@ -133,6 +177,24 @@ namespace Infrastructure.Repository
 ;            try
             {
                 var availableDates = await _context.AvailableDates.Where(ad => ad.SlotId == slotId).ToListAsync();
+                availableDateModels = _mapper.Map<List<AvailableDateModel>>(availableDates);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in getting available dates");
+            }
+            return availableDateModels;
+        }
+        #endregion
+
+        #region Get available dates by lecturer id
+        public async Task<IEnumerable<AvailableDateModel>> GetAvailableDatesByLecturerId(int lecturerId)
+        {
+            var availableDateModels = new List<AvailableDateModel>()
+; try
+            {
+                var availableDates = await _context.AvailableDates.Where(ad => ad.LecturerId == lecturerId).ToListAsync();
                 availableDateModels = _mapper.Map<List<AvailableDateModel>>(availableDates);
             }
             catch (Exception)

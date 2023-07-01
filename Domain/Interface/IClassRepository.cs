@@ -17,5 +17,6 @@ namespace Domain.Interface
         public Task<IEnumerable<ChangeClassRequestModel>> GetChangeClassRequests();
         public Task<bool> UpdateApprovalStatus(int requestId, bool isApproved);
         public Task<(List<ClassModel>, int)> GetClasses(string? searchKeyword, string? sortBy, DateTime? startingFromDate, int? durationMonths, string? classCapacity, int page, int pageSize);
+        public Task<PaymentModel> StudentEnrollToClass(PaymentModel paymentModel);
     }
 }
