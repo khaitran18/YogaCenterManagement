@@ -1,0 +1,58 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<partial name="_Notification"/>
+<div class="yg-testimonial">
+    <div class="container yg-container-full">
+        <div class="row yg-gutter-0" style="padding-top: 6rem;">
+            <div class="col-md-5 col-sm-12 animate-box d-flex align-items-center justify-content-center" data-animate-effect="fadeInLeft" style="background-color: rgb(247, 247, 247);">
+                <div class="testimonial-image" >
+                    <img src="~/images/testimonial.jpg" class="img-fluid" alt="">
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12 animate-box d-flex align-items-center justify-content-center fadeInRight animated" data-animate-effect="fadeInRight">
+                <div class="container" style="background-color:white" >
+                    <div class="row justify-content-center">
+                        <div class="col-md-6 ml-6">
+                            <h2 class="text-center mb-4">Signup</h2>
+                            <form asp-action="Signup" asp-controller="Auth" method="post"> 
+                                <div class="mb-3">
+                                    <label for="Username" class="form-label">Username *</label>
+                                    <input type="text" class="form-control" id="Username" placeholder="Enter your username" name="Username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Password" class="form-label">Password *</label>
+                                    <input type="password" class="form-control" id="Password" placeholder="Enter your password" name="Password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Fullname" class="form-label">Fullname *</label>
+                                    <input type="text" class="form-control" id="Fullname" placeholder="Enter your full name" name="Fullname" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Email" class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="Email" placeholder="Enter your email" name="Email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Address" class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="Address" name="Address" placeholder="Enter your address">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Phone" class="form-label">Phone</label>
+                                    <input type="text" class="form-control" id="Phone" name="Phone" placeholder="Enter your phone number">
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">Signup</button>
+                                </div>
+                                <div class="d-grid gap-2 mt-2">
+                                    <a asp-action="Login" asp-controller="Auth">Already a member</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
