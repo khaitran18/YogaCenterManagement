@@ -94,6 +94,44 @@ namespace Infrastructure.Repository
             }
         }
 
+        public async Task<ClassModel> AssignLecturer(int classId, int lecId)
+        {
+            Class result = new Class();
+            try
+            {
+                var theClass = _context.Classes.Find(classId);
+                if (theClass == null)
+                {
+                    throw new Exception("Class not found");
+                }
+                var lecturer = _context.Users.Single(u => u.Uid == lecId && u.RoleId == 2);
+                if (lecturer == null)
+                {
+                    throw new Exception("Lecturer not found");
+                }
+
+                bool availableLecturer = false;
+                foreach (var schedule in theClass.Schedules.ToList())
+                {
+                    availableLecturer = lecturer.AvailableDates.Where(d => d.SlotId == schedule.SlotId).Any();
+                }
+                if (availableLecturer)
+                {
+                    theClass.LecturerId = lecturer.Uid;
+                    _context.Classes.Update(theClass);
+                    await _context.SaveChangesAsync();
+                    return _mapper.Map<ClassModel>(theClass);
+                }
+                else
+                {
+                    throw new Exception("Lecturer is not available for the class schedules.");
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
         public async Task<ClassModel> GetClassById(int classId)
         {
             try
@@ -387,6 +425,32 @@ namespace Infrastructure.Repository
 
                 throw;
             }
+        }
+        #endregion
+
+        #region Get Change Classes
+        public async Task<IEnumerable<ClassModel>> GetChangeClasses(int fromClassId)
+        {
+            var classModels = new List<ClassModel>();
+            try
+            {
+                var classes = new List<Class>();
+                var allClasses = await _context.Classes.ToListAsync();
+                foreach (var @class in allClasses)
+                {
+                    if(await IsMatchSchedule(fromClassId, @class.ClassId))
+                    {
+                        classes.Add(@class);
+                    }
+                }
+                classModels = _mapper.Map<List<ClassModel>>(classes);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in Get Change Classes");
+            }
+            return classModels;
         }
         #endregion
     }
