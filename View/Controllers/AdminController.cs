@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using View.Models;
+using View.Models.Response;
 
 namespace View.Controllers
 {
