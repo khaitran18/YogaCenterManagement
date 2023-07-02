@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Web;
 using View.Models;
@@ -57,6 +58,47 @@ namespace View.Controllers
             }
             else
             {
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DisableUser(int userId)
+        {
+            var disableUserDto = new DisableUserDto
+            {
+                Reason = "You have been banned!"
+            };
+
+            var url = apiUrl + $"/disable/{userId}";
+
+            var jsonCommand = JsonSerializer.Serialize(disableUserDto);
+            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync(url, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<UserDto>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    return RedirectToAction("Users");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "An error occurred while disabling the user.";
                 return View();
             }
         }
