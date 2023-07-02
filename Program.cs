@@ -110,6 +110,7 @@ builder.Services.AddScoped<IRequestHandler<CreateClassCommand,BaseResponse<Class
 builder.Services.AddScoped<IRequestHandler<CreateStudySlotCommand,BaseResponse<StudySlotDto>>, CreateStudySlotHandler>();
 builder.Services.AddScoped<IRequestHandler<AddAvailableDateCommand,BaseResponse<IEnumerable<AvailableDateDto>>>, AddAvailableDateHandler>();
 builder.Services.AddScoped<IRequestHandler<SignUpCommand,BaseResponse<bool>>, SignUpHandler>();
+builder.Services.AddScoped<IRequestHandler<AssignLecturerCommand,BaseResponse<ClassDto>>, AssignLecturerHandler>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 //Service

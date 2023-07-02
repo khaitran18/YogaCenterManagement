@@ -64,6 +64,30 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "Staff,Admin,Lecturer")]
+        [HttpPost("assignLecturer")]
+        [ProducesDefaultResponseType(typeof(ClassDto))]
+        public async Task<IActionResult> AssignLecturer(
+                [FromHeader] string? Authorization
+                , [FromBody] AssignLecturerCommand command)
+        {
+            command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
         // GET: api/<ClassController>
         [HttpGet("notification")]
         [ProducesDefaultResponseType(typeof(ClassNotificationDto))]

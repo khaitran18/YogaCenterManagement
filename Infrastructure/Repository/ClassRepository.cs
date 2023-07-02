@@ -72,6 +72,45 @@ namespace Infrastructure.Repository
             }
         }
 
+        public async Task<ClassModel> AssignLecturer(int classId, int lecId)
+        {
+            Class result = new Class();
+            try
+            {
+                var theClass = _context.Classes.Find(classId);
+                if(theClass == null)
+                {
+                    throw new Exception("Class not found");
+                }
+                var lecturer = _context.Users.Find(lecId);
+                if(lecturer == null)
+                {
+                    throw new Exception("Lecturer not found");
+                }
+
+                bool availableLecturer = false;
+                foreach(var schedule in theClass.Schedules.ToList())
+                {
+                    availableLecturer = lecturer.AvailableDates.Where(d => d.SlotId == schedule.SlotId).Any();
+                }
+                if (availableLecturer)
+                {
+                    theClass.LecturerId = lecturer.Uid;
+                    _context.Classes.Update(theClass);
+                    await _context.SaveChangesAsync();
+                    return _mapper.Map<ClassModel>(theClass);
+                }
+                else
+                {
+                    throw new Exception("Lecturer is not available for the class schedules.");
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public async Task<bool> CheckLecturerAuthority(int scheduleid, int userId)
         {
             try
