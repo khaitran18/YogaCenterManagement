@@ -14,7 +14,7 @@ namespace Infrastructure.Data
         {
         }
 
-        public YGCContext(DbContextOptions<YGCContext> options, IConfiguration configuration)
+        public YGCContext(DbContextOptions<YGCContext> options,IConfiguration configuration )
             : base(options)
         {
             _configuration = configuration;
@@ -66,7 +66,6 @@ namespace Infrastructure.Data
                 entity.HasOne(d => d.Slot)
                     .WithMany(p => p.AvailableDates)
                     .HasForeignKey(d => d.SlotId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Available__slot___73BA3083");
             });
 
@@ -262,6 +261,7 @@ namespace Infrastructure.Data
                 entity.HasOne(d => d.Slot)
                     .WithMany(p => p.Schedules)
                     .HasForeignKey(d => d.SlotId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__Schedule__slot_i__7E37BEF6");
             });
 
@@ -283,7 +283,7 @@ namespace Infrastructure.Data
                     .UsingEntity<Dictionary<string, object>>(
                         "StudySlotDay",
                         l => l.HasOne<DateOfWeek>().WithMany().HasForeignKey("DayId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__StudySlot__day_i__2E1BDC42"),
-                        r => r.HasOne<StudySlot>().WithMany().HasForeignKey("SlotId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__StudySlot__slot___00200768"),
+                        r => r.HasOne<StudySlot>().WithMany().HasForeignKey("SlotId").HasConstraintName("FK__StudySlot__slot___00200768"),
                         j =>
                         {
                             j.HasKey("SlotId", "DayId").HasName("PK__StudySlo__3FAF1710B9F5AE59");
