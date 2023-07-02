@@ -111,11 +111,15 @@ builder.Services.AddScoped<IRequestHandler<GetFeedbacksQuery, BaseResponse<Pagin
 builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>, ClassNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<AvailableDateQuery, BaseResponse<IEnumerable<AvailableDateDto>>>, AvailableDateHandler>();
 builder.Services.AddScoped<IRequestHandler<GetClassByIdQuery, BaseResponse<ClassDto>>, GetClassByIdHandler>();
+builder.Services.AddScoped<IRequestHandler<GetChangeClassRequestsQuery, BaseResponse<IEnumerable<ChangeClassRequestDto>>>, GetChangeClassRequestHandler>();
 builder.Services.AddScoped<IRequestHandler<GetClassesQuery, BaseResponse<PaginatedResult<ClassDto>>>, GetClassesHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateClassCommand,BaseResponse<ClassDto>>, CreateClassHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateStudySlotCommand,BaseResponse<StudySlotDto>>, CreateStudySlotHandler>();
 builder.Services.AddScoped<IRequestHandler<AddAvailableDateCommand,BaseResponse<IEnumerable<AvailableDateDto>>>, AddAvailableDateHandler>();
+// builder.Services.AddScoped<IRequestHandler<SignUpCommand,BaseResponse<bool>>, SignUpHandler>();
+builder.Services.AddScoped<IRequestHandler<CreateChangeRequestCommand,BaseResponse<ClassDto>>, CreateChangeRequestClassHandler>();
+builder.Services.AddScoped<IRequestHandler<UpdateApprovalStatusCommand,BaseResponse<bool>>, UpdateApprovalStatusHandler>();
 builder.Services.AddScoped<IRequestHandler<SignUpCommand,BaseResponse<UserDto>>, SignUpHandler>();
 builder.Services.AddScoped<IRequestHandler<VerifyEmailCommand,BaseResponse<bool>>, VerifyEmailHandler>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
@@ -126,6 +130,7 @@ builder.Services.AddTransient<IMailService, MailService>();
 // Validator
 builder.Services.AddScoped<IValidator<AuthCommand>, AuthCommandValidator>();
 builder.Services.AddScoped<IValidator<CreateNotificationCommand>, CreateNotificationCommandValidator>();
+builder.Services.AddScoped<IValidator<SignUpCommand>, SignupCommandValidator>();
 
 //Behaviour registration
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
@@ -140,11 +145,16 @@ var mapperConfig = new MapperConfiguration(cfg =>
     cfg.AddProfile<StudySlotMapper>();
     cfg.AddProfile<StudySlotProfile>();
     cfg.AddProfile<AvailableDateMapper>();
+    cfg.AddProfile<ChangeClassRequestMapper>();
     cfg.AddProfile<AvailableDateProfile>();
     cfg.AddProfile<ClassMapper>();
     cfg.AddProfile<ClassProfile>();
+    cfg.AddProfile<ChangeClassRequestProfile>();
     cfg.AddProfile<FeedbackMapper>();
     cfg.AddProfile<FeedbackProfile>();
+    cfg.AddProfile<PaymentMapper>();
+    cfg.AddProfile<PaymentProfile>();
+    cfg.AddProfile<DayProfile>();
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

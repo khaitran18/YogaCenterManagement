@@ -150,6 +150,44 @@ namespace Api.Controllers
             }
         }
 
+        [HttpDelete("slot")]
+        public async Task<IActionResult> DeleteStudySlot([FromBody] DeleteStudySlotCommand command)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpPut("slot")]
+        public async Task<IActionResult> UpdateStudySlot([FromBody] UpdateStudySlotCommand command)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
         [HttpPost("availabledate")]
         public async Task<IActionResult> AddAvailableDate(
         //[FromHeader] string? Authorization
@@ -191,6 +229,100 @@ namespace Api.Controllers
             }
         }
 
+        [HttpGet("availabledate/{lecturerId}")]
+        public async Task<IActionResult> GetAvailableDateByLecturerId([FromRoute] int lecturerId)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(new GetAvailableDateByLecturerId { LecturerId = lecturerId });
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpPost("changeclass")]
+        public async Task<IActionResult> CreateChangeClassRequest([FromBody] CreateChangeRequestCommand command)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpGet("changeclass")]
+        public async Task<IActionResult> GetChangeClassRequests()
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(new GetChangeClassRequestsQuery());
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpPut("changeclass")]
+        public async Task<IActionResult> UpdateApprovalStatus([FromBody] UpdateApprovalStatusCommand command)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpPost("enroll")]
+        public async Task<IActionResult> EnrollStudentToClass([FromBody] StudentEnrollToClassCommand command)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
         
     }
 }

@@ -14,6 +14,9 @@ namespace Domain.Interface
         public Task<StudySlotModel> CreateSlot(TimeSpan startTime, TimeSpan endTime, List<int> dateIds);
         public Task<IEnumerable<AvailableDateModel>> AddAvailableDate(int lecturerId, List<int> slotIds);
         public Task<IEnumerable<AvailableDateModel>> GetAvailableDatesBySlotId(int slotId);
+        public Task<IEnumerable<AvailableDateModel>> GetAvailableDatesByLecturerId(int lecturerId);
+        public Task<bool> DeleteStudySlot(int studySlotId);
+        public Task<bool> UpdateStudySlot(StudySlotModel studySlot);
         Task<bool> ExistSchedule(int scheduleId);
         Task<string> GetNotification(int scheduleId);
     }

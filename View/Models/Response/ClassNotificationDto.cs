@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace View.Models
+namespace View.Models.Response
 {
     public class ClassNotificationDto
     {

@@ -6,12 +6,8 @@ using Domain.Model;
 using Infrastructure.Data;
 using Infrastructure.DataModels;
 using Infrastructure.Repositories;
+using Infrastructure.Service;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repository
 {
@@ -32,21 +28,25 @@ namespace Infrastructure.Repository
                 var acc = _context.Users.FirstOrDefault(a => a.UserName.Equals(username));
                 if (acc != null)
                 {
-                    if (acc.Password.Equals(password))
+                    if (PasswordHasher.Validate(acc.Password,password))
                     {
-                        //if (acc.EmailVerify == true)
-                        //{
-                        //    return await Task.FromResult(acc.Id);
-                        //}
-                        //else return await Task.FromResult(0);
-                        return await Task.FromResult(acc.Uid);
+                        if (acc.IsVerified == true)
+                        {
+                            if (acc.IsDisabled)
+                            {
+                                return await Task.FromResult(-3);
+                            }
+                            else return await Task.FromResult(acc.Uid);
+                        }
+                        else return await Task.FromResult(0);     
                     }
+                    else { return await Task.FromResult(-1); }
                 }
-                return await Task.FromResult(-1);
+                return await Task.FromResult(-2);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return await Task.FromResult(-1);
+                throw e;
             }
 
         }
@@ -61,7 +61,7 @@ namespace Infrastructure.Repository
                 user = new User
                 {
                     UserName = userName,
-                    Password = password,
+                    Password = PasswordHasher.Hash(password),
                     FullName = fullName,
                     Address = address,
                     Phone = phone,
@@ -116,7 +116,7 @@ namespace Infrastructure.Repository
                     existingUser.Address = user.Address;
                     existingUser.Phone = user.Phone;
                     existingUser.UserName = user.UserName;
-                    existingUser.Password = user.Password;
+                    existingUser.Password = PasswordHasher.Hash(user.Password);
                     existingUser.RoleId = user.RoleId;
 
                     return _mapper.Map<UserModel>(existingUser);

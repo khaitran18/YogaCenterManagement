@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Infrastructure.DataModels
+namespace Domain.Model
 {
-    public partial class Payment
+    public class PaymentModel
     {
         public int PaymentId { get; set; }
         public int? StudentId { get; set; }
@@ -11,7 +14,7 @@ namespace Infrastructure.DataModels
         public decimal Amount { get; set; }
         public string? Method { get; set; }
 
-        public virtual User? Student { get; set; }
-        public virtual Class? Class { get; set; }
+        public virtual UserModel? Student { get; set; }
+        public virtual ClassModel? Class { get; set; }
     }
 }
