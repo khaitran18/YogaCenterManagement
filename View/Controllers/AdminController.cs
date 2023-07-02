@@ -18,12 +18,26 @@ namespace View.Controllers
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             apiUrl = "https://localhost:7241/api/user";
         }
+
+        private string? GetAuthTokenFromCookie()
+        {
+            var authToken = Request.Cookies["AuthToken"];
+            return authToken;
+        }
+
+        private void AddAuthTokenToRequestHeaders()
+        {
+            var authToken = GetAuthTokenFromCookie();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+        }
+
         public IActionResult Index()
         {
             return View();
         }
         public async Task<IActionResult> Users(string? searchKeyword, int? roleId, bool? isDisabled, bool? isVerified, string? sortBy, int? page, int? pageSize)
         {
+            AddAuthTokenToRequestHeaders();
             var queryString = BuildQueryString(searchKeyword, roleId, isDisabled, isVerified, sortBy, page, pageSize);
             var queryStringWithoutPage = RemoveQueryStringParameter(queryString, "page");
             var url = apiUrl + queryString;
@@ -65,6 +79,7 @@ namespace View.Controllers
         [HttpPost]
         public async Task<IActionResult> DisableUser(int userId)
         {
+            AddAuthTokenToRequestHeaders();
             var disableUserDto = new DisableUserDto
             {
                 Reason = "You have been banned!"
