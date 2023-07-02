@@ -43,7 +43,21 @@ namespace View.Controllers
                 var loginResult = JsonSerializer.Deserialize<BaseResponse<AuthResponseDto>>(resultJson, options);
 
                 // Set token to header
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",loginResult?.Result.Token);
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResult?.Result.Token);
+
+                // Set token as a cookie
+                var cookieOptions = new CookieOptions
+                {
+                    // Set other options as needed (e.g., expiration, domain, path, secure, etc.)
+                    Expires = DateTimeOffset.Now.AddDays(1),
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict
+                };
+
+                // Set the cookie
+                Response.Cookies.Append("AuthToken", loginResult?.Result.Token, cookieOptions);
+
                 // Check authority
                 TempData["Success"] = "Login success";
                 if (loginResult.Result.Role.Equals("User"))
