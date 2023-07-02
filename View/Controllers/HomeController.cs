@@ -15,11 +15,10 @@ namespace View.Controllers
 
         public IActionResult Index()
         {
-            var requestHeaders = Request.Headers;
-            if (requestHeaders.ContainsKey("Authorization"))
+            string authToken = Request.Cookies["AuthToken"];
+            if (authToken != null)
             {
-                var headerValue = requestHeaders["Authorization"].ToString();
-                Console.WriteLine("Header value of Authorization:" + headerValue);
+                Console.WriteLine("Token:" + authToken);
             }
             return View();
         }
