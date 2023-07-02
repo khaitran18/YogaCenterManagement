@@ -7,8 +7,22 @@
 
 <div class="row">
     <div class="col-md-12">
+        <!-- WELCOME-->
+        <section class="welcome p-t-10">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="title-4">
+                            Manage Accounts
+                        </h1>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- END WELCOME-->
         <!-- DATA TABLE -->
-        <h3 class="title-5 m-b-35">user management</h3>
+        <h3 class="title-5 m-b-35">data table</h3>
         <!-- Filter/sort -->
         <div class="table-data__tool">
             <div class="table-data__tool-left">
@@ -94,9 +108,16 @@
                                     <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
                                         <i class="zmdi zmdi-delete"></i>
                                     </button>
-                                    <button class="item" data-toggle="tooltip" data-placement="top" title="More">
-                                        <i class="zmdi zmdi-more"></i>
-                                    </button>
+                                    <div class="dropdown">
+                                        <button class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="zmdi zmdi-more"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <button class="dropdown-item disable-user" data-user-id="@user.Uid">
+                                                Disable User
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -190,6 +211,29 @@
 
             window.location.href = url;
         }
+
+        $('.disable-user').click(function () {
+                var userId = $(this).data('user-id');
+                var userName = $(this).closest('tr').find('td:first-child').text();
+                var isDisabled = $(this).closest('tr').find('.status--denied').length > 0;
+                var confirmationMessage = 'Do you want to disable the user ' + userName + '?';
+
+                if (confirm(confirmationMessage)) {
+                    var form = $('<form>').attr({
+                        method: 'post',
+                        action: '/Admin/DisableUser',
+                        style: 'display: none;'
+                    });
+
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'userId',
+                        value: userId
+                    }).appendTo(form);
+
+                    form.appendTo('body').submit();
+                }
+            });
     });
 </script>
 }
