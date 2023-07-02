@@ -36,6 +36,7 @@ namespace Application.Query.Handler
                     var isAdmin = await _unitOfWork.UserRepository.IsUserAdmin(userId);
 
                     var (userModels, totalCount) = await _unitOfWork.UserRepository.GetUsers(
+                        request.SearchKeyword,
                         request.RoleId,
                         request.IsDisabled,
                         request.IsVerified,

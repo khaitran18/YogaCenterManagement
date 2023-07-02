@@ -60,7 +60,7 @@ namespace View.Controllers
                 }
                 else if (loginResult.Result.Role.Equals("Admin"))
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Admin");
                 }
                 else
                 {
