@@ -122,6 +122,7 @@ builder.Services.AddScoped<IRequestHandler<CreateChangeRequestCommand,BaseRespon
 builder.Services.AddScoped<IRequestHandler<UpdateApprovalStatusCommand,BaseResponse<bool>>, UpdateApprovalStatusHandler>();
 builder.Services.AddScoped<IRequestHandler<SignUpCommand,BaseResponse<UserDto>>, SignUpHandler>();
 builder.Services.AddScoped<IRequestHandler<VerifyEmailCommand,BaseResponse<bool>>, VerifyEmailHandler>();
+builder.Services.AddScoped<IRequestHandler<AssignLecturerCommand, BaseResponse<ClassDto>>, AssignLecturerHandler>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 //Service

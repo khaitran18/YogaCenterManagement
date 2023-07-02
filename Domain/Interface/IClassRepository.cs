@@ -11,6 +11,7 @@ namespace Domain.Interface
     public interface IClassRepository : IBaseRepository<ClassModel>
     {
         public Task<ClassModel> CreateClassSchedule(string name, double price, int capacity, DateTime startDate, DateTime endDate, List<int> dateIds);
+        public Task<ClassModel> AssignLecturer(int classId, int lecturerId);
         public Task<bool> CheckLecturerAuthority(int scheduleid, int userId);
         public Task<ClassModel> GetClassById(int classId);
         public Task<ClassModel> RequestChangeClass(int fromClassId, int studentId, int toClassId, string content);
