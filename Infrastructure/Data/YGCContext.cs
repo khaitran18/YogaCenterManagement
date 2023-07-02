@@ -14,7 +14,7 @@ namespace Infrastructure.Data
         {
         }
 
-        public YGCContext(DbContextOptions<YGCContext> options, IConfiguration configuration)
+        public YGCContext(DbContextOptions<YGCContext> options,IConfiguration configuration )
             : base(options)
         {
             _configuration = configuration;
@@ -26,6 +26,7 @@ namespace Infrastructure.Data
         public virtual DbSet<DateOfWeek> DateOfWeeks { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Payment> Payments { get; set; } = null!;
+        public virtual DbSet<Post> Posts { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Schedule> Schedules { get; set; } = null!;
         public virtual DbSet<StudySlot> StudySlots { get; set; } = null!;
@@ -65,7 +66,6 @@ namespace Infrastructure.Data
                 entity.HasOne(d => d.Slot)
                     .WithMany(p => p.AvailableDates)
                     .HasForeignKey(d => d.SlotId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Available__slot___73BA3083");
             });
 
@@ -184,16 +184,45 @@ namespace Infrastructure.Data
                     .HasColumnType("money")
                     .HasColumnName("amount");
 
+                entity.Property(e => e.ClassId).HasColumnName("class_id");
+
                 entity.Property(e => e.Method)
                     .HasMaxLength(50)
                     .HasColumnName("method");
 
                 entity.Property(e => e.StudentId).HasColumnName("student_id");
 
+                entity.HasOne(d => d.Class)
+                    .WithMany(p => p.Payments)
+                    .HasForeignKey(d => d.ClassId)
+                    .HasConstraintName("FK__Payment__class_i__3F115E1A");
+
                 entity.HasOne(d => d.Student)
                     .WithMany(p => p.Payments)
                     .HasForeignKey(d => d.StudentId)
                     .HasConstraintName("FK__Payment__student__4222D4EF");
+            });
+
+            modelBuilder.Entity<Post>(entity =>
+            {
+                entity.ToTable("Post");
+
+                entity.Property(e => e.PostId).HasColumnName("post_id");
+
+                entity.Property(e => e.ClassId).HasColumnName("class_id");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(255)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.Title)
+                    .HasMaxLength(255)
+                    .HasColumnName("title");
+
+                entity.HasOne(d => d.Class)
+                    .WithMany(p => p.Posts)
+                    .HasForeignKey(d => d.ClassId)
+                    .HasConstraintName("FK__Post__class_id__41EDCAC5");
             });
 
             modelBuilder.Entity<Role>(entity =>
@@ -232,6 +261,7 @@ namespace Infrastructure.Data
                 entity.HasOne(d => d.Slot)
                     .WithMany(p => p.Schedules)
                     .HasForeignKey(d => d.SlotId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__Schedule__slot_i__7E37BEF6");
             });
 
@@ -253,7 +283,7 @@ namespace Infrastructure.Data
                     .UsingEntity<Dictionary<string, object>>(
                         "StudySlotDay",
                         l => l.HasOne<DateOfWeek>().WithMany().HasForeignKey("DayId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__StudySlot__day_i__2E1BDC42"),
-                        r => r.HasOne<StudySlot>().WithMany().HasForeignKey("SlotId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__StudySlot__slot___00200768"),
+                        r => r.HasOne<StudySlot>().WithMany().HasForeignKey("SlotId").HasConstraintName("FK__StudySlot__slot___00200768"),
                         j =>
                         {
                             j.HasKey("SlotId", "DayId").HasName("PK__StudySlo__3FAF1710B9F5AE59");

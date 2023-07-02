@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Web;
 using View.Models;
 using View.Models.Response;
 
@@ -25,9 +26,10 @@ namespace View.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> Users(int? roleId, bool? disabled, bool? verified, string sortBy, int? page, int? pageSize)
+        public async Task<IActionResult> Users(string? searchKeyword, int? roleId, bool? isDisabled, bool? isVerified, string? sortBy, int? page, int? pageSize)
         {
-            var queryString = BuildQueryString(roleId, disabled, verified, sortBy, page, pageSize);
+            var queryString = BuildQueryString(searchKeyword, roleId, isDisabled, isVerified, sortBy, page, pageSize);
+            var queryStringWithoutPage = RemoveQueryStringParameter(queryString, "page");
             var url = apiUrl + queryString;
             var response = await _httpClient.GetAsync(url);
 
@@ -42,7 +44,7 @@ namespace View.Controllers
 
                 if (!baseResponse!.Error)
                 {
-                    baseResponse.Result.QueryString = queryString;
+                    ViewBag.QueryString = queryStringWithoutPage;
                     return View(baseResponse.Result);
                 }
                 else
@@ -71,6 +73,7 @@ namespace View.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
+
 
                 var options = new JsonSerializerOptions
                 {
@@ -205,9 +208,58 @@ namespace View.Controllers
 
             return RedirectToAction(nameof(StudySlots));
         }
-        private string BuildQueryString(int? roleId, bool? disabled, bool? verified, string sortBy, int? page, int? pageSize)
+        //private string BuildQueryString(int? roleId, bool? disabled, bool? verified, string sortBy, int? page, int? pageSize)
+
+        [HttpPost]
+        public async Task<IActionResult> DisableUser(int userId)
+
         {
-            var queryString = "?";
+            var disableUserDto = new DisableUserDto
+            {
+                Reason = "You have been banned!"
+            };
+
+            var url = apiUrl + $"/disable/{userId}";
+
+            var jsonCommand = JsonSerializer.Serialize(disableUserDto);
+            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync(url, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<UserDto>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    return RedirectToAction("Users");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "An error occurred while disabling the user.";
+                return View();
+            }
+        }
+
+        private string BuildQueryString(string? searchKeyword, int? roleId, bool? disabled, bool? verified, string? sortBy, int? page, int? pageSize)
+        {
+            var queryString = "";
+
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                queryString += $"searchKeyword={searchKeyword}&";
+            }
 
             if (roleId != null)
             {
@@ -216,12 +268,12 @@ namespace View.Controllers
 
             if (disabled != null)
             {
-                queryString += $"disabled={disabled}&";
+                queryString += $"isDisabled={disabled}&";
             }
 
             if (verified != null)
             {
-                queryString += $"verified={verified}&";
+                queryString += $"isVerified={verified}&";
             }
 
             if (!string.IsNullOrEmpty(sortBy))
@@ -239,7 +291,24 @@ namespace View.Controllers
                 queryString += $"pageSize={pageSize}&";
             }
 
-            return queryString.TrimEnd('&');
+            if (queryString.EndsWith("&"))
+            {
+                queryString = queryString.TrimEnd('&');
+            }
+
+            if (queryString != "")
+            {
+                queryString = "?" + queryString;
+            }
+
+            return queryString;
+        }
+
+        private string RemoveQueryStringParameter(string queryString, string key)
+        {
+            var collection = HttpUtility.ParseQueryString(queryString);
+            collection.Remove(key);
+            return "?" + collection.ToString();
         }
     }
 }

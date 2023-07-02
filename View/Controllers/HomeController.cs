@@ -1,25 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using View.Models;
 
 namespace View.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly HttpClient _httpClient;
+        private string apiUrl = "";
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController()
         {
-            _logger = logger;
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            apiUrl = "https://localhost:7241/api/auth";
         }
 
         public IActionResult Index()
         {
-            var requestHeaders = Request.Headers;
-            if (requestHeaders.ContainsKey("Authorization"))
+            string authToken = Request.Cookies["AuthToken"];
+            _httpClient.DefaultRequestHeaders.Add("Authorization", authToken);
+
+            if (authToken != null)
             {
-                var headerValue = requestHeaders["Authorization"].ToString();
-                Console.WriteLine("Header value of Authorization:" + headerValue);
+                string authorizationHeader = _httpClient.DefaultRequestHeaders.Authorization.ToString();
+                Console.WriteLine("Token in header:"+authorizationHeader);
             }
             return View();
         }

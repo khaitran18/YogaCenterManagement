@@ -132,7 +132,7 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<(List<UserModel>, int)> GetUsers(int? roleId, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isAdmin)
+        public async Task<(List<UserModel>, int)> GetUsers(string? searchKeyword, int? roleId, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isAdmin)
         {
             IQueryable<User> query = _context.Users.Include(u => u.Role).AsQueryable();
 
@@ -140,6 +140,10 @@ namespace Infrastructure.Repository
             if (!isAdmin)
             {
                 query = query.Where(u => u.Role!.RoleName == "User" || u.Role.RoleName == "Lecturer");
+            }
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                query = query.Where(u => u.FullName.ToLower().Contains(searchKeyword.ToLower()));
             }
             if (roleId.HasValue)
                 query = query.Where(u => u.RoleId == roleId.Value);

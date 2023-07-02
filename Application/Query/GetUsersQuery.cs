@@ -13,6 +13,7 @@ namespace Application.Query
     public class GetUsersQuery : IRequest<BaseResponse<PaginatedResult<UserDto>>>
     {
         public string? Token { get; set; }
+        public string? SearchKeyword { get; set; }
         public int? RoleId { get; set; }
         public bool? IsVerified { get; set; }
         public bool? IsDisabled { get; set; }

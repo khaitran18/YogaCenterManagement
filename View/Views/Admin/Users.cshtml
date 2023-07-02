@@ -1,4 +1,5 @@
-﻿@using View.Models.Response
+﻿@using View.Models.Response;
+@using View.Models.Enum;
 @model View.Models.PaginatedResult<UserDto>
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -6,45 +7,87 @@
 
 <div class="row">
     <div class="col-md-12">
+        <!-- WELCOME-->
+        <section class="welcome p-t-10">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="title-4">
+                            Manage Accounts
+                        </h1>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- END WELCOME-->
         <!-- DATA TABLE -->
         <h3 class="title-5 m-b-35">data table</h3>
         <!-- Filter/sort -->
         <div class="table-data__tool">
-            <!-- Role filter -->
-            <div class="rs-select2--light rs-select2--md">
-                <select class="js-select2 filter-select" id="roleIdsSelect">
-                    <option value="">All Roles</option>
-                    <option value="1">User</option>
-                    <option value="2">Lecturer</option>
-                    <option value="3">Staff</option>
-                    <option value="4">Admin</option>
-                </select>
-                <div class="dropDownSelect2"></div>
+            <div class="table-data__tool-left">
+                <!-- Role filter -->
+                <div class="rs-select2--light rs-select2--sm">
+                    <select class="js-select2 filter-select" id="roleIdSelect">
+                        <option value="">All Roles</option>
+                        @foreach (var role in Enum.GetValues(typeof(Role)))
+                        {
+                            <option value="@((int)role)">@role</option>
+                        }
+                    </select>
+                    <div class="dropDownSelect2"></div>
+                </div>
+                <!-- Status filter -->
+                <div class="rs-select2--light rs-select2--sm">
+                    <select class="js-select2 filter-select" id="statusSelect">
+                        <option value="">All Status</option>
+                        <option value="False">Active</option>
+                        <option value="True">Inactive</option>
+                    </select>
+                    <div class="dropDownSelect2"></div>
+                </div>
+                <!-- Sort by name -->
+                <div class="rs-select2--light rs-select2--md">
+                    <select class="js-select2 filter-select" id="sortByNameSelect">
+                        <option value="">Sort by Name</option>
+                        <option value="name">A-Z</option>
+                        <option value="name_desc">Z-A</option>
+                    </select>
+                    <div class="dropDownSelect2"></div>
+                </div>
+                <form method="get" class="search-form rs-select2--dark" asp-controller="Admin" asp-action="Users">
+                    <div class="input-group">
+                        <input class="au-input" type="text" name="searchKeyword" placeholder="Search by Name" />
+                        <button class="au-btn--submit" type="submit">
+                            <i class="zmdi zmdi-search"></i>
+                        </button>
+                    </div>
+                </form>
             </div>
-            <!-- Other filters and sort options can be added here -->
-            <!-- Add a filter button -->
-            <button class="au-btn-filter" id="filterBtn">
-                <i class="zmdi zmdi-filter-list"></i>filters
-            </button>
+            <div class="table-data__tool-right">
+                <button class="au-btn au-btn-icon au-btn--green au-btn--small">
+                    <i class="zmdi zmdi-plus"></i>create new
+                </button>
+            </div>
         </div>
         <!-- End filter/sort -->
         <div class="table-responsive table-responsive-data2">
             <table class="table table-data2">
                 <thead>
                     <tr>
-                        <!-- Table header columns -->
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Role</th>
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody id="userTableBody">
+                <tbody>
                     @foreach (var user in Model.Items)
                     {
                         <tr class="tr-shadow">
-                            <td>
-                                <label class="au-checkbox">
-                                    <input type="checkbox">
-                                    <span class="au-checkmark"></span>
-                                </label>
-                            </td>
                             <td>@user.FullName</td>
                             <td>
                                 <span class="block-email">@user.Email</span>
@@ -52,23 +95,29 @@
                             <td class="desc">@user.Address</td>
                             <td>@user.Phone</td>
                             <td>
-                                <span class="status--process">@user.IsVerified ? "Verified" : "Not Verified"</span>
+                                <span class="@(user.IsDisabled ? "status--denied" : "status--process")">
+                                    @(user.IsDisabled ? "Inactive" : "Active")
+                                </span>
                             </td>
-                            <td>$0.00</td>
+                            <td>@Enum.GetName(typeof(Role), user.RoleId!)</td>
                             <td>
                                 <div class="table-data-feature">
-                                    <button class="item" data-toggle="tooltip" data-placement="top" title="Send">
-                                        <i class="zmdi zmdi-mail-send"></i>
-                                    </button>
                                     <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
                                         <i class="zmdi zmdi-edit"></i>
                                     </button>
                                     <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
                                         <i class="zmdi zmdi-delete"></i>
                                     </button>
-                                    <button class="item" data-toggle="tooltip" data-placement="top" title="More">
-                                        <i class="zmdi zmdi-more"></i>
-                                    </button>
+                                    <div class="dropdown">
+                                        <button class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="zmdi zmdi-more"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <button class="dropdown-item disable-user" data-user-id="@user.Uid">
+                                                Disable User
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -83,21 +132,21 @@
                 @if (Model.HasPreviousPage)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="?@Model.QueryString&page=@(Model.Page - 1)">&lt</a>
+                        <a class="page-link" href="@(ViewBag.QueryString)&page=@(Model.Page - 1)">&lt</a>
                     </li>
                 }
 
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     <li class="page-item @(i == Model.Page ? "active" : "")">
-                        <a class="page-link" href="?@Model.QueryString&page=@i">@i</a>
+                        <a class="page-link" href="@(ViewBag.QueryString)&page=@i">@i</a>
                     </li>
                 }
 
                 @if (Model.HasNextPage)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="?@Model.QueryString&page=@(Model.Page + 1)">&gt</a>
+                        <a class="page-link" href="@(ViewBag.QueryString)&page=@(Model.Page + 1)">&gt</a>
                     </li>
                 }
             </ul>
@@ -106,28 +155,85 @@
     </div>
 </div>
 
+@section Scripts{
 <script>
     $(document).ready(function () {
-        // Filter button click event
-        $('#filterBtn').click(function () {
+        var searchKeywordParam = '@Context.Request.Query["searchKeyword"]';
+        var roleIdParam = '@Context.Request.Query["roleId"]';
+        var statusParam = '@Context.Request.Query["isDisabled"]';
+        var sortParam = '@Context.Request.Query["sortBy"]';
+
+        if (roleIdParam) {
+            $('#roleIdSelect').val(roleIdParam).trigger('change');
+        }
+
+        if (statusParam) {
+            $('#statusSelect').val(statusParam).trigger('change');
+        }
+
+        if (sortParam) {
+            $('#sortByNameSelect').val(sortParam).trigger('change');
+        }
+
+        if (searchKeywordParam) {
+            $('[name="searchKeyword"]').val(searchKeywordParam);
+        }
+
+        $('#roleIdSelect, #statusSelect, #sortByNameSelect').change(function () {
             applyFilters();
         });
 
-        // Function to apply filters
         function applyFilters() {
-            var roleId = $('#roleIdsSelect').val(); // Get selected roleId
+            var roleId = $('#roleIdSelect').val();
+            var status = $('#statusSelect').val();
+            var sortBy = $('#sortByNameSelect').val();
+            var searchKeyword = $('[name="searchKeyword"]').val();
 
-            $.ajax({
-                url: '@Url.Action("Users", "Admin")',
-                type: 'GET',
-                data: { roleId: roleId },
-                success: function (result) {
-                    $('#userTableBody').html(result);
-                },
-                error: function (xhr, status, error) {
-                    // Handle the error
+            var url = '@Url.Action("Users", "Admin")';
+
+            var params = [];
+            if (roleId) {
+                params.push('roleId=' + roleId);
+            }
+            if (status) {
+                params.push('isDisabled=' + status);
+            }
+            if (sortBy) {
+                params.push('sortBy=' + sortBy);
+            }
+            if (searchKeyword) {
+                params.push('searchKeyword=' + encodeURIComponent(searchKeyword));
+            }
+
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+
+            window.location.href = url;
+        }
+
+        $('.disable-user').click(function () {
+                var userId = $(this).data('user-id');
+                var userName = $(this).closest('tr').find('td:first-child').text();
+                var isDisabled = $(this).closest('tr').find('.status--denied').length > 0;
+                var confirmationMessage = 'Do you want to disable the user ' + userName + '?';
+
+                if (confirm(confirmationMessage)) {
+                    var form = $('<form>').attr({
+                        method: 'post',
+                        action: '/Admin/DisableUser',
+                        style: 'display: none;'
+                    });
+
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'userId',
+                        value: userId
+                    }).appendTo(form);
+
+                    form.appendTo('body').submit();
                 }
             });
-        }
     });
 </script>
+}
