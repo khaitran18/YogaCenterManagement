@@ -7,11 +7,11 @@ namespace Infrastructure.DataModels
     {
         public int PaymentId { get; set; }
         public int? StudentId { get; set; }
-        public int? ClassId { get; set; }
         public decimal Amount { get; set; }
         public string? Method { get; set; }
+        public int? ClassId { get; set; }
 
-        public virtual User? Student { get; set; }
         public virtual Class? Class { get; set; }
+        public virtual User? Student { get; set; }
     }
 }
