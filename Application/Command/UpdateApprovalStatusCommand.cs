@@ -11,7 +11,7 @@ namespace Application.Command
     public class UpdateApprovalStatusCommand : IRequest<BaseResponse<bool>>
     {
         public int requestId { get; set; }
-        public bool isApproved { get; set; }
+        public short isApproved { get; set; }
 
     }
 }

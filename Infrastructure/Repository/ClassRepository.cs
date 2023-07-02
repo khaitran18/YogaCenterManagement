@@ -270,6 +270,7 @@ namespace Infrastructure.Repository
                                 ClassId = fromClassId,
                                 RequestClassId = toClassId,
                                 Content = content,
+                                IsApproved = -1
                             });
                             await _context.SaveChangesAsync();
 
@@ -322,7 +323,7 @@ namespace Infrastructure.Repository
         /// <param name="isApproved">Approve status for the request</param>
         /// <returns>True if success; False if unsuccess</returns>
         /// <exception cref="Exception"></exception>
-        public async Task<bool> UpdateApprovalStatus(int requestId, bool isApproved)
+        public async Task<bool> UpdateApprovalStatus(int requestId, short isApproved)
         {
             try
             {
@@ -332,7 +333,7 @@ namespace Infrastructure.Repository
                 {
                     changeRequest.IsApproved = isApproved;
                     await _context.SaveChangesAsync();
-                    if (isApproved)
+                    if (isApproved == 1)
                     {
                         var classFound = await _context.Classes.FindAsync(changeRequest.RequestClassId);
 

@@ -12,7 +12,7 @@ namespace Application.Common.Dto
         public int? UserId { get; set; }
         public int? ClassId { get; set; }
         public string? Content { get; set; }
-        public bool IsApproved { get; set; }
+        public short? IsApproved { get; set; }
         public int? RequestClassId { get; set; }
 
         public ClassDto? Class { get; set; }
