@@ -9,6 +9,8 @@ namespace Infrastructure.DataModels
         {
             ChangeClassRequestClasses = new HashSet<ChangeClassRequest>();
             ChangeClassRequestRequestClasses = new HashSet<ChangeClassRequest>();
+            Payments = new HashSet<Payment>();
+            Posts = new HashSet<Post>();
             Schedules = new HashSet<Schedule>();
             Students = new HashSet<User>();
         }
@@ -24,6 +26,8 @@ namespace Infrastructure.DataModels
         public virtual User? Lecturer { get; set; }
         public virtual ICollection<ChangeClassRequest> ChangeClassRequestClasses { get; set; }
         public virtual ICollection<ChangeClassRequest> ChangeClassRequestRequestClasses { get; set; }
+        public virtual ICollection<Payment> Payments { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
 
         public virtual ICollection<User> Students { get; set; }
