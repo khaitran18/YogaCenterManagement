@@ -132,7 +132,7 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<(List<UserModel>, int)> GetUsers(List<int>? roleIds, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isAdmin)
+        public async Task<(List<UserModel>, int)> GetUsers(int? roleId, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isAdmin)
         {
             IQueryable<User> query = _context.Users.Include(u => u.Role).AsQueryable();
 
@@ -141,23 +141,16 @@ namespace Infrastructure.Repository
             {
                 query = query.Where(u => u.Role!.RoleName == "User" || u.Role.RoleName == "Lecturer");
             }
-
-            if (roleIds != null && roleIds.Any())
-            {
-                query = query.Where(u => roleIds.Contains((int)u.RoleId!));
-            }
+            if (roleId.HasValue)
+                query = query.Where(u => u.RoleId == roleId.Value);
 
             if (disabled.HasValue)
-            {
                 query = query.Where(u => u.IsDisabled == disabled.Value);
-            }
 
             if (verified.HasValue)
-            {
                 query = query.Where(u => u.IsVerified == verified.Value);
-            }
 
-            // Sort
+            // Sorting
             if (!string.IsNullOrEmpty(sortBy))
             {
                 switch (sortBy.ToLower())

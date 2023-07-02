@@ -294,3 +294,59 @@
         .done(done_func)
         .fail(fail_func);
     });
+
+var currentPage = window.location.pathname;
+var links = document.querySelectorAll('.navbar__list a, .pagination a');
+
+for (var i = 0; i < links.length; i++) {
+    var linkHref = links[i].getAttribute('href');
+    var linkPath = linkHref.split('?')[0];
+
+    if (linkPath === currentPage) {
+        links[i].parentNode.classList.add('active');
+        break;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Filter button click event
+    var filterBtn = document.getElementById('filterBtn');
+    filterBtn.addEventListener('click', function () {
+        applyFilters();
+    });
+
+    // Selection change event for filter dropdowns
+    var filterSelects = document.querySelectorAll('.filter-select');
+    filterSelects.forEach(function (select) {
+        select.addEventListener('change', function () {
+            applyFilters();
+        });
+    });
+
+    // Function to apply filters
+    function applyFilters() {
+        var roleIds = getSelectedValues('roleIds'); // Get selected roleIds
+        var disabled = null; // Get selected disabled status
+        var verified = null; // Get selected verified status
+        var sortBy = null; // Get selected sort option
+
+        // Build the new URL with selected filter/sort parameters
+        var newUrl = '@Url.Action("Users", "Admin")' +
+            '?roleIds=' + roleIds +
+            '&disabled=' + disabled +
+            '&verified=' + verified +
+            '&sortBy=' + sortBy;
+
+        // Redirect to the new URL
+        window.location.href = newUrl;
+    }
+
+    // Function to get selected values from a multi-select dropdown
+    function getSelectedValues(selectName) {
+        var select = document.querySelector('select[name="' + selectName + '"]');
+        var selectedOptions = Array.from(select.options)
+            .filter(option => option.selected)
+            .map(option => option.value);
+        return selectedOptions.join(',');
+    }
+});

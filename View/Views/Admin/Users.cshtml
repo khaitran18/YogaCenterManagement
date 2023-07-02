@@ -1,0 +1,132 @@
+﻿@model View.Models.PaginatedResult<UserDto>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- DATA TABLE -->
+        <h3 class="title-5 m-b-35">data table</h3>
+        <!-- Filter/sort -->
+        <div class="table-data__tool">
+            <!-- Role filter -->
+            <div class="rs-select2--light rs-select2--md">
+                <select class="js-select2 filter-select" id="roleIdsSelect">
+                    <option value="">All Roles</option>
+                    <option value="1">User</option>
+                    <option value="2">Lecturer</option>
+                    <option value="3">Staff</option>
+                    <option value="4">Admin</option>
+                </select>
+                <div class="dropDownSelect2"></div>
+            </div>
+            <!-- Other filters and sort options can be added here -->
+            <!-- Add a filter button -->
+            <button class="au-btn-filter" id="filterBtn">
+                <i class="zmdi zmdi-filter-list"></i>filters
+            </button>
+        </div>
+        <!-- End filter/sort -->
+        <div class="table-responsive table-responsive-data2">
+            <table class="table table-data2">
+                <thead>
+                    <tr>
+                        <!-- Table header columns -->
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    @foreach (var user in Model.Items)
+                    {
+                        <tr class="tr-shadow">
+                            <td>
+                                <label class="au-checkbox">
+                                    <input type="checkbox">
+                                    <span class="au-checkmark"></span>
+                                </label>
+                            </td>
+                            <td>@user.FullName</td>
+                            <td>
+                                <span class="block-email">@user.Email</span>
+                            </td>
+                            <td class="desc">@user.Address</td>
+                            <td>@user.Phone</td>
+                            <td>
+                                <span class="status--process">@user.IsVerified ? "Verified" : "Not Verified"</span>
+                            </td>
+                            <td>$0.00</td>
+                            <td>
+                                <div class="table-data-feature">
+                                    <button class="item" data-toggle="tooltip" data-placement="top" title="Send">
+                                        <i class="zmdi zmdi-mail-send"></i>
+                                    </button>
+                                    <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
+                                        <i class="zmdi zmdi-edit"></i>
+                                    </button>
+                                    <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
+                                        <i class="zmdi zmdi-delete"></i>
+                                    </button>
+                                    <button class="item" data-toggle="tooltip" data-placement="top" title="More">
+                                        <i class="zmdi zmdi-more"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="spacer"></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- PAGING NAVIGATION -->
+        <nav>
+            <ul class="pagination">
+                @if (Model.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?@Model.QueryString&page=@(Model.Page - 1)">&lt</a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.Page ? "active" : "")">
+                        <a class="page-link" href="?@Model.QueryString&page=@i">@i</a>
+                    </li>
+                }
+
+                @if (Model.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?@Model.QueryString&page=@(Model.Page + 1)">&gt</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+        <!-- END PAGING NAVIGATION -->
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Filter button click event
+        $('#filterBtn').click(function () {
+            applyFilters();
+        });
+
+        // Function to apply filters
+        function applyFilters() {
+            var roleId = $('#roleIdsSelect').val(); // Get selected roleId
+
+            $.ajax({
+                url: '@Url.Action("Users", "Admin")',
+                type: 'GET',
+                data: { roleId: roleId },
+                success: function (result) {
+                    $('#userTableBody').html(result);
+                },
+                error: function (xhr, status, error) {
+                    // Handle the error
+                }
+            });
+        }
+    });
+</script>
