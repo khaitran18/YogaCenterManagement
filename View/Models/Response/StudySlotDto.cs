@@ -11,6 +11,6 @@ namespace View.Models.Response
         public int SlotId { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
-        public List<string> Day { get; set; } = new List<string>();
+        public List<DayDto> Day { get; set; } = new List<DayDto>();
     }
 }

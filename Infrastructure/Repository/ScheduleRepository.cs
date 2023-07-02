@@ -82,13 +82,31 @@ namespace Infrastructure.Repository
         }
         #endregion
 
+        #region Get all study slots
+        public async Task<IEnumerable<StudySlotModel>> GetAllStudySlot()
+        {
+            var studySlotModels = new List<StudySlotModel>();
+            try
+            {
+                var studySlots = await _context.StudySlots.Include(ss => ss.Days).ToListAsync();
+                studySlotModels = _mapper.Map<List<StudySlotModel>>(studySlots);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in Get all study slot");
+            }
+            return studySlotModels;
+        }
+        #endregion
+
         #region Delete study slot by slot id
         public async Task<bool> DeleteStudySlot(int studySlotId)
         {
             var check = false;
             try
             {
-                var existStudySlot = await _context.StudySlots.FindAsync(studySlotId);
+                var existStudySlot = await _context.StudySlots.FirstOrDefaultAsync(ss => ss.SlotId == studySlotId);
                 if(existStudySlot != null)
                 {
                     _context.StudySlots.Remove(existStudySlot);

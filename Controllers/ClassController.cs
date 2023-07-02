@@ -149,13 +149,32 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
-
-        [HttpDelete("slot")]
-        public async Task<IActionResult> DeleteStudySlot([FromBody] DeleteStudySlotCommand command)
+        [HttpGet("slot")]
+        [ProducesDefaultResponseType(typeof(StudySlotDto))]
+        public async Task<IActionResult> GetAllStudySlots(
+        [FromHeader] string? Authorization
+        )
+        {
+            
+            var response = await _mediator.Send(new GetStudySlotsQuery());
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+        [HttpDelete("slot/{slotId}")]
+        public async Task<IActionResult> DeleteStudySlot([FromRoute] int slotId)
         {
             //command.token = Authorization;
 
-            var response = await _mediator.Send(command);
+            var response = await _mediator.Send(new DeleteStudySlotCommand { StudySlotId = slotId });
             if (!response.Error)
                 return Ok(response);
             else
@@ -215,7 +234,7 @@ namespace Api.Controllers
         {
             //command.token = Authorization;
 
-            var response = await _mediator.Send(new AvailableDateQuery { SlotId = slotId});
+            var response = await _mediator.Send(new AvailableDateQuery { SlotId = slotId });
             if (!response.Error)
                 return Ok(response);
             else
@@ -286,6 +305,25 @@ namespace Api.Controllers
             }
         }
 
+        [HttpGet("changeclasses/{fromClassId}")]
+        public async Task<IActionResult> GetChangeClass([FromRoute] int fromClassId)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(new GetChangeClassQuery { FromClassId = fromClassId });
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
         [HttpPut("changeclass")]
         public async Task<IActionResult> UpdateApprovalStatus([FromBody] UpdateApprovalStatusCommand command)
         {
@@ -323,6 +361,6 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
-        
+
     }
 }
