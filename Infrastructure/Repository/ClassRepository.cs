@@ -389,5 +389,31 @@ namespace Infrastructure.Repository
             }
         }
         #endregion
+
+        #region Get Change Classes
+        public async Task<IEnumerable<ClassModel>> GetChangeClasses(int fromClassId)
+        {
+            var classModels = new List<ClassModel>();
+            try
+            {
+                var classes = new List<Class>();
+                var allClasses = await _context.Classes.ToListAsync();
+                foreach (var @class in allClasses)
+                {
+                    if(await IsMatchSchedule(fromClassId, @class.ClassId))
+                    {
+                        classes.Add(@class);
+                    }
+                }
+                classModels = _mapper.Map<List<ClassModel>>(classes);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in Get Change Classes");
+            }
+            return classModels;
+        }
+        #endregion
     }
 }
