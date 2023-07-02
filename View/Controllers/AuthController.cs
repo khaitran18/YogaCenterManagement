@@ -2,9 +2,12 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using View.Models;
+using View.Models.Response;
 
 namespace View.Controllers
 {
+    [Route("")]
     public class AuthController : Controller
     {
         private readonly HttpClient _httpClient;
@@ -15,47 +18,102 @@ namespace View.Controllers
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             apiUrl = "https://localhost:7241/api/auth";
         }
+
+        [HttpGet("login")]
         public IActionResult Login()
         {
             return View();
         }
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Login(LoginDto loginDto)
-        //{
-        //    var loginUrl = apiUrl+"/login";
-        //    var json = JsonSerializer.Serialize(loginDto);
-        //    var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        //    var response = await _httpClient.PostAsync(loginUrl, content);
+        [HttpPost("login")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginDto loginDto)
+        {
+            var loginUrl = apiUrl + "/login";
+            var json = JsonSerializer.Serialize(loginDto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(loginUrl, content);
+            var resultJson = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            if (response.IsSuccessStatusCode)
+            {
+                var loginResult = JsonSerializer.Deserialize<BaseResponse<AuthResponseDto>>(resultJson, options);
 
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        var resultJson = await response.Content.ReadAsStringAsync();
-        //        var options = new JsonSerializerOptions
-        //        {
-        //            PropertyNameCaseInsensitive = true,
-        //        };
-        //        var loginResult = JsonSerializer.Deserialize<UserDto>(resultJson, options);
-        //        if (loginResult?.IsAdmin == true)
-        //        {
-        //            HttpContext.Session.SetString("Status", "LoggedIn");
-        //            HttpContext.Session.SetString("IsAdmin", "True");
-        //            return RedirectToAction("Index", "Employee");
-        //        }
-        //        else
-        //        {
-        //            HttpContext.Session.SetString("Status", "LoggedIn");
-        //            HttpContext.Session.SetString("IsAdmin", "False");
-        //            HttpContext.Session.SetInt32("EmployeeId", loginResult?.EmployeeID ?? 0);
-        //            return RedirectToAction("EmployeeIndex", "ParticipatingProject");
-        //        }
-        //    }
-        //    else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-        //    {
-        //        ViewData["Message"] = "Wrong email or password";
-        //    }
-        //    return View(loginDto);
-        //}
+                // Set token to header
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",loginResult?.Result.Token);
+                // Check authority
+                TempData["Success"] = "Login success";
+                if (loginResult.Result.Role.Equals("User"))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else if (loginResult.Result.Role.Equals("Lecturer"))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else if (loginResult.Result.Role.Equals("Staff"))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else if (loginResult.Result.Role.Equals("Admin"))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    return View();
+                }
+            }
+            else
+            {
+                var error = JsonSerializer.Deserialize<string>(resultJson, options);
+                TempData["Error"] = string.Join("\n", error);
+                return View();
+            }
+        }
+
+        [HttpGet("signup")]
+        public IActionResult Signup()
+        {
+            return View();
+        }
+
+        [HttpPost("signup")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Signup(SignupDto signupDto)
+        {
+            var signup = apiUrl + "/signup";
+            var json = JsonSerializer.Serialize(signupDto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(signup, content);
+            var resultJson = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<BaseResponse<UserDto>>(resultJson, options);
+                if (result.Error)
+                {
+                    TempData["Error"] = await response.Content.ReadAsStringAsync();
+                    return View(result.Message);
+                }
+                else
+                {
+                    TempData["Success"] = "Check email to verify your account";
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            else
+            {
+                var error = JsonSerializer.Deserialize<string>(resultJson, options);
+                TempData["Error"] = string.Join("\n", error);
+                return View();
+            }
+        }
     }
 }

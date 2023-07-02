@@ -15,6 +15,12 @@ namespace View.Controllers
 
         public IActionResult Index()
         {
+            var requestHeaders = Request.Headers;
+            if (requestHeaders.ContainsKey("Authorization"))
+            {
+                var headerValue = requestHeaders["Authorization"].ToString();
+                Console.WriteLine("Header value of Authorization:" + headerValue);
+            }
             return View();
         }
 

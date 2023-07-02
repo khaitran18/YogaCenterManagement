@@ -2,4 +2,43 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+     
 }
+<partial name="_Notification"/>
+<div class="yg-testimonial">
+    <div class="container yg-container-full">
+        <div class="row yg-gutter-0" style="padding-top: 6rem;">
+            <div class="col-md-5 col-sm-12 animate-box" data-animate-effect="fadeInLeft" style="background-color: rgb(247, 247, 247);">
+                <div class="testimonial-image" >
+                    <img src="~/images/testimonial.jpg" class="img-fluid" alt="">
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-12 animate-box d-flex align-items-center justify-content-center" data-animate-effect="fadeInRight" >
+                <div class="container" style="background-color:white">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <h2 class="text-center mb-4">Login</h2>
+                            <form asp-action="Login" asp-controller="Auth" method="post"> 
+                                <div class="mb-3">
+                                    <label for="Username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="Username" placeholder="Enter your username" name="Username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="Password" placeholder="Enter your password" name="Password" required>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">Login</button>
+                                </div>
+                                <div class="d-grid gap-2 mt-2">
+                                    <a asp-action="Signup" asp-controller="Auth">Registrate an account</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

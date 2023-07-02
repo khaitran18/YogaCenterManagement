@@ -13,6 +13,9 @@ namespace Application.Common.Dto
         public string FullName { get; set; } = null!;
         public string? Address { get; set; }
         public string? Phone { get; set; }
+        public int? RoleId { get; set; }
+        public bool IsVerified { get; set; }
+        public bool IsDisabled { get; set; }
         public string Email { get; set; } = null!;
     }
 }

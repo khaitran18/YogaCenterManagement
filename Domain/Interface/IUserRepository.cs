@@ -16,7 +16,7 @@ namespace Domain.Interface
         Task<UserModel> Create(string userName, string password, string phone, string fullName, string address, string email);
         Task<UserModel> EditProfile(UserModel user);
         Task<UserModel> EditUser(UserModel user);
-        public Task<(List<UserModel>, int)> GetUsers(List<int>? roleIds, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isAdmin);
+        public Task<(List<UserModel>, int)> GetUsers(int? roleId, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isAdmin);
         Task<bool> VerifyToken(string token);
         Task<UserModel> DisableUser(int id, string reason);
         Task<int> CreateFeedback(FeedbackModel feedback);

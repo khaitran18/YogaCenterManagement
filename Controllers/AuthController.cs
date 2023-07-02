@@ -18,7 +18,6 @@ namespace Api.Controllers
         }
 
         [HttpPost("login")]
-        [ProducesDefaultResponseType(typeof(AuthResponseDto))]
         public async Task<IActionResult> Login([FromBody] AuthCommand command)
         {
             var response = await _mediator.Send(command);
