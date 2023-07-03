@@ -455,12 +455,12 @@ namespace View.Controllers
             if (response.IsSuccessStatusCode)
             {
                 TempData["Success"] = "Create account successful";
-                return View();
+                return RedirectToAction("Users");
             }
             else
             {
                 TempData["Error"] = await response.Content.ReadAsStringAsync();
-                return RedirectToAction("CreateAccount");
+                return RedirectToAction("Create");
             }
             return View();
         }
