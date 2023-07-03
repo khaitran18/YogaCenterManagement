@@ -113,6 +113,8 @@ builder.Services.AddScoped<IRequestHandler<AvailableDateQuery, BaseResponse<IEnu
 builder.Services.AddScoped<IRequestHandler<GetClassByIdQuery, BaseResponse<ClassDto>>, GetClassByIdHandler>();
 builder.Services.AddScoped<IRequestHandler<GetChangeClassRequestsQuery, BaseResponse<IEnumerable<ChangeClassRequestDto>>>, GetChangeClassRequestHandler>();
 builder.Services.AddScoped<IRequestHandler<GetClassesQuery, BaseResponse<PaginatedResult<ClassDto>>>, GetClassesHandler>();
+builder.Services.AddScoped<IRequestHandler<GetStudySlotsQuery, BaseResponse<IEnumerable<StudySlotDto>>>, GetStudySlotsHandler>();
+builder.Services.AddScoped<IRequestHandler<GetChangeClassQuery, BaseResponse<IEnumerable<ClassDto>>>, GetChangeClassHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateClassCommand,BaseResponse<ClassDto>>, CreateClassHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateStudySlotCommand,BaseResponse<StudySlotDto>>, CreateStudySlotHandler>();
@@ -122,7 +124,13 @@ builder.Services.AddScoped<IRequestHandler<CreateChangeRequestCommand,BaseRespon
 builder.Services.AddScoped<IRequestHandler<UpdateApprovalStatusCommand,BaseResponse<bool>>, UpdateApprovalStatusHandler>();
 builder.Services.AddScoped<IRequestHandler<SignUpCommand,BaseResponse<UserDto>>, SignUpHandler>();
 builder.Services.AddScoped<IRequestHandler<VerifyEmailCommand,BaseResponse<bool>>, VerifyEmailHandler>();
+
+builder.Services.AddScoped<IRequestHandler<UpdateStudySlotCommand,BaseResponse<bool>>, UpdateStudySlotHandler>();
+builder.Services.AddScoped<IRequestHandler<StudentEnrollToClassCommand,BaseResponse<PaymentDto>>, StudentEnrollToClassHandler>();
+builder.Services.AddScoped<IRequestHandler<DeleteStudySlotCommand,BaseResponse<bool>>, DeleteStudySlotHandler>();
+
 builder.Services.AddScoped<IRequestHandler<AssignLecturerCommand, BaseResponse<ClassDto>>, AssignLecturerHandler>();
+
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 //Service
@@ -156,6 +164,7 @@ var mapperConfig = new MapperConfiguration(cfg =>
     cfg.AddProfile<PaymentMapper>();
     cfg.AddProfile<PaymentProfile>();
     cfg.AddProfile<DayProfile>();
+    cfg.AddProfile<DayMapper>();
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

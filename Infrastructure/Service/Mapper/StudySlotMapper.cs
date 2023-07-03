@@ -9,7 +9,7 @@ namespace Infrastructure.Service.Mapper
         public StudySlotMapper()
         {
             CreateMap<StudySlot, StudySlotModel>()
-                    .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Days.Select(d => d.Day).ToList()));
+                    .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Days));
         }
     }
 }

@@ -269,7 +269,8 @@ namespace Infrastructure.Repository
                                 UserId = studentId,
                                 ClassId = fromClassId,
                                 RequestClassId = toClassId,
-                                Content = content
+                                Content = content,
+                                IsApproved = -1
                             });
                             await _context.SaveChangesAsync();
 
@@ -322,7 +323,7 @@ namespace Infrastructure.Repository
         /// <param name="isApproved">Approve status for the request</param>
         /// <returns>True if success; False if unsuccess</returns>
         /// <exception cref="Exception"></exception>
-        public async Task<bool> UpdateApprovalStatus(int requestId, bool isApproved)
+        public async Task<bool> UpdateApprovalStatus(int requestId, short isApproved)
         {
             try
             {
@@ -332,7 +333,7 @@ namespace Infrastructure.Repository
                 {
                     changeRequest.IsApproved = isApproved;
                     await _context.SaveChangesAsync();
-                    if (isApproved)
+                    if (isApproved == 1)
                     {
                         var classFound = await _context.Classes.FindAsync(changeRequest.RequestClassId);
 
@@ -343,7 +344,7 @@ namespace Infrastructure.Repository
                             if (student != null)
                             {
                                 var originalClass = await _context.Classes.Include(c => c.Students).FirstOrDefaultAsync(oc => oc.ClassId == changeRequest.ClassId);
-                                 
+
                                 if (originalClass != null)
                                 {
                                     originalClass.Students.Remove(student);
@@ -372,11 +373,11 @@ namespace Infrastructure.Repository
             {
                 var fromClass = await _context.Classes.Include(fc => fc.Schedules).FirstOrDefaultAsync(fc => fc.ClassId == fromClassId);
                 var toClass = await _context.Classes.Include(tc => tc.Schedules).FirstOrDefaultAsync(tc => tc.ClassId == toClassId);
-                if(fromClass != null && toClass != null)
+                if (fromClass != null && toClass != null)
                 {
-                    if(fromClass.StartDate == toClass.StartDate && fromClass.EndDate == toClass.EndDate)
+                    if (fromClass.StartDate == toClass.StartDate && fromClass.EndDate == toClass.EndDate)
                     {
-                        if(fromClass.Schedules.Count == toClass.Schedules.Count)
+                        if (fromClass.Schedules.Count == toClass.Schedules.Count)
                         {
                             return true;
                         }
@@ -438,7 +439,7 @@ namespace Infrastructure.Repository
                 var allClasses = await _context.Classes.ToListAsync();
                 foreach (var @class in allClasses)
                 {
-                    if(await IsMatchSchedule(fromClassId, @class.ClassId))
+                    if (await IsMatchSchedule(fromClassId, @class.ClassId) && @class.ClassId != fromClassId)
                     {
                         classes.Add(@class);
                     }

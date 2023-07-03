@@ -1,0 +1,104 @@
+﻿.time {
+    width: 50%;
+    min-width: 200px;
+    margin: 25px auto;
+}
+
+.time__heading {
+    text-align: center;
+    color: #fff;
+    text-shadow: 4px 4px 0px rgba(0, 0, 0, .2);
+}
+
+.time__input {
+    width: 100%;
+}
+
+    .time__input .timepicker {
+        width: 100%;
+        font-size: 25px;
+        padding: 10px;
+        font-weight: 300;
+        text-align: center;
+        border: solid 2px #303233;
+        color: #303233;
+        outline: none;
+        /*box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, .1);*/
+    }
+
+div[id^="tp_"].timepicker__wrapper {
+    opacity: 0;
+    height: auto;
+    min-width: 150px;
+    max-height: 0px;
+    overflow: hidden;
+    position: absolute;
+    transition: max-height .1s ease-in-out;
+    background: #F4F5F7;
+    background: linear-gradient(to bottom, rgba(227, 227, 229, 1) 0%, rgba(239, 239, 239, 1) 7%, rgba(244, 245, 247, 1) 100%);
+    border-radius: 0px 0px 5px 5px;
+    border: 2px solid #303233;
+    border-top: transparent;
+    /*box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, .1);*/
+    text-align: center;
+    z-index: 3;
+}
+
+    div[id^="tp_"].timepicker__wrapper * {
+        box-sizing: border-box;
+    }
+
+div[id^="tp_"].timepicker__wrapper-active {
+    opacity: 1;
+    max-height: 150px;
+    padding: 15px;
+}
+
+div[id^="tp_"].timepicker__wrapper-full > div {
+    width: 33% !important;
+}
+
+div[id^="tp_"].timepicker__wrapper > div {
+    margin: 0px;
+    padding: 0px;
+    display: inline-block;
+    text-align: center;
+    width: 50%;
+    max-width: 75px;
+}
+
+    div[id^="tp_"].timepicker__wrapper > div .display {
+        color: #303233;
+        font-size: 30px;
+        font-weight: 100;
+        line-height: 35px;
+        margin: 0px;
+        text-transform: uppercase;
+        user-select: none;
+    }
+
+    div[id^="tp_"].timepicker__wrapper > div .timepicker__button {
+        margin: 15px auto;
+        padding: 0px;
+        background: #fff;
+        cursor: pointer;
+        background: transparent;
+        border: solid 5px transparent;
+    }
+
+    div[id^="tp_"].timepicker__wrapper > div .timepicker__button__up > div {
+        width: 0px;
+        height: 0px;
+        margin: auto;
+        border-left: solid 5px transparent;
+        border-right: solid 5px transparent;
+        border-bottom: solid 5px #303233;
+    }
+
+    div[id^="tp_"].timepicker__wrapper > div .timepicker__button__down > div {
+        width: 0px;
+        height: 0px;
+        margin: auto;
+        border-left: solid;
+    }
+
