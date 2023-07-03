@@ -17,7 +17,7 @@ namespace Application.Command
         public string? Address { get; set; }
         public string? Phone { get; set; }
         public string Email { get; set; }
-        public string Role { get; set; } = "User";
+        public string? Role { get; set; } = "User";
         public string? Token { get; set; }
     }
 }
