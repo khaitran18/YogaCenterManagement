@@ -17,8 +17,6 @@ namespace Application.Common.Dto
         public string? Description { get; set; }
         public string? Image { get; set; }
         public int? LecturerId { get; set; }
-        public string? Description { get; set; }
-        public string? Image { get; set; }
         public UserDto? Lecturer { get; set; }
         public List<UserDto>? Students { get; set; }
         public List<ScheduleDto>? Schedules { get; set; }

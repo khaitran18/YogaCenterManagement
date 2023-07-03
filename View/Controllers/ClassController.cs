@@ -64,6 +64,38 @@ namespace View.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var url = $"{apiUrl}/{id}";
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<ClassDto>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    return View(baseResponse.Result);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                return View();
+            }
+        }
+
         private string BuildQueryStringClasses(string? searchKeyword, string? sortBy, DateTime? startingFromDate, int? durationMonths, string? classCapacity, int? page, int? pageSize)
         {
             var queryString = "";
