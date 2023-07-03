@@ -368,7 +368,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("enroll")]
-        public async Task<IActionResult> EnrollStudentToClass([FromBody] StudentEnrollToClassCommand command)
+        public async Task<IActionResult> EnrollStudentToClass([FromBody] StudentEnrollToClassCommand command, [FromHeader] string? Authorization)
         {
             //command.token = Authorization;
 

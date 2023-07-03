@@ -23,7 +23,7 @@ namespace Infrastructure.DataModels
         public double Price { get; set; }
         public int ClassCapacity { get; set; }
 
-        public short? ClassStatus { get; set; }
+        //public short? ClassStatus { get; set; }
 
         public string? Description { get; set; }
         public string? Image { get; set; }
