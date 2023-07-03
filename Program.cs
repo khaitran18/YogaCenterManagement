@@ -24,10 +24,26 @@ using Application.Common;
 using Microsoft.OpenApi.Models;
 using Application.Common.Mapping;
 using static Infrastructure.Services.MailService;
+
 using Infrastructure.Service;
+
+using Google.Apis.Auth.OAuth2;
+using FirebaseAdmin;
+using Application.Common.CloudStorage;
+
+
+//firebase 
+var credential = GoogleCredential.FromFile("yoga-guru-391213-5f27d3bece3a.json");
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = credential,
+});
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Add cloud storage to store image
+builder.Services.AddSingleton<ICloudStorageService, CloudStorageService>();
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -132,6 +148,7 @@ builder.Services.AddScoped<IRequestHandler<StudentEnrollToClassCommand,BaseRespo
 builder.Services.AddScoped<IRequestHandler<DeleteStudySlotCommand,BaseResponse<bool>>, DeleteStudySlotHandler>();
 
 builder.Services.AddScoped<IRequestHandler<AssignLecturerCommand, BaseResponse<ClassDto>>, AssignLecturerHandler>();
+builder.Services.AddScoped<IRequestHandler<UserDetailQuery, BaseResponse<UserDto>>, UserDetailHandler>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 

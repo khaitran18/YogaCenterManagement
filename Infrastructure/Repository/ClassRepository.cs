@@ -20,7 +20,7 @@ namespace Infrastructure.Repository
             _mapper = mapper;
         }
 
-        public async Task<ClassModel> CreateClassSchedule(string name, double price, int capacity, DateTime startDate, DateTime endDate, List<int> dateIds)
+        public async Task<ClassModel> CreateClassSchedule(string name, double price, int capacity,string description,string image, DateTime startDate, DateTime endDate, List<int> dateIds)
         {
             Class newClass = new Class();
             try
@@ -30,6 +30,8 @@ namespace Infrastructure.Repository
                     ClassName = name,
                     Price = price,
                     ClassCapacity = capacity,
+                    Description = description,
+                    Image = image,
                     StartDate = startDate,
                     EndDate = endDate,
                 };
@@ -41,7 +43,7 @@ namespace Infrastructure.Repository
                     throw new Exception("Failed to retrieve the newly created class.");
                 }
                 //return class with empty if no day is selected 
-                if (dateIds.Count() == 0)
+                if (dateIds.Count() == 0 || startDate == null)
                 {
                     return _mapper.Map<ClassModel>(newClassWithEmptySchedules);
                 }
@@ -63,7 +65,13 @@ namespace Infrastructure.Repository
                 }
                 await _context.SaveChangesAsync();
                 var newClassWithSchedules = _context.Classes.Single(c => c.ClassId == newClassWithEmptySchedules.ClassId);
-                return _mapper.Map<ClassModel>(newClassWithSchedules);
+                var entityClass = await _context.Classes
+                    .Include(c => c.Schedules)
+                        .ThenInclude(s => s.Slot)
+                    .Include(s => s.Lecturer)
+                    .Include(c => c.Students)
+                    .FirstOrDefaultAsync(c => c.ClassId == newClassWithEmptySchedules.ClassId);
+                return _mapper.Map<ClassModel>(entityClass);
             }
             catch (Exception ex)
             {
@@ -166,7 +174,7 @@ namespace Infrastructure.Repository
             // Search
             if (!string.IsNullOrEmpty(searchKeyword))
             {
-                query = query.Where(c => c.ClassName.Contains(searchKeyword));
+                query = query.Where(c => c.ClassName.ToLower().Contains(searchKeyword.ToLower()));
             }
 
             // Starting from date filter
@@ -185,7 +193,7 @@ namespace Infrastructure.Repository
             // Class capacity filter
             if (!string.IsNullOrEmpty(classCapacity))
             {
-                if (classCapacity == "<15")
+                if (classCapacity == "lt15")
                 {
                     query = query.Where(c => c.ClassCapacity < 15);
                 }
@@ -193,7 +201,7 @@ namespace Infrastructure.Repository
                 {
                     query = query.Where(c => c.ClassCapacity >= 15 && c.ClassCapacity <= 25);
                 }
-                else if (classCapacity == ">25")
+                else if (classCapacity == "gt25")
                 {
                     query = query.Where(c => c.ClassCapacity > 25);
                 }

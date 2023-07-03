@@ -47,7 +47,7 @@ namespace Api.Controllers
         [ProducesDefaultResponseType(typeof(ClassDto))]
         public async Task<IActionResult> CreateClass(
                 [FromHeader] string? Authorization
-                , [FromBody] CreateClassCommand command)
+                , [FromForm] CreateClassCommand command)
         {
             command.token = Authorization;
 

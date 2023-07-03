@@ -1,0 +1,225 @@
+﻿@using View.Models.Response;
+@model View.Models.PaginatedResult<ClassDto>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Img Section  -->
+<div class="yg-img-section">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 animate-box" data-animate-effect="fadeInUp"> <img src="images/about.jpg" class="img-fluid" alt=""> </div>
+    </div>
+</div>
+
+<!-- Classes Section -->
+<div class="container yg-classes-section">
+    <div class="row">
+        <!-- Filter Section -->
+        <div class="col-md-3 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Filter</h5>
+                    <!-- Search -->
+                    <form method="get" class="search-form rs-select2--dark" asp-controller="Class" asp-action="Index">
+                        <div class="input-group">
+                            <input class="au-input" type="text" name="searchKeyword" placeholder="Search by Class Name" />
+                            @*<button class="au-btn--submit" type="submit">
+                                <i class="zmdi zmdi-search"></i>
+                            </button>*@
+                        </div>
+                    </form>
+
+                    <!-- Sort by -->
+                    <div class="rs-select2--light rs-select2--md form-group filter-item">
+                        <select class="js-select2 filter-select" id="sortBySelect">
+                            <option value="">Sort by</option>
+                            <option value="classname">Name (A-Z)</option>
+                            <option value="classname_desc">Name (Z-A)</option>
+                            <option value="price">Price (Low to High)</option>
+                            <option value="price_desc">Price (High to Low)</option>
+                        </select>
+                        <div class="dropDownSelect2"></div>
+                    </div>
+
+                    <!-- Filter by startingFromDate -->
+                    <div class="rs-select2--light rs-select2--md form-group filter-item">
+                        <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control au-input" id="startingFromDateInput" placeholder="Starting From" />
+                    </div>
+
+                    <!-- Filter by durationMonths -->
+                    <div class="rs-select2--light rs-select2--md form-group filter-item">
+                        <input type="number" class="form-control au-input" id="durationMonthsInput" placeholder="Durations" />
+                    </div>
+
+                    <!-- Filter by classCapacity -->
+                    <div class="rs-select2--light rs-select2--md form-group filter-item">
+                        <select class="js-select2 filter-select" id="classCapacitySelect">
+                            <option value="">Class Capacity</option>
+                            <option value="lt15">&lt;15</option>
+                            <option value="15-25">15-25</option>
+                            <option value="gt25">&gt;25</option>
+                        </select>
+                        <div class="dropDownSelect2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Filter Section -->
+        <!-- Classes List Section -->
+        <div class="col-md-9 col-sm-12">
+            <h3 class="yg-details-title animate-box" data-animate-effect="fadeInUp">OUR CLASSES</h3>
+            <div></div>
+            <div class="row">
+                @foreach (var classItem in Model.Items)
+                {
+                    <div class="col-md-6 col-sm-12">
+                        <div class="yg-classes-wrap">
+                            <a href="@Url.Action("Details", "Class", new { id = classItem.ClassId })">
+                                <img src="@classItem.Image" class="img-fluid" alt="">
+                            </a>
+                            <div class="yg-classes-bottom-content">
+                                <div class="yg-classes-title">
+                                    <h2><a href="@Url.Action("Details", "Class", new { id = classItem.ClassId })">@classItem.ClassName</a></h2>
+                                </div>
+                                <p>
+                                    @Html.Raw(classItem.Description!.Length > 100 ? classItem.Description.Substring(0, 100) : classItem.Description)
+                                    <a href="@Url.Action("Details", "Class", new { id = classItem.ClassId })" class="yg-more">
+                                        <span class="ti-line-dotted"></span> ReadMore
+                                    </a>
+                                </p>
+                                <p class="yg-classes-date">
+                                    <span class="ti-time"></span> @classItem.StartDate.ToString("MM/dd/yyyy")
+                                    <span class="ti-medall-alt"></span> @classItem.Price.ToString("N0") VND
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- PAGING NAVIGATION -->
+            <nav class="text-center">
+                <ul class="pagination justify-content-center">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@(ViewBag.QueryString)&page=@(Model.Page - 1)">&lt;</a>
+                        </li>
+                    }
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.Page ? "active" : "")">
+                            <a class="page-link" href="@(ViewBag.QueryString)&page=@i">@i</a>
+                        </li>
+                    }
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@(ViewBag.QueryString)&page=@(Model.Page + 1)">&gt;</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+            <!-- END PAGING NAVIGATION -->
+        </div>
+        <!-- End Classes List Section -->
+    </div>
+</div>
+
+<!-- Testimonial Section -->
+<div class="yg-testimonial-section-first">
+    <div class="container yg-container-full">
+        <div class="row yg-gutter-0">
+            <div class="col-md-7 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
+                <div class=""> <img src="images/testimonial.jpg" class="img-fluid" alt=""> </div>
+            </div>
+            <div class="col-md-5 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
+                <div class="yg-text-block yg-text-block-h700">
+                    <div class="yg-text-block-center yg-text-block-w60">
+                        <div class="yg-testimonial-section-first-title">"Great teacher, great environment, great energy. Awesome specials for new yogis."</div>
+                        <div class="yg-testimonial-section-first-subtitle">— Lee Buoy</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(document).ready(function () {
+        var searchKeywordParam = '@Context.Request.Query["searchKeyword"]';
+        var sortByParam = '@Context.Request.Query["sortBy"]';
+        var startingFromDateParam = '@Context.Request.Query["startingFromDate"]';
+        var durationMonthsParam = '@Context.Request.Query["durationMonths"]';
+        var classCapacityParam = '@Context.Request.Query["classCapacity"]';
+
+        if (sortByParam) {
+            $('#sortBySelect').val(sortByParam).trigger('change');
+        }
+
+        if (startingFromDateParam) {
+            $('#startingFromDateInput').val(startingFromDateParam);
+        }
+
+        if (durationMonthsParam) {
+            $('#durationMonthsInput').val(durationMonthsParam);
+        }
+
+        if (classCapacityParam) {
+            $('#classCapacitySelect').val(classCapacityParam).trigger('change');
+        }
+
+        if (searchKeywordParam) {
+            $('[name="searchKeyword"]').val(searchKeywordParam);
+        }
+
+        $('#sortBySelect, #startingFromDateInput, #durationMonthsInput, #classCapacitySelect').change(function () {
+            applyFilters();
+        });
+
+        function applyFilters() {
+            var sortBy = $('#sortBySelect').val();
+            var startingFromDate = $('#startingFromDateInput').val();
+            var durationMonths = $('#durationMonthsInput').val();
+            var classCapacity = $('#classCapacitySelect').val();
+            var searchKeyword = $('[name="searchKeyword"]').val();
+
+            var url = '@Url.Action("Index", "Class")';
+
+            var params = [];
+            if (sortBy) {
+                params.push('sortBy=' + sortBy);
+            }
+            if (startingFromDate) {
+                params.push('startingFromDate=' + startingFromDate);
+            }
+            if (durationMonths) {
+                params.push('durationMonths=' + durationMonths);
+            }
+            if (classCapacity) {
+                params.push('classCapacity=' + classCapacity);
+            }
+            if (searchKeyword) {
+                params.push('searchKeyword=' + encodeURIComponent(searchKeyword));
+            }
+
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+
+            window.location.href = url;
+        }
+
+        var scrollPosition = localStorage.getItem('scrollPosition');
+        if (scrollPosition) {
+            $(window).scrollTop(scrollPosition);
+        }
+
+        $(window).on('beforeunload', function () {
+            localStorage.setItem('scrollPosition', $(window).scrollTop());
+        });
+    });
+</script>
+}

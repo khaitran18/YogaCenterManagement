@@ -39,6 +39,26 @@ namespace Api.Controllers
             if (!response.Error) return Ok(response);
             else
             {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpPost("signup/{role}")]
+        public async Task<IActionResult> SignupRole([FromBody] SignUpCommand command
+            , [FromRoute] string role
+            , [FromHeader] string Authorization)
+        {
+            command.Role = role;
+            command.Token = Authorization;
+            var response = await _mediator.Send(command);
+            if (!response.Error) return Ok(response);
+            else
+            {
                 var ErrorResponse = new BaseResponse<Exception> 
                 { 
                     Exception = response.Exception,

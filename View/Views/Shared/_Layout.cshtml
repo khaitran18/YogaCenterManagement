@@ -44,13 +44,13 @@
             <div class="yg-nav-overlay-menu-wrapper">
                 <div class="yg-nav-overlay-menu-wrapper-inner">
                     <ul class="yg-nav-overlay-main-nav">
-                        <li><a href="index.html">Home</a></li>
+                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                         @if (Context.Request.Cookies["AuthToken"] != null)
                         {
                             <li><a asp-controller="User" asp-action="Details">Your Profile</a></li>
                         }
                         <li><a href="about.html">About Us</a></li>
-                        <li><a class="active" href="classes.html">Classes</a></li>
+                        <li><a class="active" asp-controller="Class" asp-action="Index">Classes</a></li>
                         <li><a href="schedule.html">Schedule</a></li>
                         <li><a href="pricing.html">Pricing</a></li>
                         <li><a href="gallery.html">Gallery</a></li>
@@ -94,7 +94,7 @@
                     <div class="col-md-8 col-sm-8">
                         <ul class="yg-footer-list">
                             <li><a href="about.html">About Us</a></li>
-                            <li><a href="classes.html">Classes</a></li>
+                            <li><a asp-controller="Class" asp-action="Index">Classes</a></li>
                             <li><a href="schedule.html">Schedule</a></li>
                             <li><a href="pricing.html">Pricing</a></li>
                             <li><a href="blog.html">Blog</a></li>
