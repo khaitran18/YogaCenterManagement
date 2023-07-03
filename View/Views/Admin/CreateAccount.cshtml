@@ -1,0 +1,102 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <strong>Basic Form</strong> Elements
+            </div>
+            <div class="card-body card-block">
+                <form asp-action="CreateAccount" asp-controller="Auth" method="post" class="form-horizontal" id="create">
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label for="text-input" class=" form-control-label">Username</label>
+                        </div>
+                        <div class="col-12 col-md-9">
+                            <input type="text" id="username" name="username" placeholder="Text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label for="password-input" class=" form-control-label">Password</label>
+                        </div>
+                        <div class="col-12 col-md-9">
+                            <input type="password" id="password-input" name="password-input" placeholder="Password" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label for="email-input" class=" form-control-label">Email Input</label>
+                        </div>
+                        <div class="col-12 col-md-9">
+                            <input type="email" id="email-input" name="email-input" placeholder="Enter Email" class="form-control">
+                            <small class="help-block form-text">Please enter your email</small>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label for="text-input" class=" form-control-label">Full name</label>
+                        </div>
+                        <div class="col-12 col-md-9">
+                            <input type="text" id="Fullname" name="Fullname" placeholder="Text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label for="text-input" class=" form-control-label">Address</label>
+                        </div>
+                        <div class="col-12 col-md-9">
+                            <input type="text" id="Address" name="Address" placeholder="Text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label for="text-input" class=" form-control-label">Phone</label>
+                        </div>
+                        <div class="col-12 col-md-9">
+                            <input type="text" id="Phone" name="Phone" placeholder="Text" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label class=" form-control-label">Radios</label>
+                        </div>
+                        <div class="col col-md-9">
+                            <div class="form-check">
+                                <div class="radio">
+                                    <label for="radio1" class="form-check-label ">
+                                        <input type="radio" id="radio1" name="radios" value="option1" class="form-check-input">Option 1
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label for="radio2" class="form-check-label ">
+                                        <input type="radio" id="radio2" name="radios" value="option2" class="form-check-input">Option 2
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label for="radio3" class="form-check-label ">
+                                        <input type="radio" id="radio3" name="radios" value="option3" class="form-check-input">Option 3
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer" >
+                <button type="submit" form="create" class="btn btn-primary btn-sm">
+                    <i class="fa fa-dot-circle-o"></i> Submit
+                </button>
+                <button type="reset" form="create" class="btn btn-danger btn-sm">
+                    <i class="fa fa-ban"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>

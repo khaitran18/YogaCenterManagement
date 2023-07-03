@@ -107,7 +107,7 @@ namespace Infrastructure.Repository
             try
             {
                 var existStudySlot = await _context.StudySlots.FirstOrDefaultAsync(ss => ss.SlotId == studySlotId);
-                if(existStudySlot != null)
+                if (existStudySlot != null)
                 {
                     _context.StudySlots.Remove(existStudySlot);
                     await _context.SaveChangesAsync();
@@ -131,9 +131,37 @@ namespace Infrastructure.Repository
             try
             {
                 var studySlotData = _mapper.Map<StudySlot>(studySlot);
-                _context.StudySlots.Update(studySlotData);
-                await _context.SaveChangesAsync();
-                check = true;
+                var existingStudySlot = await _context.StudySlots
+                                                                .Include(ss => ss.Days)
+                                                                .FirstOrDefaultAsync(ss => ss.SlotId == studySlotData.SlotId);
+                if (existingStudySlot != null)
+                {
+                    existingStudySlot.StartTime = studySlotData.StartTime;
+                    existingStudySlot.EndTime = studySlotData.EndTime;
+
+                    // Remove existing days not present in the new collection
+                    foreach (var existingDay in existingStudySlot.Days.ToList())
+                    {
+                        if (!studySlotData.Days.Any(newDay => newDay.DayId == existingDay.DayId))
+                        {
+                            existingStudySlot.Days.Remove(existingDay);
+                        }
+                    }
+
+                    // Add existing days to the collection based on DayId
+                    foreach (var newDay in studySlotData.Days)
+                    {
+                        var existingDay = await _context.DateOfWeeks.FirstOrDefaultAsync(d => d.DayId == newDay.DayId);
+                        if (existingDay != null)
+                        {
+                            existingStudySlot.Days.Add(existingDay);
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    check = true;
+                }
             }
             catch (Exception)
             {
@@ -192,7 +220,7 @@ namespace Infrastructure.Repository
         public async Task<IEnumerable<AvailableDateModel>> GetAvailableDatesBySlotId(int slotId)
         {
             var availableDateModels = new List<AvailableDateModel>()
-;            try
+; try
             {
                 var availableDates = await _context.AvailableDates.Where(ad => ad.SlotId == slotId).ToListAsync();
                 availableDateModels = _mapper.Map<List<AvailableDateModel>>(availableDates);

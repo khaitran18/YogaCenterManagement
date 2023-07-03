@@ -51,9 +51,11 @@ namespace Infrastructure.Repository
 
         }
 
-        public async Task<UserModel> Create(string userName, string password, string phone, string fullName, string address, string email)
+        public async Task<UserModel> Create(string userName, string password, string phone, string fullName, string address, string email, string role)
         {
             User user = new User();
+            int roleId = _context.Roles.FirstOrDefault(r => r.RoleName == role).RoleId;
+            if (roleId == -1) throw new Exception("Role not found");
             try
             {
                 Guid uid = Guid.NewGuid();
@@ -66,7 +68,7 @@ namespace Infrastructure.Repository
                     Address = address,
                     Phone = phone,
                     Email = email,
-                    RoleId = 1,
+                    RoleId = roleId,
                     VerificationToken = uidString
                 };
                 await _context.Users.AddAsync(user);
@@ -343,6 +345,25 @@ namespace Infrastructure.Repository
             var feedbackModels = _mapper.Map<List<FeedbackModel>>(feedbacks);
 
             return (feedbackModels, totalCount);
+        }
+
+        public async Task<UserModel> GetUserDetail(int userId)
+        {
+            UserModel user = new UserModel();
+            try
+            {
+                User u = _context.Users.FirstOrDefault(u => u.Uid == userId);
+                if (u == null)
+                {
+                    throw new Exception("User not found");
+                }
+                user = _mapper.Map<UserModel>(u);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return await Task.FromResult(user);
         }
     }
 }

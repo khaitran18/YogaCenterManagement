@@ -6,6 +6,7 @@ using Application.Service;
 using AutoMapper;
 using Domain.Model;
 using MediatR;
+using System.Security.Claims;
 
 namespace Application.Command.Handler
 {
@@ -14,25 +15,54 @@ namespace Application.Command.Handler
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMailService _mailService;
         private readonly IMapper _mapper;
+        private readonly ITokenService _tokenService;
 
-        public SignUpHandler(IUnitOfWork unitOfWork, IMailService mailService, IMapper mapper)
+        public SignUpHandler(IUnitOfWork unitOfWork, IMailService mailService, IMapper mapper, ITokenService tokenService)
         {
             _unitOfWork = unitOfWork;
             _mailService = mailService;
             _mapper = mapper;
+            _tokenService = tokenService;
         }
 
         public async Task<BaseResponse<UserDto>> Handle(SignUpCommand request, CancellationToken cancellationToken)
         {
             BaseResponse<UserDto> response = new BaseResponse<UserDto>();
+            UserModel u = null;
             try
             {
                 //check if username exist
                 if (!await _unitOfWork.UserRepository.ExistUserName(request.UserName))
                 {
-                    //signup for the account
-                    UserModel u = await _unitOfWork.UserRepository.Create(request.UserName, request.Password, request.Phone, request.FullName, request.Address, request.Email);
-
+                    // Check token to add role to the account
+                    if (request.Token != null)
+                    {
+                        var role = _tokenService.ValidateToken(request.Token)?.FindFirst(ClaimTypes.Role)?.Value;
+                        if (role.Equals("Staff"))
+                        {
+                            if ((!request.Role.Equals("Lecturer", StringComparison.OrdinalIgnoreCase)) || (!request.Role.Equals("User", StringComparison.OrdinalIgnoreCase)))
+                            {
+                                response.Error = true;
+                                response.Exception = new UnauthorizedAccessException();
+                                response.Message = "Unauthorized";
+                            }
+                            else u = await _unitOfWork.UserRepository.Create(request.UserName, request.Password, request.Phone, request.FullName, request.Address, request.Email, request.Role);
+                        }
+                        if (role.Equals("Admin"))
+                        {
+                            if (!request.Role.Equals("Staff", StringComparison.OrdinalIgnoreCase))
+                            {
+                                response.Error = true;
+                                response.Exception = new UnauthorizedAccessException();
+                                response.Message = "Unauthorized";
+                            }
+                            else u = await _unitOfWork.UserRepository.Create(request.UserName, request.Password, request.Phone, request.FullName, request.Address, request.Email, request.Role);
+                        }
+                    }
+                    else
+                    {
+                        u = await _unitOfWork.UserRepository.Create(request.UserName, request.Password, request.Phone, request.FullName, request.Address, request.Email, "User");
+                    }
                     //send email verification
                     if (u != null)
                     {
@@ -41,7 +71,7 @@ namespace Application.Command.Handler
                         bool c = await _mailService.SendAsync(
     new MailDataModel
     {
-        To = new List<string> { u.Email},
+        To = new List<string> { u.Email },
         Subject = "Yoga Guru",
         Body = $@"
                               <h2 style=""color: #0c7cd5; font-family: Arial, sans-serif; font-size: 24px; margin-bottom: 20px;"">Yoga Guru</h2>

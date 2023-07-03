@@ -13,7 +13,7 @@ namespace Domain.Interface
         Task<int> CheckAccountAsync(string username, string password);
         Task<(int userId, string UserName, string role)> GetAccountDetailsByIdAsync(int id);
         Task<bool> ExistUserName(string userName);
-        Task<UserModel> Create(string userName, string password, string phone, string fullName, string address, string email);
+        Task<UserModel> Create(string userName, string password, string phone, string fullName, string address, string email, string role);
         Task<UserModel> EditProfile(UserModel user);
         Task<UserModel> EditUser(UserModel user);
         public Task<(List<UserModel>, int)> GetUsers(string? searchKeyword, int? roleId, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isAdmin);
@@ -23,5 +23,6 @@ namespace Domain.Interface
         Task<bool> IsUserLecturer(int id);
         Task<bool> IsUserAdmin(int id);
         Task<(List<FeedbackModel>, int)> GetFeedbacks(int id, bool isLecturer, string? sortBy, int page, int pageSize);
+        Task<UserModel> GetUserDetail(int userId);
     }
 }

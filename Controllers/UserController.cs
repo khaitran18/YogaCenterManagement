@@ -149,5 +149,26 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(errorResponse);
             }
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("profile")]
+        [ProducesDefaultResponseType(typeof(UserDto))]
+        public async Task<IActionResult> EditProfile(
+            [FromHeader] string? Authorization)
+        {
+            UserDetailQuery query = new UserDetailQuery { Token = Authorization };
+            var response = await _mediator.Send(query);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var errorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(errorResponse);
+            }
+        }
     }
 }
