@@ -14,7 +14,7 @@ namespace Infrastructure.Data
         {
         }
 
-        public YGCContext(DbContextOptions<YGCContext> options,IConfiguration configuration )
+        public YGCContext(DbContextOptions<YGCContext> options, IConfiguration configuration)
             : base(options)
         {
             _configuration = configuration;
@@ -45,7 +45,7 @@ namespace Infrastructure.Data
             modelBuilder.Entity<AvailableDate>(entity =>
             {
                 entity.HasKey(e => new { e.LecturerId, e.SlotId })
-                    .HasName("PK__Availabl__7DA07AAACB79894C");
+                    .HasName("PK__Availabl__7DA07AAA1E0D0C56");
 
                 entity.ToTable("AvailableDate");
 
@@ -72,7 +72,7 @@ namespace Infrastructure.Data
             modelBuilder.Entity<ChangeClassRequest>(entity =>
             {
                 entity.HasKey(e => e.RequestId)
-                    .HasName("PK__ChangeCl__18D3B90FDC679E9F");
+                    .HasName("PK__ChangeCl__18D3B90F752F9812");
 
                 entity.Property(e => e.RequestId).HasColumnName("request_id");
 
@@ -116,7 +116,15 @@ namespace Infrastructure.Data
                     .HasMaxLength(255)
                     .HasColumnName("class_name");
 
+                entity.Property(e => e.Description)
+                    .HasMaxLength(255)
+                    .HasColumnName("description");
+
                 entity.Property(e => e.EndDate).HasColumnName("end_date");
+
+                entity.Property(e => e.Image)
+                    .HasMaxLength(255)
+                    .HasColumnName("image");
 
                 entity.Property(e => e.LecturerId).HasColumnName("lecturer_id");
 
@@ -195,7 +203,7 @@ namespace Infrastructure.Data
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Payments)
                     .HasForeignKey(d => d.ClassId)
-                    .HasConstraintName("FK__Payment__class_i__3F115E1A");
+                    .HasConstraintName("FK__Payment__class_i__00200768");
 
                 entity.HasOne(d => d.Student)
                     .WithMany(p => p.Payments)
@@ -222,7 +230,7 @@ namespace Infrastructure.Data
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Posts)
                     .HasForeignKey(d => d.ClassId)
-                    .HasConstraintName("FK__Post__class_id__41EDCAC5");
+                    .HasConstraintName("FK__Post__class_id__02084FDA");
             });
 
             modelBuilder.Entity<Role>(entity =>
@@ -268,7 +276,7 @@ namespace Infrastructure.Data
             modelBuilder.Entity<StudySlot>(entity =>
             {
                 entity.HasKey(e => e.SlotId)
-                    .HasName("PK__StudySlo__971A01BB6CD92A1C");
+                    .HasName("PK__StudySlo__971A01BB5195A96A");
 
                 entity.ToTable("StudySlot");
 
@@ -286,7 +294,7 @@ namespace Infrastructure.Data
                         r => r.HasOne<StudySlot>().WithMany().HasForeignKey("SlotId").HasConstraintName("FK__StudySlot__slot___00200768"),
                         j =>
                         {
-                            j.HasKey("SlotId", "DayId").HasName("PK__StudySlo__3FAF1710B9F5AE59");
+                            j.HasKey("SlotId", "DayId").HasName("PK__StudySlo__3FAF171022C50B7A");
 
                             j.ToTable("StudySlotDay");
 
@@ -357,7 +365,7 @@ namespace Infrastructure.Data
                         r => r.HasOne<User>().WithMany().HasForeignKey("StudentId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__Enrollmen__stude__36B12243"),
                         j =>
                         {
-                            j.HasKey("StudentId", "ClassId").HasName("PK__Enrollme__55EC41027C0B47FF");
+                            j.HasKey("StudentId", "ClassId").HasName("PK__Enrollme__55EC41028F9A5B4E");
 
                             j.ToTable("Enrollment");
 
