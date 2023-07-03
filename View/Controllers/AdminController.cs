@@ -23,12 +23,26 @@ namespace View.Controllers
             studySlotApiUrl = "https://localhost:7241/api/Class/slot";
             changeClassRequestsApiUrl = "https://localhost:7241/api/Class/changeclass";
         }
+
+        private string? GetAuthTokenFromCookie()
+        {
+            var authToken = Request.Cookies["AuthToken"];
+            return authToken;
+        }
+
+        private void AddAuthTokenToRequestHeaders()
+        {
+            var authToken = GetAuthTokenFromCookie();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+        }
+
         public IActionResult Index()
         {
             return View();
         }
         public async Task<IActionResult> Users(string? searchKeyword, int? roleId, bool? isDisabled, bool? isVerified, string? sortBy, int? page, int? pageSize)
         {
+            AddAuthTokenToRequestHeaders();
             var queryString = BuildQueryString(searchKeyword, roleId, isDisabled, isVerified, sortBy, page, pageSize);
             var queryStringWithoutPage = RemoveQueryStringParameter(queryString, "page");
             var url = apiUrl + queryString;
@@ -50,20 +64,13 @@ namespace View.Controllers
                 }
                 else
                 {
-                    var errorResponse = new BaseResponse<Exception>
-                    {
-                        Error = true,
-                        Message = baseResponse.Message,
-                        Exception = baseResponse.Exception
-                    };
-
-                    ViewBag.ErrorResponse = errorResponse;
+                    ViewBag.ErrorMessage = baseResponse.Message;
                     return View();
                 }
             }
             else
             {
-                return View();
+                return RedirectToAction("Index", "Home");
             }
         }
         [HttpGet]
@@ -269,6 +276,7 @@ namespace View.Controllers
         public async Task<IActionResult> DisableUser(int userId)
 
         {
+            AddAuthTokenToRequestHeaders();
             var disableUserDto = new DisableUserDto
             {
                 Reason = "You have been banned!"
@@ -306,7 +314,6 @@ namespace View.Controllers
                 return View();
             }
         }
-
         public async Task<IActionResult> UpdateApprovalStatus(int requestId, short isApproved)
         {
             var requestData = new
@@ -344,6 +351,43 @@ namespace View.Controllers
             {
                 TempData["Error"] = "Error occur while approve/deny request";
                 return RedirectToAction(nameof(ChangeClassRequests));
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> EditUser(UserDto user)
+        {
+            AddAuthTokenToRequestHeaders();
+
+            var jsonCommand = JsonSerializer.Serialize(user);
+            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync(apiUrl, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<UserDto>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    return RedirectToAction("Users");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "An error occurred while updating the user.";
+                return View();
             }
         }
 

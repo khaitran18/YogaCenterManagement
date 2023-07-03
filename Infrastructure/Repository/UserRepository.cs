@@ -115,8 +115,8 @@ namespace Infrastructure.Repository
                     existingUser.FullName = user.FullName;
                     existingUser.Address = user.Address;
                     existingUser.Phone = user.Phone;
+                    existingUser.Email = user.Email;
                     existingUser.UserName = user.UserName;
-                    existingUser.Password = PasswordHasher.Hash(user.Password);
                     existingUser.RoleId = user.RoleId;
 
                     return _mapper.Map<UserModel>(existingUser);

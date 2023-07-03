@@ -36,10 +36,10 @@ namespace Application.Command.Handler
                 {
                     Uid = request.Uid,
                     UserName = request.UserName,
-                    Password = request.Password,
                     FullName = request.FullName,
                     Address = request.Address,
                     Phone = request.Phone,
+                    Email = request.Email,
                     RoleId = request.RoleId
                 };
 

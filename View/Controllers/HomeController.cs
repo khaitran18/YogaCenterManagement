@@ -19,12 +19,12 @@ namespace View.Controllers
 
         public IActionResult Index()
         {
-            string authToken = Request.Cookies["AuthToken"];
-            _httpClient.DefaultRequestHeaders.Add("Authorization", authToken);
+            string? authToken = Request.Cookies["AuthToken"];
 
             if (authToken != null)
             {
-                string authorizationHeader = _httpClient.DefaultRequestHeaders.Authorization.ToString();
+                _httpClient.DefaultRequestHeaders.Add("Authorization", authToken);
+                string authorizationHeader = _httpClient.DefaultRequestHeaders.Authorization!.ToString();
                 Console.WriteLine("Token in header:"+authorizationHeader);
             }
             return View();

@@ -102,7 +102,7 @@
                             <td>@Enum.GetName(typeof(Role), user.RoleId!)</td>
                             <td>
                                 <div class="table-data-feature">
-                                    <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
+                                    <button class="item edit-user-btn" data-user='@Json.Serialize(user)' data-toggle="tooltip" data-placement="top" title="Edit">
                                         <i class="zmdi zmdi-edit"></i>
                                     </button>
                                     <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
@@ -152,6 +152,63 @@
             </ul>
         </nav>
         <!-- END PAGING NAVIGATION -->
+    </div>
+</div>
+
+<!-- The Edit Modal -->
+<div class="modal fade overflow-auto" id="editModal" data-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Edit User</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form asp-controller="Admin" asp-action="EditUser" method="post" id="edit-user-form">
+                    <input type="hidden" name="uid" id="edit-uid" />
+                    <div class="form-group">
+                        <label for="edit-username">Username</label>
+                        <input type="text" class="form-control" id="edit-username" name="username" />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-fullname">Full Name</label>
+                        <input type="text" class="form-control" id="edit-fullname" name="fullname" />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-address">Address</label>
+                        <input type="text" class="form-control" id="edit-address" name="address" />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">Email</label>
+                        <input type="text" class="form-control" id="edit-email" name="email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-phone">Phone</label>
+                        <input type="text" class="form-control" id="edit-phone" name="phone" />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-role">Role</label>
+                        <select class="form-control" id="edit-role" name="roleId">
+                            @foreach (var role in Enum.GetValues(typeof(Role)))
+                            {
+                                <option value="@((int)role)">@role</option>
+                            }
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="edit-user-form">Save Changes</button>
+            </div>
+
+        </div>
     </div>
 </div>
 
@@ -213,27 +270,66 @@
         }
 
         $('.disable-user').click(function () {
-                var userId = $(this).data('user-id');
-                var userName = $(this).closest('tr').find('td:first-child').text();
-                var isDisabled = $(this).closest('tr').find('.status--denied').length > 0;
-                var confirmationMessage = 'Do you want to disable the user ' + userName + '?';
+            var userId = $(this).data('user-id');
+            var userName = $(this).closest('tr').find('td:first-child').text();
+            var isDisabled = $(this).closest('tr').find('.status--denied').length > 0;
+            var confirmationMessage = 'Do you want to disable the user ' + userName + '?';
 
-                if (confirm(confirmationMessage)) {
-                    var form = $('<form>').attr({
-                        method: 'post',
-                        action: '/Admin/DisableUser',
-                        style: 'display: none;'
-                    });
+            if (confirm(confirmationMessage)) {
+                var form = $('<form>').attr({
+                    method: 'post',
+                    action: '/Admin/DisableUser',
+                    style: 'display: none;'
+                });
 
-                    $('<input>').attr({
-                        type: 'hidden',
-                        name: 'userId',
-                        value: userId
-                    }).appendTo(form);
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'userId',
+                    value: userId
+                }).appendTo(form);
 
-                    form.appendTo('body').submit();
+                form.appendTo('body').submit();
+            }
+        });
+
+        function openEditModal(user) {
+            console.log(user);
+            $('#edit-uid').val(user.uid);
+            $('#edit-username').val(user.userName);
+            $('#edit-fullname').val(user.fullName);
+            $('#edit-address').val(user.address);
+            $('#edit-email').val(user.email);
+            $('#edit-phone').val(user.phone);
+            $('#edit-role').val(user.roleId);
+            $('#editModal').modal('show');
+        }
+
+        function submitEditForm() {
+            var form = $('#edit-user-form');
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function (response) {
+                    $('#editModal').modal('hide');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
                 }
             });
+        }
+
+        $(document).on('click', '.edit-user-btn', function () {
+            var user = $(this).data('user');
+            openEditModal(user);
+        });
+
+        // Event listener for the form submission
+        $('#edit-user-form').on('submit', function (event) {
+            event.preventDefault();
+            submitEditForm();
+        });
     });
 </script>
 }
