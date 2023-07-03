@@ -492,9 +492,14 @@ namespace Infrastructure.Repository
             var classModel = new ClassModel();
             try
             {
-                var @class = await _context.Classes.FirstOrDefaultAsync(c => c.ClassStatus == 2 
-                                                                                                && c.ClassId == classId 
-                                                                                                && c.Students.Any(s => s.Uid == studentId));
+                var @class = await _context.Classes
+                    .Include(c => c.Schedules)
+                        .ThenInclude(sc => sc.Slot)
+                            .ThenInclude(sl => sl.Days)
+                    .Include(c => c.Lecturer)
+                    .FirstOrDefaultAsync(c => c.ClassStatus == 2 
+                                                                 && c.ClassId == classId 
+                                                                 && c.Students.Any(s => s.Uid == studentId));
                 classModel = _mapper.Map<ClassModel>(@class);
             }
             catch (Exception)
@@ -503,6 +508,29 @@ namespace Infrastructure.Repository
                 throw;
             }
             return classModel;
+        }
+        #endregion
+
+        #region Update class status with today time
+        public  async Task UpdateClassStatus()
+        {
+            DateTime today = DateTime.Today;
+            var classes = await _context.Classes.ToListAsync();
+
+            foreach (var @class in classes)
+            {
+                if (today >= @class.StartDate && today <= @class.EndDate)
+                {
+                    @class.ClassStatus = 2;
+                }
+                else if (today > @class.EndDate)
+                {
+                    @class.ClassStatus = 3;
+                }
+            }
+
+            // Save the changes to the database
+            await _context.SaveChangesAsync();
         }
         #endregion
     }

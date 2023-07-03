@@ -20,5 +20,6 @@ namespace Domain.Interface
         public Task<bool> UpdateStudySlot(StudySlotModel studySlot);
         Task<bool> ExistSchedule(int scheduleId);
         Task<string> GetNotification(int scheduleId);
+        public Task<bool> ExistStudySlot(TimeSpan startTime, TimeSpan endTime, List<int> dateIds);
     }
 }

@@ -277,5 +277,17 @@ namespace Infrastructure.Repository
                 throw e;
             }
         }
+
+        #region Check if the same schedule exist
+        public Task<bool> ExistStudySlot(TimeSpan startTime, TimeSpan endTime, List<int> dateIds)
+        {
+            bool slotExists = _context.StudySlots.Any(s =>
+                s.StartTime == startTime &&
+                s.EndTime == endTime &&
+                s.Days.All(day => dateIds.Contains(day.DayId)));
+
+            return Task.FromResult(slotExists);
+        }
+        #endregion
     }
 }

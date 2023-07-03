@@ -273,11 +273,11 @@ namespace Api.Controllers
         }        
         
         [HttpGet("studyclass/{studentId}")]
-        public async Task<IActionResult> GetStudyingClass([FromRoute] int studentId)
+        public async Task<IActionResult> GetStudyingClass([FromRoute] int studentId, [FromQuery] int page, [FromQuery] int pageSize)
         {
             //command.token = Authorization;
 
-            var response = await _mediator.Send(new GetStudyingClassQuery { StudentId = studentId });
+            var response = await _mediator.Send(new GetStudyingClassQuery { StudentId = studentId , Page = page, PageSize = pageSize});
             if (!response.Error)
                 return Ok(response);
             else

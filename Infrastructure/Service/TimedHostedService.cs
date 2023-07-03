@@ -30,7 +30,7 @@ namespace Infrastructure.Service
             // When the timer should have no due-time, then do the work once now.
             await DoWork();
 
-            using PeriodicTimer timer = new(TimeSpan.FromSeconds(1));
+            using PeriodicTimer timer = new(TimeSpan.FromMinutes(1));
 
             try
             {
@@ -52,7 +52,7 @@ namespace Infrastructure.Service
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             try
             {
-                //var @class = await unitOfWork.ClassRepository.GetClassById(1);
+                //await unitOfWork.ClassRepository.UpdateClassStatus();
                 //_logger.LogInformation(@class.ClassName);
             }
             catch (Exception)
