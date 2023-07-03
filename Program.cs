@@ -24,6 +24,7 @@ using Application.Common;
 using Microsoft.OpenApi.Models;
 using Application.Common.Mapping;
 using static Infrastructure.Services.MailService;
+using Infrastructure.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,7 +95,8 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-
+builder.Services.AddScoped<TimedHostedService>();
+builder.Services.AddHostedService<TimedHostedService>();
 
 builder.Services.AddDbContext<YGCContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("YGC")
