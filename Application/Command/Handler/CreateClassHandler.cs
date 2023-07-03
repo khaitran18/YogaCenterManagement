@@ -1,8 +1,10 @@
 ﻿using Application.Common;
+using Application.Common.CloudStorage;
 using Application.Common.Dto;
 using Application.Common.Exceptions;
 using Application.Interfaces;
 using Application.Service;
+using AutoMapper;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -17,10 +19,14 @@ namespace Application.Command.Handler
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenService _tokenServices;
-        public CreateClassHandler(IUnitOfWork unitOfWork, ITokenService tokenServices)
+        private readonly IMapper _mapper;
+        private readonly ICloudStorageService _cloudStorageService;
+        public CreateClassHandler(IUnitOfWork unitOfWork, ITokenService tokenServices, IMapper mapper, ICloudStorageService cloudStorageService)
         {
             _unitOfWork = unitOfWork;
             _tokenServices = tokenServices;
+            _mapper = mapper;
+            _cloudStorageService = cloudStorageService;
         }
         public async Task<BaseResponse<ClassDto>> Handle(CreateClassCommand request, CancellationToken cancellationToken)
         {
@@ -32,6 +38,7 @@ namespace Application.Command.Handler
                 if (claims != null)
                 {
                     List<int> dateIds = new List<int>();
+                    string ImageUrl = "";
                     if(request.SelectedDayOfWeek != null)
                     {
                         foreach (string day in request.SelectedDayOfWeek.Split(','))
@@ -39,15 +46,13 @@ namespace Application.Command.Handler
                             dateIds.Add(int.Parse(day));
                         }
                     }
-                    var newClass = await _unitOfWork.ClassRepository.CreateClassSchedule(request.ClassName, request.Price, request.ClassCapacity, request.StartDate,request.EndDate,dateIds);
-                    response.Result = new ClassDto { 
-                        ClassId = newClass.ClassId, 
-                        ClassName = newClass.ClassName, 
-                        ClassCapacity = newClass.ClassCapacity,
-                        StartDate = newClass.StartDate,
-                        EndDate = newClass.EndDate,
-                        Price = newClass.Price
-                    };
+                    if(request.Image != null)
+                    {
+                        ImageUrl = await _cloudStorageService.UploadFileAsync(request.Image, "image/" + request.ClassName);
+                    }
+                    var newClass = await _unitOfWork.ClassRepository.CreateClassSchedule(request.ClassName, request.Price, request.ClassCapacity,request.Description,ImageUrl, request.StartDate,request.EndDate,dateIds);
+                    var classDto = _mapper.Map<ClassDto>(newClass);
+                    response.Result = classDto;
                     response.Message = newClass.Schedules != null ? "Schedules generated" : "No schedule yet";
                 }
                 else
