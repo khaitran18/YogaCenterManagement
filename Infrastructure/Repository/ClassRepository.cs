@@ -285,7 +285,6 @@ namespace Infrastructure.Repository
             }
             catch (Exception)
             {
-
                 throw new Exception("Error when create request change class");
             }
             return classModel;
@@ -303,7 +302,7 @@ namespace Infrastructure.Repository
             var classRequestModels = new List<ChangeClassRequestModel>();
             try
             {
-                var classRequests = await _context.ChangeClassRequests.ToListAsync();
+                var classRequests = await _context.ChangeClassRequests.Include(cr => cr.Class).Include(cr => cr.RequestClass).Include(cr => cr.User).ToListAsync();
                 classRequestModels = _mapper.Map<List<ChangeClassRequestModel>>(classRequests);
             }
             catch (Exception)

@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 using View.Models;
+using View.Models.Enum;
 using View.Models.Response;
 
 namespace View.Controllers
@@ -69,7 +70,7 @@ namespace View.Controllers
         public async Task<IActionResult> StudySlots()
         {
             var response = await _httpClient.GetAsync(studySlotApiUrl);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
@@ -98,7 +99,7 @@ namespace View.Controllers
                     ViewBag.ErrorResponse = errorResponse;
                     return View();
                 }
-               
+
             }
             else
             {
@@ -145,6 +146,60 @@ namespace View.Controllers
             }
         }
         [HttpPost]
+        public async Task<IActionResult> UpdateSlot(int slotId,TimeSpan start, TimeSpan end, List<int> days)
+        {
+            List<DayDto> dayDtos = days.Select(dayId => new DayDto
+            {
+                DayId = dayId,
+                Day = ((Days)dayId).ToString()
+            }).ToList();
+
+            var requestData = new
+            {
+                studySlot = new
+                {
+                    slotId = slotId,
+                    startTime = start.ToString(),
+                    endTime = end.ToString(),
+                    day = dayDtos
+                }
+            };
+
+            var jsonCommand = JsonSerializer.Serialize(requestData);
+            Console.WriteLine(jsonCommand);
+            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync(studySlotApiUrl, content);
+            Console.WriteLine(response);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<bool>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    TempData["Success"] = "Update Successfully";
+                    return RedirectToAction(nameof(StudySlots));
+                }
+                else
+                {
+                    TempData["Error"] = baseResponse.Message;
+                    return RedirectToAction(nameof(StudySlots));
+                }
+            }
+            else
+            {
+                TempData["Error"] = "Error update study slot";
+                return RedirectToAction(nameof(StudySlots));
+            }
+            //return RedirectToAction(nameof(StudySlots));
+        }
+
+        [HttpPost]
         public async Task<IActionResult> StudySlots(TimeSpan start, TimeSpan end, List<int> days)
         {
             var requestData = new
@@ -177,7 +232,7 @@ namespace View.Controllers
                 return RedirectToAction(nameof(StudySlots));
             }
             //Console.WriteLine(baseResponse);
-            
+
             return RedirectToAction(nameof(StudySlots));
         }
 
@@ -249,6 +304,46 @@ namespace View.Controllers
             {
                 ViewBag.ErrorMessage = "An error occurred while disabling the user.";
                 return View();
+            }
+        }
+
+        public async Task<IActionResult> UpdateApprovalStatus(int requestId, short isApproved)
+        {
+            var requestData = new
+            {
+                RequestId = requestId,
+                IsApproved = isApproved
+            };
+
+            var jsonCommand = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync(changeClassRequestsApiUrl, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<bool>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    TempData["Success"] = isApproved == 0 ? "Deny successfully" : "Approve successfully";
+                    return RedirectToAction(nameof(ChangeClassRequests));
+                }
+                else
+                {
+                    TempData["Error"] = baseResponse.Message;
+                    return RedirectToAction(nameof(ChangeClassRequests));
+                }
+            }
+            else
+            {
+                TempData["Error"] = "Error occur while approve/deny request";
+                return RedirectToAction(nameof(ChangeClassRequests));
             }
         }
 

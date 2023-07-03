@@ -1,66 +1,154 @@
 ﻿@model IEnumerable<View.Models.Response.ChangeClassRequestDto>
+@using Newtonsoft.Json
 
 @{
     ViewData["Title"] = "ChangeClassRequests";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+<partial name="_Notification" />
+<div class="table-responsive m-b-40" style="font-weight: 500">
+    @*<form asp-controller="Admin" asp-action="UpdateApprovalStatus" method="post" id="update-form">
+        <input type="hidden" id="requestId" name="requestId" />
+        <input type="hidden" id="isApproved" name="isApproved" />*@
 
-
-<div class="table-responsive m-b-40" style="font-weight:500">
-
-    <table class="table table-borderless table-data3">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.RequestId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.UserId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ClassId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Content)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.IsApproved)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.RequestClassId)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+        <table class="table table-borderless table-data3">
+            <thead>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RequestId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UserId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ClassId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Content)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IsApproved)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RequestClassId)
-                    </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                    </td>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RequestId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.User.Email)
+                    </th>
+                    <th>
+                        From class
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Content)
+                    </th>
+                    <th>
+                        To class
+                    </th>
+                    <th class="text-center">
+                        Status
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+
+                    @foreach (var item in Model)
+                    {
+                        <tr data-item="@JsonConvert.SerializeObject(item)">
+                            <!-- table row content -->
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RequestId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.User.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Class.ClassName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Content)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RequestClass.ClassName)
+                            </td>
+                            <td>
+                                @if (item.IsApproved == -1)
+                                {
+                                    <button class="btn btn-success accept-btn" data-value="1">Approve</button>
+                                    <button class="btn btn-danger deny-btn" data-value="0">Deny</button>
+                                }
+                                else if (item.IsApproved == 1)
+                                {
+                                    <div class="btn btn-success">Approved</div>
+                                }
+                                else if (item.IsApproved == 0)
+                                {
+                                    <div class="btn btn-danger">Denied</div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    @*</form>*@
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="info-modal-label" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="info-modal-label">Row Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Class Name:</strong> <span id="class-name"></span></p>
+                <p><strong>Request Class Name:</strong> <span id="request-class-name"></span></p>
+                <p><strong>User Email:</strong> <span id="user-email"></span></p>
+                <p><strong>User Name:</strong> <span id="user-name"></span></p>
+                <form asp-action="UpdateApprovalStatus" asp-controller="Admin" method="post" id="update-form">
+                    <input type="hidden" id="requestId" name="requestId" />
+                    <input type="hidden" id="isApproved" name="isApproved" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('.accept-btn, .deny-btn').click(function (e) {
+                e.preventDefault();
+                var $row = $(this).closest('tr');
+                var item = $row.data('item');
+               
+                var requestId = $(this).closest('tr').find('td:nth-child(1)').text().trim();
+                var className = $(this).closest('tr').find('td:nth-child(3)').text().trim();
+                var requestClassName = $(this).closest('tr').find('td:nth-child(5)').text().trim();
+                var userEmail = $(this).closest('tr').find('td:nth-child(2)').text().trim();
+                var isApproved = $(this).data('value');
+
+                var $modal = $('#info-modal');
+                var $modalFooter = $modal.find('.modal-footer');
+
+                $('#class-name').text(className);
+                $('#request-class-name').text(requestClassName);
+                $('#user-email').text(userEmail);
+                $('#user-name').text(item.User.UserName);
+                $('#requestId').val(requestId);
+                $('#isApproved').val(isApproved);
+
+                $modalFooter.empty();
+
+                if (isApproved === 1) {
+                    console.log('appr')
+                    $modalFooter.append('<button type="submit" class="btn btn-success" form="update-form">Approve</button>');
+                } else if (isApproved === 0) {
+                    console.log('deny')
+                    $modalFooter.append('<button type="submit" class="btn btn-danger" form="update-form">Deny</button>');
+                }
+
+                $('#info-modal').modal('show');
+
+            });
+        });
+    </script>
+
+
+
+}
+
