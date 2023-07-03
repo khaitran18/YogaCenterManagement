@@ -24,6 +24,9 @@ using Application.Common;
 using Microsoft.OpenApi.Models;
 using Application.Common.Mapping;
 using static Infrastructure.Services.MailService;
+
+using Infrastructure.Service;
+
 using Google.Apis.Auth.OAuth2;
 using FirebaseAdmin;
 using Application.Common.CloudStorage;
@@ -35,6 +38,7 @@ FirebaseApp.Create(new AppOptions()
 {
     Credential = credential,
 });
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,7 +111,8 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-
+builder.Services.AddScoped<TimedHostedService>();
+builder.Services.AddHostedService<TimedHostedService>();
 
 builder.Services.AddDbContext<YGCContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("YGC")
@@ -128,6 +133,8 @@ builder.Services.AddScoped<IRequestHandler<GetChangeClassRequestsQuery, BaseResp
 builder.Services.AddScoped<IRequestHandler<GetClassesQuery, BaseResponse<PaginatedResult<ClassDto>>>, GetClassesHandler>();
 builder.Services.AddScoped<IRequestHandler<GetStudySlotsQuery, BaseResponse<IEnumerable<StudySlotDto>>>, GetStudySlotsHandler>();
 builder.Services.AddScoped<IRequestHandler<GetChangeClassQuery, BaseResponse<IEnumerable<ClassDto>>>, GetChangeClassHandler>();
+builder.Services.AddScoped<IRequestHandler<GetStudyingClassQuery, BaseResponse<PaginatedResult<ClassDto>>>, GetStudyingClassHandler>();
+builder.Services.AddScoped<IRequestHandler<GetStudyingClassByClassIdQuery, BaseResponse<ClassDto>>, GetStudyingClassByClassIdHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateClassCommand,BaseResponse<ClassDto>>, CreateClassHandler>();
 builder.Services.AddScoped<IRequestHandler<EditClassCommand,BaseResponse<ClassDto>>, EditClassHandler>();

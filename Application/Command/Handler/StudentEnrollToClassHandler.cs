@@ -28,6 +28,7 @@ namespace Application.Command.Handler
             try
             {
                 var paymentModel = _mapper.Map<PaymentModel>(request.PaymentDto);
+                
                 var result = await _unitOfWork.ClassRepository.StudentEnrollToClass(paymentModel);
                 response.Result = _mapper.Map<PaymentDto>(result);
             }

@@ -21,6 +21,8 @@ namespace Domain.Interface
         public Task<(List<ClassModel>, int)> GetClasses(string? searchKeyword, string? sortBy, DateTime? startingFromDate, int? durationMonths, string? classCapacity, int page, int pageSize);
         public Task<PaymentModel> StudentEnrollToClass(PaymentModel paymentModel);
         public Task<ClassModel> EditClass(ClassModel model);
-        
+        public Task<(IEnumerable<ClassModel>, int)> GetStudingClass(int studentId, int page, int pageSize);
+        public Task<ClassModel> GetStudyingClassByClassId(int studentId, int classId);
+
     }
 }

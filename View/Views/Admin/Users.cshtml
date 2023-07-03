@@ -114,7 +114,7 @@
                                             <i class="zmdi zmdi-more"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <button class="dropdown-item disable-user" data-user-id="@user.Uid">
+                                            <button class="dropdown-item disable-user" data-user-id="@user.Uid" data-toggle="modal" data-target="#disableModal">
                                                 Disable User
                                             </button>
                                         </div>
@@ -212,7 +212,33 @@
         </div>
     </div>
 </div>
-
+<!-- Disable modal -->
+<div class="modal fade" id="disableModal" tabindex="-1" role="dialog" aria-labelledby="disableModalLabel" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="disableModalLabel">Disable User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="disable-user-form">
+                    <input type="hidden" id="disable-user-id" name="userId" />
+                    <div class="form-group">
+                        <label for="disable-reason">Reason</label>
+                        <input type="text" class="form-control" id="disable-reason" name="reason" required />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="disable-user-btn">Disable</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End disable modal -->
 @section Scripts{
 <script>
     $(document).ready(function () {
@@ -272,26 +298,37 @@
 
         $('.disable-user').click(function () {
             var userId = $(this).data('user-id');
-            var userName = $(this).closest('tr').find('td:first-child').text();
-            var isDisabled = $(this).closest('tr').find('.status--denied').length > 0;
-            var confirmationMessage = 'Do you want to disable the user ' + userName + '?';
-
-            if (confirm(confirmationMessage)) {
-                var form = $('<form>').attr({
-                    method: 'post',
-                    action: '/Admin/DisableUser',
-                    style: 'display: none;'
-                });
-
-                $('<input>').attr({
-                    type: 'hidden',
-                    name: 'userId',
-                    value: userId
-                }).appendTo(form);
-
-                form.appendTo('body').submit();
-            }
+            $('#disable-user-id').val(userId);
+            $('#disableModal').modal('show');
         });
+
+        $('#disable-user-btn').click(function () {
+            var userId = $('#disable-user-id').val();
+            var reason = $('#disable-reason').val();
+            disableUser(userId, reason);
+        });
+
+        function disableUser(userId, reason) {
+            var form = $('<form>').attr({
+                method: 'post',
+                action: '/Admin/DisableUser',
+                style: 'display: none;'
+        });
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'userId',
+                value: userId
+            }).appendTo(form);
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'reason',
+                value: reason
+            }).appendTo(form);
+
+            form.appendTo('body').submit();
+        }
 
         function openEditModal(user) {
             console.log(user);

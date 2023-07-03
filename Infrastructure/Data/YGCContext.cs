@@ -17,7 +17,7 @@ namespace Infrastructure.Data
         public YGCContext(DbContextOptions<YGCContext> options, IConfiguration configuration)
             : base(options)
         {
-            _configuration = configuration;
+                _configuration = configuration;
         }
 
         public virtual DbSet<AvailableDate> AvailableDates { get; set; } = null!;
@@ -116,9 +116,9 @@ namespace Infrastructure.Data
                     .HasMaxLength(255)
                     .HasColumnName("class_name");
 
-                entity.Property(e => e.Description)
-                    .HasMaxLength(255)
-                    .HasColumnName("description");
+                entity.Property(e => e.ClassStatus).HasColumnName("class_status");
+
+                entity.Property(e => e.Description).HasColumnName("description");
 
                 entity.Property(e => e.EndDate).HasColumnName("end_date");
 

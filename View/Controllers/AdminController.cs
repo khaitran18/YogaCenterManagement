@@ -305,13 +305,13 @@ namespace View.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DisableUser(int userId)
+        public async Task<IActionResult> DisableUser(int userId, string reason)
 
         {
             AddAuthTokenToRequestHeaders();
             var disableUserDto = new DisableUserDto
             {
-                Reason = "You have been banned!"
+                Reason = reason
             };
 
             var url = apiUrl + $"/disable/{userId}";
