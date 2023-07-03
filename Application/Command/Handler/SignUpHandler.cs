@@ -40,7 +40,7 @@ namespace Application.Command.Handler
                         var role = _tokenService.ValidateToken(request.Token)?.FindFirst(ClaimTypes.Role)?.Value;
                         if (role.Equals("Staff"))
                         {
-                            if ((!request.Role.Equals("Lecturer", StringComparison.OrdinalIgnoreCase)) || (!request.Role.Equals("User", StringComparison.OrdinalIgnoreCase)))
+                            if ((!request.Role.Equals("Lecturer", StringComparison.OrdinalIgnoreCase)) && (!request.Role.Equals("User", StringComparison.OrdinalIgnoreCase)))
                             {
                                 response.Error = true;
                                 response.Exception = new UnauthorizedAccessException();
@@ -66,7 +66,7 @@ namespace Application.Command.Handler
                     //send email verification
                     if (u != null)
                     {
-                        string verifyLink = "https://localhost:7241/api/auth/verify?t=" + u.VerificationToken;
+                        string verifyLink = "https://localhost:7274/verify?t=" + u.VerificationToken;
                         //Send mail
                         bool c = await _mailService.SendAsync(
     new MailDataModel

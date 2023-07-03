@@ -1,0 +1,72 @@
+﻿@addTagHelper "*, Microsoft.AspNetCore.Mvc.TagHelpers"
+@{
+    var Token = ViewBag.Token as string;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!-- Page Preloader -->
+<div id="yg-page-loading-1" class="yg-pageloading">
+    <div class="yg-pageloading-inner">
+        <h1>YOGAGURU</h1>
+    </div>
+</div>
+<div class="yg-testimonial-section-first" id="successMessage" style="display: none;">
+    <div class="container yg-container-full">
+        <div class="row yg-gutter-0">
+            <div class="col-md-7 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
+                <div class=""> <img src="~/images/testimonial.jpg" class="img-fluid" alt=""> </div>
+            </div>
+            <div class="col-md-5 col-sm-12 animate-box" data-animate-effect="fadeInRight">
+                <div class="yg-text-block yg-text-block-h700">
+                    <div class="yg-text-block-center yg-text-block-w60">
+                        <div class="yg-testimonial-section-first-title">Verify successfull</div>
+                        <div class="yg-testimonial-section-first-subtitle" style="color:white;">Page will be redirected to login page after 5s</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="yg-testimonial" id="ErrorMessage" style="display: none;">
+    <div class="container yg-container-full">
+        <div class="row yg-gutter-0">
+            <div class="col-md-5 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
+                <div class="yg-text-block yg-text-block-h700">
+                    <div class="yg-text-block-center yg-text-block-w60">
+                        <div class="yg-testimonial-section-first-title" style="color: red;">Verification error</div>
+                        <div class="yg-testimonial-section-first-subtitle" style="color: #69CA47;">Page will be redirected to login page after 5s</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: 'https://localhost:7241/api/auth/verify?t=@Token',
+            type: 'POST',
+            data: { token: '@Token' },
+            success: function(response) {
+                console.log(response);
+                $('#yg-page-loading-1').fadeOut("slow", function() {
+                    preloader.remove();
+                });
+                $('#successMessage').show();
+                setTimeout(function() {
+                    window.location.href = '/login';
+                }, 5000);
+            },
+            error: function(xhr, status, error) {
+                $('#yg-page-loading-1').fadeOut("slow", function() {
+                    preloader.remove();
+                });
+                $('#ErrorMessage').show();
+                console.error(xhr.responseText);
+                setTimeout(function() {
+                    window.location.href = '/login';
+                }, 5000);
+            }
+        });
+    });
+</script>

@@ -239,17 +239,24 @@ namespace Infrastructure.Repository
                 User? u = _context.Users.FirstOrDefault(u => u.VerificationToken!.Equals(token));
                 if (u != null)
                 {
-                    u.IsVerified = true;
-                    await _context.SaveChangesAsync();
+                    if (u.IsVerified == true)
+                    {
+                        throw new Exception("User already verified");
+                    }
+                    else
+                    {
+                        u.IsVerified = true;
+                        _context.SaveChanges();
+                    }
                 }
                 else
                 {
                     throw new Exception("Invalid credential");
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                throw e;
             }
             return true;
         }
