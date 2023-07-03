@@ -9,14 +9,16 @@ namespace Domain.Model
     public class ClassModel
     {
         public int ClassId { get; set; }
-        public string ClassName { get; set; }
+        public string ClassName { get; set; } = null!;
         public double Price { get; set; }
         public int ClassCapacity { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int? LecturerId { get; set; }
+        public string? Description { get; set; }
+        public string? Image { get; set; }
         public UserModel? Lecturer { get; set; }
-        public List<UserModel> Students { get; set; }
-        public List<ScheduleModel> Schedules { get; set; }
+        public List<UserModel>? Students { get; set; }
+        public List<ScheduleModel>? Schedules { get; set; }
     }
 }
