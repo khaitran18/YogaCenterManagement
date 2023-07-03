@@ -166,7 +166,7 @@ namespace Infrastructure.Repository
             // Search
             if (!string.IsNullOrEmpty(searchKeyword))
             {
-                query = query.Where(c => c.ClassName.Contains(searchKeyword));
+                query = query.Where(c => c.ClassName.ToLower().Contains(searchKeyword.ToLower()));
             }
 
             // Starting from date filter
@@ -185,7 +185,7 @@ namespace Infrastructure.Repository
             // Class capacity filter
             if (!string.IsNullOrEmpty(classCapacity))
             {
-                if (classCapacity == "<15")
+                if (classCapacity == "lt15")
                 {
                     query = query.Where(c => c.ClassCapacity < 15);
                 }
@@ -193,7 +193,7 @@ namespace Infrastructure.Repository
                 {
                     query = query.Where(c => c.ClassCapacity >= 15 && c.ClassCapacity <= 25);
                 }
-                else if (classCapacity == ">25")
+                else if (classCapacity == "gt25")
                 {
                     query = query.Where(c => c.ClassCapacity > 25);
                 }

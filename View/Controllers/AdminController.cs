@@ -12,6 +12,7 @@ namespace View.Controllers
     {
         private readonly HttpClient _httpClient;
         private string apiUrl = "";
+        private string classApiUrl = "";
         private string studySlotApiUrl = "";
         private string changeClassRequestsApiUrl = "";
         public AdminController()
@@ -19,30 +20,20 @@ namespace View.Controllers
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             apiUrl = "https://localhost:7241/api/user";
+            classApiUrl = "https://localhost:7241/api/class";
             studySlotApiUrl = "https://localhost:7241/api/Class/slot";
             changeClassRequestsApiUrl = "https://localhost:7241/api/Class/changeclass";
-        }
-
-        private string? GetAuthTokenFromCookie()
-        {
-            var authToken = Request.Cookies["AuthToken"];
-            return authToken;
-        }
-
-        private void AddAuthTokenToRequestHeaders()
-        {
-            var authToken = GetAuthTokenFromCookie();
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
         }
 
         public IActionResult Index()
         {
             return View();
         }
+
         public async Task<IActionResult> Users(string? searchKeyword, int? roleId, bool? isDisabled, bool? isVerified, string? sortBy, int? page, int? pageSize)
         {
             AddAuthTokenToRequestHeaders();
-            var queryString = BuildQueryString(searchKeyword, roleId, isDisabled, isVerified, sortBy, page, pageSize);
+            var queryString = BuildQueryStringUsers(searchKeyword, roleId, isDisabled, isVerified, sortBy, page, pageSize);
             var queryStringWithoutPage = RemoveQueryStringParameter(queryString, "page");
             var url = apiUrl + queryString;
             var response = await _httpClient.GetAsync(url);
@@ -72,6 +63,46 @@ namespace View.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+
+        public async Task<IActionResult> Classes(string? searchKeyword, string? sortBy, DateTime? startingFromDate, int? durationMonths, string? classCapacity, int? page, int? pageSize)
+        {
+            AddAuthTokenToRequestHeaders();
+            var queryString = BuildQueryStringClasses(searchKeyword, sortBy, startingFromDate, durationMonths, classCapacity, page, pageSize);
+            var queryStringWithoutPage = RemoveQueryStringParameter(queryString, "page");
+            var url = classApiUrl + queryString;
+            var response = await _httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<PaginatedResult<ClassDto>>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    ViewBag.QueryString = queryStringWithoutPage;
+                    return View(baseResponse.Result);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        //public async Task<IActionResult> ClassDetails(int classId)
+        //{
+
+        //}
+
         [HttpGet]
         public async Task<IActionResult> StudySlots()
         {
@@ -112,6 +143,7 @@ namespace View.Controllers
                 return View();
             }
         }
+
         [HttpGet]
         public async Task<IActionResult> ChangeClassRequests()
         {
@@ -151,6 +183,7 @@ namespace View.Controllers
                 return View();
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> StudySlots(TimeSpan start, TimeSpan end, List<int> days)
         {
@@ -215,7 +248,6 @@ namespace View.Controllers
 
             return RedirectToAction(nameof(StudySlots));
         }
-        //private string BuildQueryString(int? roleId, bool? disabled, bool? verified, string sortBy, int? page, int? pageSize)
 
         [HttpPost]
         public async Task<IActionResult> DisableUser(int userId)
@@ -295,7 +327,21 @@ namespace View.Controllers
                 return View();
             }
         }
-        private string BuildQueryString(string? searchKeyword, int? roleId, bool? disabled, bool? verified, string? sortBy, int? page, int? pageSize)
+
+        #region Other Functions
+        private string? GetAuthTokenFromCookie()
+        {
+            var authToken = Request.Cookies["AuthToken"];
+            return authToken;
+        }
+
+        private void AddAuthTokenToRequestHeaders()
+        {
+            var authToken = GetAuthTokenFromCookie();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+        }
+
+        private string BuildQueryStringUsers(string? searchKeyword, int? roleId, bool? disabled, bool? verified, string? sortBy, int? page, int? pageSize)
         {
             var queryString = "";
 
@@ -347,11 +393,64 @@ namespace View.Controllers
             return queryString;
         }
 
+        private string BuildQueryStringClasses(string? searchKeyword, string? sortBy, DateTime? startingFromDate, int? durationMonths, string? classCapacity, int? page, int? pageSize)
+        {
+            var queryString = "";
+
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                queryString += $"searchKeyword={searchKeyword}&";
+            }
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                queryString += $"sortBy={sortBy}&";
+            }
+
+            if (startingFromDate != null)
+            {
+                queryString += $"startingFromDate={startingFromDate}&";
+            }
+
+            if (durationMonths != null)
+            {
+                queryString += $"durationMonths={durationMonths}&";
+            }
+
+            if (!string.IsNullOrEmpty(classCapacity))
+            {
+                queryString += $"classCapacity={classCapacity}&";
+            }
+
+            if (page != null)
+            {
+                queryString += $"page={page}&";
+            }
+
+            if (pageSize != null)
+            {
+                queryString += $"pageSize={pageSize}&";
+            }
+
+            if (queryString.EndsWith("&"))
+            {
+                queryString = queryString.TrimEnd('&');
+            }
+
+            if (queryString != "")
+            {
+                queryString = "?" + queryString;
+            }
+
+            return queryString;
+        }
+
         private string RemoveQueryStringParameter(string queryString, string key)
         {
             var collection = HttpUtility.ParseQueryString(queryString);
             collection.Remove(key);
             return "?" + collection.ToString();
         }
+        #endregion
     }
 }

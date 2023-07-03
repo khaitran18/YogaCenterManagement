@@ -1,0 +1,220 @@
+﻿@using View.Models.Response;
+@using View.Models.Enum;
+@model View.Models.PaginatedResult<ClassDto>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- WELCOME-->
+        <section class="welcome p-t-10">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="title-4">
+                            Manage Classes
+                        </h1>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- END WELCOME-->
+        <!-- DATA TABLE -->
+        <h3 class="title-5 m-b-35">data table</h3>
+        <!-- Filter/sort -->
+        <div class="table-data__tool">
+            <div class="table-data__tool-left">
+                <!-- Sort by -->
+                <div class="rs-select2--light rs-select2--md">
+                    <select class="js-select2 filter-select" id="sortBySelect">
+                        <option value="">Sort by</option>
+                        <option value="classname">Name (A-Z)</option>
+                        <option value="classname_desc">Name (Z-A)</option>
+                        <option value="price">Price (Low to High)</option>
+                        <option value="price_desc">Price (High to Low)</option>
+                    </select>
+                    <div class="dropDownSelect2"></div>
+                </div>
+                <!-- Filter by startingFromDate -->
+                <div class="rs-select2--light rs-select2--md">
+                    <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control au-input" id="startingFromDateInput" placeholder="Starting From" />
+                </div>
+                <!-- Filter by durationMonths -->
+                <div class="rs-select2--light rs-select2--md">
+                    <input type="number" class="form-control au-input" id="durationMonthsInput" placeholder="Durations" />
+                </div>
+                <!-- Filter by classCapacity -->
+                <div class="rs-select2--light rs-select2--md">
+                    <select class="js-select2 filter-select" id="classCapacitySelect">
+                        <option value="">Class Capacity</option>
+                        <option value="lt15">&lt;15</option>
+                        <option value="15-25">15-25</option>
+                        <option value="gt25">&gt;25</option>
+                    </select>
+                    <div class="dropDownSelect2"></div>
+                </div>
+                <!-- Search -->
+                <form method="get" class="search-form rs-select2--dark" asp-controller="Admin" asp-action="Classes">
+                    <div class="input-group">
+                        <input class="au-input" type="text" name="searchKeyword" placeholder="Search by Class Name" />
+                        <button class="au-btn--submit" type="submit">
+                            <i class="zmdi zmdi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="table-data__tool-right">
+                <button class="au-btn au-btn-icon au-btn--green au-btn--small">
+                    <i class="zmdi zmdi-plus"></i>create new
+                </button>
+            </div>
+        </div>
+        <!-- End filter/sort -->
+        <div class="table-responsive table-responsive-data2">
+            <table class="table table-data2">
+                <thead>
+                    <tr>
+                        <th>Class Name</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th>Class Capacity</th>
+                        <th>Lecturer</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var classItem in Model.Items)
+                    {
+                        <tr class="tr-shadow">
+                            <td>@classItem.ClassName</td>
+                            <td>@classItem.StartDate.ToString("MM/dd/yyyy")</td>
+                            <td>@classItem.EndDate.ToString("MM/dd/yyyy")</td>
+                            <td>@classItem.Price</td>
+                            <td>@classItem.ClassCapacity</td>
+                            <td>@(classItem.Lecturer != null ? classItem.Lecturer.FullName : "N/A")</td>
+                            <td>
+                                <div class="table-data-feature">
+                                    <button class="item edit-class-btn" data-class='@Json.Serialize(classItem)' data-toggle="tooltip" data-placement="top" title="Edit">
+                                        <i class="zmdi zmdi-edit"></i>
+                                    </button>
+                                    <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
+                                        <i class="zmdi zmdi-delete"></i>
+                                    </button>
+                                    <div class="dropdown">
+                                        <button class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="zmdi zmdi-more"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="@Url.Action("ClassDetails", "Admin", new { classId = classItem.ClassId })">
+                                                View Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="spacer"></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- PAGING NAVIGATION -->
+        <nav>
+            <ul class="pagination">
+                @if (Model.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@(ViewBag.QueryString)&page=@(Model.Page - 1)">&lt</a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.Page ? "active" : "")">
+                        <a class="page-link" href="@(ViewBag.QueryString)&page=@i">@i</a>
+                    </li>
+                }
+
+                @if (Model.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@(ViewBag.QueryString)&page=@(Model.Page + 1)">&gt</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+        <!-- END PAGING NAVIGATION -->
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(document).ready(function () {
+        var searchKeywordParam = '@Context.Request.Query["searchKeyword"]';
+        var sortByParam = '@Context.Request.Query["sortBy"]';
+        var startingFromDateParam = '@Context.Request.Query["startingFromDate"]';
+        var durationMonthsParam = '@Context.Request.Query["durationMonths"]';
+        var classCapacityParam = '@Context.Request.Query["classCapacity"]';
+
+        if (sortByParam) {
+            $('#sortBySelect').val(sortByParam).trigger('change');
+        }
+
+        if (startingFromDateParam) {
+            $('#startingFromDateInput').val(startingFromDateParam);
+        }
+
+        if (durationMonthsParam) {
+            $('#durationMonthsInput').val(durationMonthsParam);
+        }
+
+        if (classCapacityParam) {
+            $('#classCapacitySelect').val(classCapacityParam).trigger('change');
+        }
+
+        if (searchKeywordParam) {
+            $('[name="searchKeyword"]').val(searchKeywordParam);
+        }
+
+        $('#sortBySelect, #startingFromDateInput, #durationMonthsInput, #classCapacitySelect').change(function () {
+            applyFilters();
+        });
+
+        function applyFilters() {
+            var sortBy = $('#sortBySelect').val();
+            var startingFromDate = $('#startingFromDateInput').val();
+            var durationMonths = $('#durationMonthsInput').val();
+            var classCapacity = $('#classCapacitySelect').val();
+            var searchKeyword = $('[name="searchKeyword"]').val();
+
+            var url = '@Url.Action("Classes", "Admin")';
+
+            var params = [];
+            if (sortBy) {
+                params.push('sortBy=' + sortBy);
+            }
+            if (startingFromDate) {
+                params.push('startingFromDate=' + startingFromDate);
+            }
+            if (durationMonths) {
+                params.push('durationMonths=' + durationMonths);
+            }
+            if (classCapacity) {
+                params.push('classCapacity=' + classCapacity);
+            }
+            if (searchKeyword) {
+                params.push('searchKeyword=' + encodeURIComponent(searchKeyword));
+            }
+
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+
+            window.location.href = url;
+        }
+    });
+</script>
+}
