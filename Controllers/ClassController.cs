@@ -270,6 +270,44 @@ namespace Api.Controllers
                 };
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
+        }        
+        
+        [HttpGet("studyclass/{studentId}")]
+        public async Task<IActionResult> GetStudyingClass([FromRoute] int studentId)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(new GetStudyingClassQuery { StudentId = studentId });
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpGet("studyclass")]
+        public async Task<IActionResult> GetStudyingClass([FromQuery] GetStudyingClassByClassIdQuery query)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(query);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
         }
 
         [HttpGet("availabledate/{lecturerId}")]

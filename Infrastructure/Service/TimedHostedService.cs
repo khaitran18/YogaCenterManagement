@@ -52,8 +52,8 @@ namespace Infrastructure.Service
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             try
             {
-                var @class = await unitOfWork.ClassRepository.GetClassById(1);
-                _logger.LogInformation(@class.ClassName);
+                //var @class = await unitOfWork.ClassRepository.GetClassById(1);
+                //_logger.LogInformation(@class.ClassName);
             }
             catch (Exception)
             {
