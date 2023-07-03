@@ -101,7 +101,7 @@ namespace View.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Signup(SignupDto signupDto)
         {
-            var signup = apiUrl + "/signup";
+            var signup = apiUrl + "/signup/";
             var json = JsonSerializer.Serialize(signupDto);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(signup, content);

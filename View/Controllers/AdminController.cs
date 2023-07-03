@@ -122,7 +122,6 @@ namespace View.Controllers
                 //Console.WriteLine(baseResponse);
                 if (!baseResponse!.Error)
                 {
-
                     return View(baseResponse.Result);
                 }
                 else
@@ -423,20 +422,26 @@ namespace View.Controllers
             }
         }
 
-        public IActionResult CreateAccount()
+        [HttpGet("users/create")]
+        public IActionResult Create()
         {
-            return View();
+            string? role = GetRoleFromCookie();
+            if (role == null) 
+            {
+                TempData["Error"] = "Invalid credential \n Please login again";
+            }
+            ViewBag.Role = role;
+            return View("CreateAccount");
         }
 
-        [HttpPost]
+        [HttpPost("users/create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateAccount(SignupDto signupDto)
+        public async Task<IActionResult> Create(SignupDto signupDto)
         {
             var signup = "https://localhost:7241/api/auth/signup/"+signupDto.Role;
 
             // Add auth token to request header
-            string authToken = Request.Cookies["AuthToken"];
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+            AddAuthTokenToRequestHeaders();
 
             // Call to the api
             var json = JsonSerializer.Serialize(signupDto);
@@ -450,12 +455,12 @@ namespace View.Controllers
             if (response.IsSuccessStatusCode)
             {
                 TempData["Success"] = "Create account successful";
-                return View();
+                return RedirectToAction("Users");
             }
             else
             {
                 TempData["Error"] = await response.Content.ReadAsStringAsync();
-                return View();
+                return RedirectToAction("Create");
             }
             return View();
         }
@@ -521,6 +526,11 @@ namespace View.Controllers
         {
             var authToken = Request.Cookies["AuthToken"];
             return authToken;
+        }
+        private string? GetRoleFromCookie()
+        {
+            var role = Request.Cookies["Role"];
+            return role;
         }
 
         private void AddAuthTokenToRequestHeaders()

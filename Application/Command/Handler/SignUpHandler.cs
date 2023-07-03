@@ -40,7 +40,7 @@ namespace Application.Command.Handler
                         var role = _tokenService.ValidateToken(request.Token)?.FindFirst(ClaimTypes.Role)?.Value;
                         if (role.Equals("Staff"))
                         {
-                            if ((!request.Role.Equals("Lecturer", StringComparison.OrdinalIgnoreCase)) || (!request.Role.Equals("User", StringComparison.OrdinalIgnoreCase)))
+                            if ((!request.Role.Equals("Lecturer", StringComparison.OrdinalIgnoreCase)) && (!request.Role.Equals("User", StringComparison.OrdinalIgnoreCase)))
                             {
                                 response.Error = true;
                                 response.Exception = new UnauthorizedAccessException();
