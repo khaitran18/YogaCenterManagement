@@ -69,7 +69,7 @@ namespace View.Controllers
             }
             else
             {
-                return View();
+                return RedirectToAction("Index", "Home");
             }
         }
         [HttpGet]
@@ -260,6 +260,41 @@ namespace View.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EditUser(UserDto user)
+        {
+            AddAuthTokenToRequestHeaders();
+
+            var jsonCommand = JsonSerializer.Serialize(user);
+            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync(apiUrl, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<UserDto>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    return RedirectToAction("Users");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "An error occurred while updating the user.";
+                return View();
+            }
+        }
         private string BuildQueryString(string? searchKeyword, int? roleId, bool? disabled, bool? verified, string? sortBy, int? page, int? pageSize)
         {
             var queryString = "";
