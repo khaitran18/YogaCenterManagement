@@ -21,14 +21,6 @@
             <div class="col-md-8 col-sm-12 animate-box" data-animate-effect="fadeInUp">
                 <p>@Model.Description</p>
                 <br />
-                <h3>Advantages of Yoga</h3>
-                <p>
-                    <span class="ti-check"></span> Integer molliser fauci neque nec tincidunte.<br />
-                    <span class="ti-check"></span> Nunc ranish libero maximus aliquet.<br />
-                    <span class="ti-check"></span> Duru egiter ligula at nibh viverra ultricies.<br />
-                    <span class="ti-check"></span> Praesent tristique nisl felis, at volutpat erat hendrerit ac.
-                </p>
-                <br />
                 <!-- Trainer -->
                 <div class="row">
                     <div class="col-md-4 col-sm-4">
@@ -60,7 +52,7 @@
                     <h3>Class Details</h3>
                     <div class="yg-class-table">
                         <ul>
-                            <li> <span class="yg-class-table-light-text"><i class="ti-tag"></i>Price</span> <span>@Model.Price</span> </li>
+                            <li> <span class="yg-class-table-light-text"><i class="ti-tag"></i>Price</span> <span>@Model.Price.ToString("N0") VND</span> </li>
                             <li>
                                 <span class="yg-class-table-light-text"><i class="ti-user"></i>Trainer</span>
                                 @if (Model.Lecturer != null)
@@ -89,7 +81,7 @@
                                     {
                                         <li>
                                             <span class="yg-class-table-light-text">@((Days)day.DayId)</span>
-                                            <span>@schedule.Slot.StartTime.ToString("hh:mmtt") - @schedule.Slot.EndTime.ToString("hh:mmtt")</span>
+                                            <span>@schedule.Slot.StartTime.ToString("hh\\:mm") - @schedule.Slot.EndTime.ToString("hh\\:mm")</span>
                                         </li>
                                     }
                                 }

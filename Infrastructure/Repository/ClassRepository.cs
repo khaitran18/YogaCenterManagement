@@ -147,6 +147,7 @@ namespace Infrastructure.Repository
                 var entityClass = await _context.Classes
                     .Include(c => c.Schedules)
                         .ThenInclude(s => s.Slot)
+                            .ThenInclude(sl => sl!.Days)
                     .Include(s => s.Lecturer)
                     .Include(c => c.Students)
                     .FirstOrDefaultAsync(c => c.ClassId == classId);
