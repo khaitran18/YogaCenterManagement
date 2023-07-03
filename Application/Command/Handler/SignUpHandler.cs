@@ -66,7 +66,7 @@ namespace Application.Command.Handler
                     //send email verification
                     if (u != null)
                     {
-                        string verifyLink = "https://localhost:7241/api/auth/verify?t=" + u.VerificationToken;
+                        string verifyLink = "https://localhost:7274/verify?t=" + u.VerificationToken;
                         //Send mail
                         bool c = await _mailService.SendAsync(
     new MailDataModel

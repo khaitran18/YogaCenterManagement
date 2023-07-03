@@ -91,6 +91,13 @@ namespace View.Controllers
             }
         }
 
+        [HttpGet("verify")]
+        public IActionResult Verify([FromQuery] string t)
+        {
+            ViewBag.Token = t;
+            return View("Verify");
+        }
+
         [HttpGet("signup")]
         public IActionResult Signup()
         {
