@@ -59,14 +59,7 @@ namespace View.Controllers
                 }
                 else
                 {
-                    var errorResponse = new BaseResponse<Exception>
-                    {
-                        Error = true,
-                        Message = baseResponse.Message,
-                        Exception = baseResponse.Exception
-                    };
-
-                    ViewBag.ErrorResponse = errorResponse;
+                    ViewBag.ErrorMessage = baseResponse.Message;
                     return View();
                 }
             }
