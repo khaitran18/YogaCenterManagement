@@ -57,6 +57,8 @@ namespace View.Controllers
 
                 // Set the cookie
                 Response.Cookies.Append("AuthToken", loginResult?.Result.Token, cookieOptions);
+                Response.Cookies.Append("Role", loginResult.Result.Role, cookieOptions);
+                Response.Cookies.Append("Id", loginResult.Result.UserId.ToString(), cookieOptions);
 
                 // Check authority
                 TempData["Success"] = "Login success";

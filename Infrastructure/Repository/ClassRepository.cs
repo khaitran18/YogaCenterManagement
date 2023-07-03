@@ -462,5 +462,48 @@ namespace Infrastructure.Repository
             return classModels;
         }
         #endregion
+
+        #region Get studying class by student id
+        public async Task<(IEnumerable<ClassModel>, int)> GetStudingClass(int studentId, int page, int pageSize)
+        {
+            var classModels = new List<ClassModel>();
+            int totalCount = 0;
+            try
+            {
+                var classes = await _context.Classes
+                                                    .Include(c => c.Students)
+                                                    .Where(c => c.ClassStatus == 2 && c.Students.Any(s => s.Uid == studentId))
+                                                    .ToListAsync();
+                classModels = _mapper.Map<List<ClassModel>>(classes.Skip((page - 1) * pageSize).Take(pageSize));
+                totalCount = classes.Count;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return (classModels, totalCount);
+        }
+        #endregion
+
+        #region Get specific studying class with class id
+        public async Task<ClassModel> GetStudyingClassByClassId(int studentId, int classId)
+        {
+            var classModel = new ClassModel();
+            try
+            {
+                var @class = await _context.Classes.FirstOrDefaultAsync(c => c.ClassStatus == 2 
+                                                                                                && c.ClassId == classId 
+                                                                                                && c.Students.Any(s => s.Uid == studentId));
+                classModel = _mapper.Map<ClassModel>(@class);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return classModel;
+        }
+        #endregion
     }
 }
