@@ -20,5 +20,7 @@ namespace Domain.Interface
         public Task<bool> UpdateApprovalStatus(int requestId, short isApproved);
         public Task<(List<ClassModel>, int)> GetClasses(string? searchKeyword, string? sortBy, DateTime? startingFromDate, int? durationMonths, string? classCapacity, int page, int pageSize);
         public Task<PaymentModel> StudentEnrollToClass(PaymentModel paymentModel);
+        public Task<ClassModel> EditClass(ClassModel model);
+        
     }
 }

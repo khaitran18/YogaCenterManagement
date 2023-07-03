@@ -193,6 +193,30 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "Staff,Admin,Lecturer")]
+        [HttpPut]
+        [ProducesDefaultResponseType(typeof(ClassDto))]
+        public async Task<IActionResult> EditClass(
+                [FromHeader] string? Authorization
+                , [FromForm] EditClassCommand command)
+        {
+            command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
         [HttpDelete("slot/{slotId}")]
         public async Task<IActionResult> DeleteStudySlot([FromRoute] int slotId)
         {

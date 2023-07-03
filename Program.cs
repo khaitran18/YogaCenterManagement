@@ -130,6 +130,7 @@ builder.Services.AddScoped<IRequestHandler<GetStudySlotsQuery, BaseResponse<IEnu
 builder.Services.AddScoped<IRequestHandler<GetChangeClassQuery, BaseResponse<IEnumerable<ClassDto>>>, GetChangeClassHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateClassCommand,BaseResponse<ClassDto>>, CreateClassHandler>();
+builder.Services.AddScoped<IRequestHandler<EditClassCommand,BaseResponse<ClassDto>>, EditClassHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateStudySlotCommand,BaseResponse<StudySlotDto>>, CreateStudySlotHandler>();
 builder.Services.AddScoped<IRequestHandler<AddAvailableDateCommand,BaseResponse<IEnumerable<AvailableDateDto>>>, AddAvailableDateHandler>();
 // builder.Services.AddScoped<IRequestHandler<SignUpCommand,BaseResponse<bool>>, SignUpHandler>();
