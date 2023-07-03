@@ -449,5 +449,42 @@ namespace View.Controllers
             collection.Remove(key);
             return "?" + collection.ToString();
         }
+
+        public IActionResult CreateAccount()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAccount(SignupDto signupDto)
+        {
+            var signup = "https://localhost:7241/api/auth/signup/"+signupDto.Role;
+
+            // Add auth token to request header
+            string authToken = Request.Cookies["AuthToken"];
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+
+            // Call to the api
+            var json = JsonSerializer.Serialize(signupDto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(signup, content);
+            var resultJson = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Success"] = "Create account successful";
+                return View();
+            }
+            else
+            {
+                TempData["Error"] = await response.Content.ReadAsStringAsync();
+                return View();
+            }
+            return View();
+        }
     }
 }
