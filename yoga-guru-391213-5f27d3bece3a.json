@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "yoga-guru-391213",
+  "private_key_id": "5f27d3bece3ae0b77acaeed7e9b830b46f206ac1",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCrc1gm39ZxAeM7\ndm0YtgeOCcP6+UvUKlUztef3J0EmcLziL34u6CjbJuCuKk6hyusocyweYcMFKSNS\nGNtU/YCnIAIkjXC7NnC/SfXP5/71RZIhXbgwt0DqADgiWrSthz2DVFp6BnOelNrb\nYMOq/OeTNrEgN1I5S5V0vfjKFXWzdtMe6qtEINqhTKBSR93Bp26M6NEygmN+QqKw\nc97RWQwa0jPcA51VhvcsTF0Z8hqKF0NHE42eK291WunXQnNj/ozifdwuTYGssumO\nQdsOLKAUZ2sPn4vhe8uZnv217MgU+4lEDr9N2DRIOgPUr3wkrzMuHbIrL4ezeruQ\nPLg94UJDAgMBAAECggEAA3i3bToVDn66SibwuJJe/spF1Jwdo/MjfIOPadq6n/ui\nZ3YMuQhsY1ubKwuiQfZo4o3Kc+cI2t7lXzEvp73mT/v+7xyKDtBgYg8uUgJhkDfT\naKeMJjhfsR1GBbQOeoEFhtY7asMcrjZXZB/Gdnzed4Wg+oUEPjLAmPeLxRPAKV0T\nF1FQ9ThSgQ1B7kpztjZlfnS1YHg/bXFzW/YPIWMqSLN6qbUU5PcYm/2r21fmtaah\nvZSpSaQw6QesnY6N215lRSqObtiC/SWiMu1716e97sMFCPTPJ06sqwaKEoPNwfVt\nE8G77ic90sXqs9K3Rzp8W+yBA4yyiW1d2vFqC2ABgQKBgQDSYsb4gOblqmpPx4Sy\ne0+UEwc07vHZKehgKjNno11cvDszGbvLfpCnG3+8x6m9GM7tjs2ApoOTnBys1MzC\n5T3Aiv2+78F9uXp7eer+VXx0gsaxFVuDuWZPfJE3H1HV7z0LecAGFsmSKBu5/XH9\nMXb/M8pahjH5s9E9vmNd4A4LQQKBgQDQn4Jd+AgLdqQBiJEColfo+SrCCoimjg7e\nIOPZGFHKBIsqMy+WzFqEtwoAxtnQUGvBhOFfq43mzVzJmd3I0UXJiFd8d6ktfjFr\nE9Jffe3KPelNXs4jhzmQnti0cZbXkiCtyoluMTyNSaU89y8B83U+glumWBKQ3k5h\nZrp9IdGAgwKBgQDE5l2BxmJTICNPd1PiFzZrR0O/bsI6lNY+6kAiBusiF6jwMm1o\nDpQjUcFDVTqvF8DS5IvAlBcg10KfHqpk3VfmFC9Xu9xDZowTdA9S6X8JLDv5EBwO\nND5kthjSliVpK/bd/pyRFlKgz5jjgShl5x2Py1DfWCj9oiV6u+0TttZuAQKBgQCD\nv/hot7b85lP00/YgH7481v51xIlABf7FsSezdnRQjEYGxISNS0ju/1lF3E66C8/B\nStW5wXHADHlIp+80X1UfTQdTB47DuColYUM+Ix0E18x6nCC6ty9XcbmRWxrT0Ojq\nWDoqaNXAtH2x3rjFFqc4bsLKblxrOLlvMZ0cYTsZWQKBgDb5K/5bqn278EnYKRrG\ns+vZu3CNtnEXYkgd8a/hbg72Vt43RYESbNbzpkPivaJjERYu22cBwmbjRIDBrHvX\njw0nl9qi4cOR4kxTolX0ZEBtjA7Nhr9hvHw+O7vMpBEHygSWo6zjB9Y45gWq71Z4\n2C/omAu6Nok2ttFktd+kvJpS\n-----END PRIVATE KEY-----\n",
+  "client_email": "yoga-guru-391213@appspot.gserviceaccount.com",
+  "client_id": "105358829307101188814",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/yoga-guru-391213%40appspot.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
