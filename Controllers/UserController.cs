@@ -153,7 +153,7 @@ namespace Api.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("profile")]
         [ProducesDefaultResponseType(typeof(UserDto))]
-        public async Task<IActionResult> EditProfile(
+        public async Task<IActionResult> GetUserProfile(
             [FromHeader] string? Authorization)
         {
             UserDetailQuery query = new UserDetailQuery { Token = Authorization };

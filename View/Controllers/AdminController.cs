@@ -583,6 +583,6 @@ namespace View.Controllers
             collection.Remove(key);
             return "?" + collection.ToString();
         }
-        #endregion
     }
+    #endregion
 }
