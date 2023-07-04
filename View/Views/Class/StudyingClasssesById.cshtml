@@ -64,7 +64,7 @@
                             }
                             else
                             {
-                                <h3>N/A — <span>TRAINER</span></h3>
+                                <h3>N/A — <span>LECTURER</span></h3>
                             }
                             <p>Proin ultricies nibh non dolor maximus sceleue. Integer molliser faubs neque nec tincidunte. Aliquam erat vol tempor malader. Aliquam erat volutpat. Praeser tempor maladi quam, nec rutre arcuornare sed. Duru egiter ligula at nibh viverra ultricies. Nunctionter ranish libero maximus aliquet.</p>
                             <span class="yg-social-icon ti-facebook"></span>
@@ -76,17 +76,17 @@
                 <div class="col-md-8">
                     <button id="changeClassButton" class="btn btn-outline-success">Change Class</button>
                 </div>
-                <div class="col-md-4"></div>
+                <div style="height:50px;"></div>
                 <!-- Feedback Form -->
                 <div class="animate-box" data-animate-effect="fadeInUp">
-                    <h3>Write Feedback</h3>
+                    <h3>Feedback For Your Lecturer</h3>
                     <form asp-controller="User" asp-action="CreateFeedback" method="post">
                         <input type="hidden" name="lecturerId" value="@Model.LecturerId" />
                         <input type="hidden" name="classId" value="@Model.ClassId" />
                         <div class="form-group">
                             <textarea name="subject" class="form-control" rows="3" placeholder="Write your feedback..."></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary yg-btn">Submit</button>
                     </form>
                 </div>
             </div>

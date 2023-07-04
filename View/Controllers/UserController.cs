@@ -6,7 +6,6 @@ using View.Models.Response;
 
 namespace View.Controllers
 {
-    [Route("User")]
     public class UserController : Controller
     {
         private readonly HttpClient _httpClient;

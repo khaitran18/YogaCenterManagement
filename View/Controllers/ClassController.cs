@@ -90,7 +90,7 @@ namespace View.Controllers
 
                 if (!baseResponse!.Error)
                 {
-                    return View("StudyingClasssesById", baseResponse.Result);
+                    return View(baseResponse.Result);
                 }
                 else
                 {
