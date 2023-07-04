@@ -92,6 +92,7 @@ namespace Infrastructure.Repository
                     existingUser.FullName = user.FullName;
                     existingUser.Address = user.Address;
                     existingUser.Phone = user.Phone;
+                    existingUser.Email = user.Email;
 
                     return _mapper.Map<UserModel>(existingUser);
                 }

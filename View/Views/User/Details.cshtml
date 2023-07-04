@@ -46,123 +46,104 @@
 </div>
 
 @section Scripts{
-    <script>
-        function toggleEditMode() {
-            var fullNameContainer = document.getElementById('fullNameContainer');
-            var emailContainer = document.getElementById('emailContainer');
-            var addressContainer = document.getElementById('addressContainer');
-            var phoneContainer = document.getElementById('phoneContainer');
+<script>
+    function toggleEditMode() {
+        var fullNameContainer = document.getElementById('fullNameContainer');
+        var emailContainer = document.getElementById('emailContainer');
+        var addressContainer = document.getElementById('addressContainer');
+        var phoneContainer = document.getElementById('phoneContainer');
 
-            var fullNameInput = document.createElement('input');
-            fullNameInput.setAttribute('type', 'text');
-            fullNameInput.setAttribute('value', fullNameContainer.textContent);
-            fullNameInput.setAttribute('class', 'form-control');
-            fullNameInput.setAttribute('name', 'FullName');
+        var fullNameInput = document.createElement('input');
+        fullNameInput.setAttribute('type', 'text');
+        fullNameInput.setAttribute('value', fullNameContainer.textContent);
+        fullNameInput.setAttribute('class', 'form-control');
+        fullNameInput.setAttribute('name', 'FullName');
 
-            var emailInput = document.createElement('input');
-            emailInput.setAttribute('type', 'text');
-            emailInput.setAttribute('value', emailContainer.textContent);
-            emailInput.setAttribute('class', 'form-control');
-            emailInput.setAttribute('name', 'Email');
+        var emailInput = document.createElement('input');
+        emailInput.setAttribute('type', 'text');
+        emailInput.setAttribute('value', emailContainer.textContent);
+        emailInput.setAttribute('class', 'form-control');
+        emailInput.setAttribute('name', 'Email');
 
-            var addressInput = document.createElement('input');
-            addressInput.setAttribute('type', 'text');
-            addressInput.setAttribute('value', addressContainer.textContent);
-            addressInput.setAttribute('class', 'form-control');
-            addressInput.setAttribute('name', 'Address');
+        var addressInput = document.createElement('input');
+        addressInput.setAttribute('type', 'text');
+        addressInput.setAttribute('value', addressContainer.textContent);
+        addressInput.setAttribute('class', 'form-control');
+        addressInput.setAttribute('name', 'Address');
 
-            var phoneInput = document.createElement('input');
-            phoneInput.setAttribute('type', 'text');
-            phoneInput.setAttribute('value', phoneContainer.textContent);
-            phoneInput.setAttribute('class', 'form-control');
-            phoneInput.setAttribute('name', 'Phone');
+        var phoneInput = document.createElement('input');
+        phoneInput.setAttribute('type', 'text');
+        phoneInput.setAttribute('value', phoneContainer.textContent);
+        phoneInput.setAttribute('class', 'form-control');
+        phoneInput.setAttribute('name', 'Phone');
 
-            fullNameContainer.innerHTML = '';
-            emailContainer.innerHTML = '';
-            addressContainer.innerHTML = '';
-            phoneContainer.innerHTML = '';
+        fullNameContainer.innerHTML = '';
+        emailContainer.innerHTML = '';
+        addressContainer.innerHTML = '';
+        phoneContainer.innerHTML = '';
 
-            fullNameContainer.appendChild(fullNameInput);
-            emailContainer.appendChild(emailInput);
-            addressContainer.appendChild(addressInput);
-            phoneContainer.appendChild(phoneInput);
+        fullNameContainer.appendChild(fullNameInput);
+        emailContainer.appendChild(emailInput);
+        addressContainer.appendChild(addressInput);
+        phoneContainer.appendChild(phoneInput);
 
-            document.querySelector('button[onclick="toggleEditMode()"]').style.display = 'none';
-            document.querySelector('button[onclick="submitForm()"]').style.display = 'block';
-            document.querySelector('button[onclick="cancelEditMode()"]').style.display = 'block';
-        }
+        document.querySelector('button[onclick="toggleEditMode()"]').style.display = 'none';
+        document.querySelector('button[onclick="submitForm()"]').style.display = 'block';
+        document.querySelector('button[onclick="cancelEditMode()"]').style.display = 'block';
+    }
 
-        function cancelEditMode() {
-            var fullNameContainer = document.getElementById('fullNameContainer');
-            var emailContainer = document.getElementById('emailContainer');
-            var addressContainer = document.getElementById('addressContainer');
-            var phoneContainer = document.getElementById('phoneContainer');
+    function cancelEditMode() {
+        var fullNameContainer = document.getElementById('fullNameContainer');
+        var emailContainer = document.getElementById('emailContainer');
+        var addressContainer = document.getElementById('addressContainer');
+        var phoneContainer = document.getElementById('phoneContainer');
 
-            fullNameContainer.innerHTML = fullNameContainer.querySelector('input[name="FullName"]').value;
-            emailContainer.innerHTML = emailContainer.querySelector('input[name="Email"]').value;
-            addressContainer.innerHTML = addressContainer.querySelector('input[name="Address"]').value;
-            phoneContainer.innerHTML = phoneContainer.querySelector('input[name="Phone"]').value;
+        fullNameContainer.innerHTML = fullNameContainer.querySelector('input[name="FullName"]').value;
+        emailContainer.innerHTML = emailContainer.querySelector('input[name="Email"]').value;
+        addressContainer.innerHTML = addressContainer.querySelector('input[name="Address"]').value;
+        phoneContainer.innerHTML = phoneContainer.querySelector('input[name="Phone"]').value;
 
-            document.querySelector('button[onclick="toggleEditMode()"]').style.display = 'block';
-            document.querySelector('button[onclick="submitForm()"]').style.display = 'none';
-            document.querySelector('button[onclick="cancelEditMode()"]').style.display = 'none';
-        }
+        document.querySelector('button[onclick="toggleEditMode()"]').style.display = 'block';
+        document.querySelector('button[onclick="submitForm()"]').style.display = 'none';
+        document.querySelector('button[onclick="cancelEditMode()"]').style.display = 'none';
+    }
 
-        function submitForm() {
-            var fullName = document.querySelector('input[name="FullName"]').value;
-            var email = document.querySelector('input[name="Email"]').value;
-            var address = document.querySelector('input[name="Address"]').value;
-            var phone = document.querySelector('input[name="Phone"]').value;
+    function submitForm() {
+        var fullName = document.querySelector('input[name="FullName"]').value;
+        var email = document.querySelector('input[name="Email"]').value;
+        var address = document.querySelector('input[name="Address"]').value;
+        var phone = document.querySelector('input[name="Phone"]').value;
 
-            var form = document.createElement('form');
-            form.setAttribute('method', 'post');
-            form.setAttribute('action', '@Url.Action("Edit")');
+        var form = document.createElement('form');
+        form.setAttribute('method', 'post');
+        form.setAttribute('action', '@Url.Action("Edit")');
 
-            var fullNameInput = document.createElement('input');
-            fullNameInput.setAttribute('type', 'hidden');
-            fullNameInput.setAttribute('name', 'FullName');
-            fullNameInput.setAttribute('value', fullName);
-            form.appendChild(fullNameInput);
+        var fullNameInput = document.createElement('input');
+        fullNameInput.setAttribute('type', 'hidden');
+        fullNameInput.setAttribute('name', 'FullName');
+        fullNameInput.setAttribute('value', fullName);
+        form.appendChild(fullNameInput);
 
-            var emailInput = document.createElement('input');
-            emailInput.setAttribute('type', 'hidden');
-            emailInput.setAttribute('name', 'Email');
-            emailInput.setAttribute('value', email);
-            form.appendChild(emailInput);
+        var emailInput = document.createElement('input');
+        emailInput.setAttribute('type', 'hidden');
+        emailInput.setAttribute('name', 'Email');
+        emailInput.setAttribute('value', email);
+        form.appendChild(emailInput);
 
-            var addressInput = document.createElement('input');
-            addressInput.setAttribute('type', 'hidden');
-            addressInput.setAttribute('name', 'Address');
-            addressInput.setAttribute('value', address);
-            form.appendChild(addressInput);
+        var addressInput = document.createElement('input');
+        addressInput.setAttribute('type', 'hidden');
+        addressInput.setAttribute('name', 'Address');
+        addressInput.setAttribute('value', address);
+        form.appendChild(addressInput);
 
-            var phoneInput = document.createElement('input');
-            phoneInput.setAttribute('type', 'hidden');
-            phoneInput.setAttribute('name', 'Phone');
-            phoneInput.setAttribute('value', phone);
-            form.appendChild(phoneInput);
+        var phoneInput = document.createElement('input');
+        phoneInput.setAttribute('type', 'hidden');
+        phoneInput.setAttribute('name', 'Phone');
+        phoneInput.setAttribute('value', phone);
+        form.appendChild(phoneInput);
 
-            document.body.appendChild(form);
-            form.submit();
-        }
-    </script>
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
 }
-
-    <!-- Testimonial Section  -->
-    @*<div class="yg-testimonial-section-first">
-    <div class="container yg-container-full">
-    <div class="row yg-gutter-0">
-    <div class="col-md-7 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
-    <div class=""> <img src="images/testimonial.jpg" class="img-fluid" alt=""> </div>
-    </div>
-    <div class="col-md-5 col-sm-12 animate-box" data-animate-effect="fadeInRight">
-    <div class="yg-text-block yg-text-block-h700">
-    <div class="yg-text-block-center yg-text-block-w60">
-    <div class="yg-testimonial-section-first-title">"Great teacher, great environment, great energy. Awesome specials for new yogis."</div>
-    <div class="yg-testimonial-section-first-subtitle">— Lee Buoy</div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>*@
