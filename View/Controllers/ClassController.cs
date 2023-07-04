@@ -400,8 +400,9 @@ namespace View.Controllers
                 if (!baseResponse!.Error)
                 {
                     //ViewBag.QueryString = queryStringWithoutPage;
-                    return View(baseResponse.Result);
                     ViewBag.ScheduleList = await GetSchedule(classId, s);
+                    return View(baseResponse.Result);
+                    
                 }
                 else
                 {
