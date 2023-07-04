@@ -24,5 +24,6 @@ namespace Domain.Interface
         public Task<(IEnumerable<ClassModel>, int)> GetStudingClass(int studentId, int page, int pageSize);
         public Task<ClassModel> GetStudyingClassByClassId(int studentId, int classId);
         public Task UpdateClassStatus();
+        public Task<bool> ExistChangeClassRequest(int studentId, int fromClassId, int toClassId);
     }
 }

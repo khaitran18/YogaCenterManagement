@@ -15,6 +15,7 @@ namespace View.Controllers
         private string studyingClassApiUrl = "";
         private string changeClassApi = "";
         private string changeClassApi2 = "";
+        private string enrollClassApiUrl = "";
         public ClassController()
         {
             _httpClient = new HttpClient();
@@ -23,6 +24,7 @@ namespace View.Controllers
             studyingClassApiUrl = "https://localhost:7241/api/Class/studyclass";
             changeClassApi = "https://localhost:7241/api/Class/changeclasses";
             changeClassApi2 = "https://localhost:7241/api/Class/changeclass";
+            enrollClassApiUrl = "https://localhost:7241/api/Class/enroll";
         }
 
         private string? GetAuthTokenFromCookie()
@@ -271,6 +273,46 @@ namespace View.Controllers
             }
             //Console.WriteLine(requestData);
             return RedirectToAction(nameof(StudyingClasssesById), new { classId = fromClassId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Enroll(int classId, decimal amount)
+        {
+            var studentId = Request.Cookies["Id"];
+            var requestData = new
+            {
+                StudentId = studentId,
+                ClassId = classId,
+                Amount = amount,
+                Method = "Online"
+            };
+
+            var json = JsonSerializer.Serialize(requestData);
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(enrollClassApiUrl, stringContent);
+            var resultJson = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(response);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<BaseResponse<PaymentDto>>(resultJson, options);
+                if (!result!.Error)
+                {
+                    if (result.Result.ClassId != 0)
+                    {
+                        TempData["Success"] = "Enroll successfully";
+                    }
+                }
+                else
+                {
+                    TempData["Error"] = result.Message;
+                }
+            }
+            //Console.WriteLine(requestData);
+            return RedirectToAction(nameof(Details), new {classId});
         }
     }
 }

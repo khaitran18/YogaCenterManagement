@@ -559,5 +559,27 @@ namespace Infrastructure.Repository
             await _context.SaveChangesAsync();
         }
         #endregion
+
+        #region Check if change class request exist
+        public async Task<bool> ExistChangeClassRequest(int studentId, int fromClassId, int toClassId)
+        {
+            try
+            {
+                var existingRequest = await _context.ChangeClassRequests
+                    .FirstOrDefaultAsync(c =>
+                        c.UserId == studentId &&
+                        c.ClassId == fromClassId &&
+                        c.RequestClassId == toClassId);
+
+                return existingRequest != null;
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception appropriately (e.g., logging, error handling)
+                throw new Exception("Error in ExistChangeClassRequest", ex);
+            }
+        }
+
+        #endregion
     }
 }
