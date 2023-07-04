@@ -65,7 +65,9 @@
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">Select the study slot:<p />
-                                <select id="selectSlot" name="SlotId"></select>
+                                <select id="selectSlot" name="SlotId">
+                                    <option value="" selected>None</option>
+                                </select>
                             </div>
                            @* <label for="days-input" class="font-weight-bold">Days of the Week:</label><br>
                             <input type="checkbox" id="monday" name="Monday" value="Monday" class="ml-4">
@@ -177,12 +179,12 @@
                             <td>@(classItem.Lecturer != null ? classItem.Lecturer.FullName : "N/A")</td>
                             <td>
                                 <div class="table-data-feature">
-                                    <button class="item edit-class-btn" data-class='@Json.Serialize(classItem)' data-toggle="tooltip" data-placement="top" title="Edit">
+                                    @*<button class="item edit-class-btn" data-class='@Json.Serialize(classItem)' data-toggle="tooltip" data-placement="top" title="Edit">
                                         <i class="zmdi zmdi-edit"></i>
                                     </button>
                                     <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
                                         <i class="zmdi zmdi-delete"></i>
-                                    </button>
+                                    </button>*@
                                     <div class="dropdown">
                                         <button class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="zmdi zmdi-more"></i>
