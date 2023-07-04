@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.Common.Dto;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Model;
@@ -27,10 +28,20 @@ namespace Application.Command.Handler
             var response = new BaseResponse<PaymentDto>();
             try
             {
-                var paymentModel = _mapper.Map<PaymentModel>(request.PaymentDto);
-                
-                var result = await _unitOfWork.ClassRepository.StudentEnrollToClass(paymentModel);
-                response.Result = _mapper.Map<PaymentDto>(result);
+                var @class = await _unitOfWork.ClassRepository.GetClassById(request.PaymentDto.ClassId!.Value);
+                if (@class.ClassStatus != 1)
+                {
+                    response.Error = true;
+                    response.Exception = new BadRequestException("Class is not able to enroll");
+                }
+                else
+                {
+                    var paymentModel = _mapper.Map<PaymentModel>(request.PaymentDto);
+
+                    var result = await _unitOfWork.ClassRepository.StudentEnrollToClass(paymentModel);
+                    response.Result = _mapper.Map<PaymentDto>(result);
+                }
+
             }
             catch (Exception)
             {
