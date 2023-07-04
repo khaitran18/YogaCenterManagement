@@ -140,6 +140,32 @@ namespace Infrastructure.Repository
                 throw e;
             }
         }
+        public async Task<ClassModel> EditClass(ClassModel model)
+        {
+            Class result = new Class();
+            try
+            {
+                var existingClass = await _context.Classes.FirstOrDefaultAsync(c => c.ClassId == model.ClassId);
+                if (existingClass != null)
+                {
+                    existingClass.ClassName = model.ClassName;
+                    existingClass.Price = model.Price;
+                    existingClass.ClassCapacity = model.ClassCapacity;
+                    existingClass.Description = model.Description;
+                    existingClass.Image = model.Image;
+
+                    return _mapper.Map<ClassModel>(existingClass);
+                }
+                else
+                {
+                    throw new NotFoundException("Class not found");
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
         public async Task<ClassModel> GetClassById(int classId)
         {
             try

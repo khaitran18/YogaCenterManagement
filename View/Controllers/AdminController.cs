@@ -465,6 +465,62 @@ namespace View.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Classes([FromForm]CreateClassDto model )
+        {
+            //Add auth token to request header
+            string authToken = Request.Cookies["AuthToken"];
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+
+            var formData = new MultipartFormDataContent();
+            Console.WriteLine(model.Monday);
+            var file = model.Image;
+            if(file != null && file.Length > 0)
+            {
+                byte[] data;
+                using (var br = new BinaryReader(file.OpenReadStream()))
+                    data = br.ReadBytes((int)file.OpenReadStream().Length);
+
+                ByteArrayContent bytes = new ByteArrayContent(data);
+                formData.Add(bytes, "Image", file.FileName);
+            }
+            else
+            {
+                Console.WriteLine("File is empty");
+            }
+            formData.Add(new StringContent(model.ClassName), "ClassName");
+            formData.Add(new StringContent(model.ClassCapacity.ToString()), "ClassCapacity");
+            formData.Add(new StringContent(model.Price.ToString()), "Price");
+            formData.Add(new StringContent(model.Description), "Description");
+            formData.Add(new StringContent(model.StartDate.ToString("yyyy-MM-dd")), "StartDate");
+            formData.Add(new StringContent(model.EndDate.ToString("yyyy-MM-dd")), "EndDate");
+            formData.Add(new StringContent(SelectDay(model)), "SelectedDayOfWeek");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJraGFpdHJhbnF1YW5nIiwianRpIjoiMTgiLCJ1c2VybmFtZSI6ImtoYWl0cmFucXVhbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNjkwOTAyMzY0LCJpc3MiOiJqd3QiLCJhdWQiOiJqd3QifQ.-zZevseiqLHOfIR1pyrlg8mF5tTRx74w6-9aFZ3tyco");
+
+            var response = await _httpClient.PostAsync(classApiUrl, formData);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            if (response.IsSuccessStatusCode)
+            {
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<ClassDto>>(responseBody, options);
+                TempData["Success"] = "Create successfully";
+            }
+            else
+            {
+                //var error = JsonSerializer.Deserialize<string>(responseBody, options);
+                //Console.WriteLine(error);
+                //TempData["Error"] = string.Join("\n", error);
+                TempData["Error"] = responseBody;
+                Console.WriteLine(responseBody);
+                return RedirectToAction(nameof(Classes));
+            }
+            return RedirectToAction(nameof(Classes));
+        }
+
         #region Other Functions
         private string? GetAuthTokenFromCookie()
         {
@@ -592,6 +648,40 @@ namespace View.Controllers
             var collection = HttpUtility.ParseQueryString(queryString);
             collection.Remove(key);
             return "?" + collection.ToString();
+        }
+
+        private string SelectDay(CreateClassDto model)
+        {
+            List<string> dayList = new List<string>();
+            if (model.Monday != null)
+            {
+                dayList.Add("1");
+            }
+            if (model.Tuesday != null)
+            {
+                dayList.Add("2");
+            }
+            if (model.Wednesday != null)
+            {
+                dayList.Add("3");
+            }
+            if (model.Thursday != null)
+            {
+                dayList.Add("4");
+            }
+            if (model.Friday != null)
+            {
+                dayList.Add("5");
+            }
+            if (model.Saturday != null)
+            {
+                dayList.Add("6");
+            }
+            if (model.Sunday != null)
+            {
+                dayList.Add("7");
+            }
+            return String.Join(",",dayList.ToArray());
         }
     }
     #endregion

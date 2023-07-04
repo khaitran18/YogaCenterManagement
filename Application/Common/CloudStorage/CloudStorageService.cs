@@ -27,7 +27,7 @@ namespace Application.Common.CloudStorage
                 using (var storageClient = StorageClient.Create(GoogleCredential.FromFile("yoga-guru-391213-5f27d3bece3a.json")))
                 {
                     var bucketName = "yoga-guru-391213.appspot.com";
-                    var uploadedFile = await storageClient.UploadObjectAsync(bucketName, fileName, fileToUpLoad.ContentType, memoryStream);
+                    var uploadedFile = await storageClient.UploadObjectAsync(bucketName, fileName, "image/jpeg", memoryStream);
                     string downloadUrl = $"https://firebasestorage.googleapis.com/v0/b/{bucketName}/o/{Uri.EscapeDataString(uploadedFile.Name)}?alt=media&token={uploadedFile.Generation}";
                     return downloadUrl;
                 }

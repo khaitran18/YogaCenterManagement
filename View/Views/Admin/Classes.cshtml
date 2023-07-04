@@ -20,6 +20,83 @@
             </div>
         </section>
         <!-- END WELCOME-->
+        <!-- CREATE CLASS WITH SCHEDULE MODAL -->
+        <div class="modal fade overflow-auto" id="myModal" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Select Days</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form asp-controller="Admin" asp-action="Classes" method="post" id="create-class" enctype="multipart/form-data">
+                        <div class="mb-2 mx-5 text-start  align-items-center justify-content-center">
+                            <div class="mx-2">
+                                <p class="font-weight-bold">Class Name:<p />
+                                <input type="text" id="class-name" name="ClassName" class="ml-3 border"/>
+                            </div>
+                            <div class="mx-2">
+                                <p class="font-weight-bold">Class Capacity:<p />
+                                <input type="number" id="class-capacity" name="ClassCapacity" class="ml-3 border" />
+                            </div>
+                            <div class="mx-2">
+                                <p class="font-weight-bold">Price:<p />
+                                <input type="number" id="price" name="Price" class="ml-3 border" />
+                            </div>
+                            <div class="mx-2">
+                                <p class="font-weight-bold">Description:<p />
+                                <textarea id="description" name="Description" class="ml-3 border"></textarea>
+                            </div>
+                            <div class="mx-2">
+                                <p class="font-weight-bold">Image:<p />
+                                <input type="file" id="image" name="Image" class="ml-3 border"/>
+                            </div>
+                            <div class="mx-2">
+                                <p class="font-weight-bold">Start Date:<p />
+                                <input type="date" id="start-date" name="StartDate" class="ml-3 border" />
+                            </div>
+                            <div class="mx-2">
+                                <p class="font-weight-bold">End Date:<p />
+                                <input type="date" id="end-date" name="EndDate" class="ml-3 border" />
+                            </div>
+                            <label for="days-input" class="font-weight-bold">Days of the Week:</label><br>
+                            <input type="checkbox" id="monday" name="Monday" value="Monday" class="ml-4">
+                            <label for="monday">Monday</label>
+                            <br>
+                            <input type="checkbox" id="tuesday" name="Tuesday" value="Tuesday" class="ml-4">
+                            <label for="tuesday">Tuesday</label>
+                            <br>
+                            <input type="checkbox" id="wednesday" name="Wednesday" value="Wednesday" class="ml-4">
+                            <label for="wednesday">Wednesday</label>
+                            <br>
+                            <input type="checkbox" id="thursday" name="Thursday" value="Thursday" class="ml-4">
+                            <label for="thursday">Thursday</label>
+                            <br>
+                            <input type="checkbox" id="friday" name="Friday" value="Friday" class="ml-4">
+                            <label for="friday">Friday</label>
+                            <br>
+                            <input type="checkbox" id="saturday" name="Saturday" value="Saturday" class="ml-4">
+                            <label for="saturday">Saturday</label>
+                            <br>
+                            <input type="checkbox" id="sunday" name="Sunday" value="Sunday" class="ml-4">
+                            <label for="sunday">Sunday</label>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="create-class">Create class</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
         <!-- DATA TABLE -->
         <h3 class="title-5 m-b-35">data table</h3>
         <!-- Filter/sort -->
@@ -65,7 +142,7 @@
                 </form>
             </div>
             <div class="table-data__tool-right">
-                <button class="au-btn au-btn-icon au-btn--green au-btn--small">
+                <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#myModal">
                     <i class="zmdi zmdi-plus"></i>create new
                 </button>
             </div>
@@ -215,5 +292,6 @@
             window.location.href = url;
         }
     });
+
 </script>
 }
