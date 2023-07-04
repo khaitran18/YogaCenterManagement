@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using View.Models;
 using View.Models.Response;
 
 namespace View.Controllers
@@ -127,6 +128,38 @@ namespace View.Controllers
             else
             {
                 return RedirectToAction("StudyingClasssesById", "Class", new { classId = classId });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Feedback(int page = 1, int pageSize = 6)
+        {
+            AddAuthTokenToRequestHeaders();
+            var url = apiUrl + $"/feedback?page={page}&pageSize={pageSize}";
+            var response = await _httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<PaginatedResult<FeedbackDto>>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    return View(baseResponse.Result);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
             }
         }
     }

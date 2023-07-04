@@ -1,5 +1,81 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using View.Models.Response
+@model View.Models.PaginatedResult<FeedbackDto>
 @{
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<div class="yg-contact-section mt-10">
+    <div class="container" style="margin-top: 5rem;">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="col-md-8 col-sm-8">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 col-sm-12 animate-box" data-animate-effect="fadeInUp">
+                        <div class="yg-details-block">
+                            <div class="yg-class-box">
+                                <h3>Students' feedback about you</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        @foreach (var feedback in Model.Items)
+                        {
+                            <div class="row comment">
+                                <div class="col-auto">
+                                    <img class="avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
+                                </div>
+                                <div class="col">
+                                    <p>@feedback.Content</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- PAGING NAVIGATION -->
+<nav class="text-center">
+    <ul class="pagination justify-content-center">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(Model.Page - 1)">&lt;</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.Page ? "active" : "")">
+                <a class="page-link" href="?page=@i">@i</a>
+            </li>
+        }
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(Model.Page + 1)">&gt;</a>
+            </li>
+        }
+    </ul>
+</nav>
+<!-- END PAGING NAVIGATION -->
+
+<style>
+    .comment {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .comment p {
+        margin: 0;
+    }
+</style>
