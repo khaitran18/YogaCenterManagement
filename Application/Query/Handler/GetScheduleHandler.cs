@@ -35,26 +35,34 @@ namespace Application.Query.Handler
                 }
                 else
                 {
-                    if(int.TryParse(_tokenService.ValidateToken(request.token).FindFirst("jti").Value,out int userId))
+                    var claims = _tokenService.ValidateToken(request.token);
+                    if (int.TryParse(claims.FindFirst("jti").Value,out int userId))
                     {
-                        var @class = await _unitOfWork.ClassRepository.GetStudyingClassByClassId(userId, request.classId);
+                        ClassModel @class = null;
+                        if (claims.IsInRole("User"))
+                        {
+                            @class = await _unitOfWork.ClassRepository.GetStudyingClassByClassId(userId, request.classId);
+                            
+                        }
+                        else if (claims.IsInRole("Lecturer"))
+                        {
+                            @class = await _unitOfWork.ClassRepository.GetTeachingClassByClassId(userId, request.classId);
+                        }
                         if (@class != null)
                         {
-                            List<ScheduleModel> list = await _unitOfWork.ScheduleRepository.GetScheduleByStartDateAndEndDate(request.startDate, request.endDate);
-                            if (list!=null) response.Result = _mapper.Map<List<ScheduleDto>>(list);
+                            List<ScheduleModel> list = await _unitOfWork.ScheduleRepository.GetScheduleByStartDateAndEndDateAndClassId(request.startDate, request.endDate, request.classId);
+                            if (list != null) response.Result = _mapper.Map<List<ScheduleDto>>(list);
                         }
                         else
                         {
                             response.Error = true;
                             response.Exception = new BadRequestException("No current class found");
-                            response.Message = "No current class found";
                         }
                     }
                     else
                     {
                         response.Error = true;
                         response.Exception = new BadRequestException("Invalid crefidentials");
-                        response.Message = "Error";
                     }
 
                 }

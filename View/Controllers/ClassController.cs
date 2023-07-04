@@ -197,9 +197,36 @@ namespace View.Controllers
                 return View();
             }
 
-        }        
-        
-        public async Task<IActionResult> StudyingClassesById(int classId)
+        }
+
+        private async Task<List<ScheduleDto>?> GetSchedule(int classId, int s = 0)
+        {
+            //s is number of shifting
+            string url = apiUrl + "/schedule";
+            DateTime today = DateTime.Today.AddDays(s * 7);
+            int daysUntilMonday = ((int)today.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
+            DateTime startDate = today.AddDays(-daysUntilMonday).Date; // Beginning of the week (Monday)
+            DateTime endDate = startDate.AddDays(6).Date; // End of the week (Sunday)
+            AddAuthTokenToRequestHeaders();
+            var response = await _httpClient.GetAsync(url + "?classId=" + classId + "&startDate=" + startDate + "&endDate=" + endDate);
+            var resultJson = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            if (response.IsSuccessStatusCode)
+            {
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<List<ScheduleDto>>>(resultJson, options);
+                return await Task.FromResult(baseResponse.Result);
+            }
+            else
+            {
+                TempData["Error"] = "Error in retrieve schedule";
+                return null;
+            }
+        }
+
+        public async Task<IActionResult> StudyingClassesById(int classId, int s = 0)
         {
             var studentId = Request.Cookies["Id"];
             var response = await _httpClient.GetAsync($"{studyingClassApiUrl}?StudentId={studentId}&ClassId={classId}");
@@ -223,6 +250,7 @@ namespace View.Controllers
                         var changeClassResponseBody = await changeClassResponse.Content.ReadAsStringAsync();
                         var changeClassBaseResponse = JsonSerializer.Deserialize<BaseResponse<IEnumerable<ClassDto>>>(changeClassResponseBody, options);
                         ViewBag.ChangeClassList = changeClassBaseResponse?.Result;
+                        ViewBag.Schedule = await GetSchedule(classId, s);
                     }
                     //ViewBag.QueryString = queryStringWithoutPage;
                     return View(baseResponse.Result);
@@ -320,40 +348,7 @@ namespace View.Controllers
             return RedirectToAction(nameof(Details), new { classId });
         }
 
-        public async Task<IActionResult> Schedule([FromQuery] int classId, int s = 0)
-        {
-            //s is number of shifting
-            string url = apiUrl + "/schedule";
-            DateTime today = DateTime.Today.AddDays(s * 7);
-            int daysUntilMonday = ((int)today.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
-            DateTime startDate = today.AddDays(-daysUntilMonday).Date; // Beginning of the week (Monday)
-            DateTime endDate = startDate.AddDays(6).Date; // End of the week (Sunday)
-            AddAuthTokenToRequestHeaders();
-            var response = await _httpClient.GetAsync(url + "?classId=" + classId + "&startDate=" + startDate + "&endDate=" + endDate);
-            var resultJson = await response.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
-            var baseResponse = JsonSerializer.Deserialize<BaseResponse<List<ScheduleDto>>>(resultJson, options);
-            if (!baseResponse!.Error)
-            {
 
-                return View(baseResponse.Result);
-            }
-            else
-            {
-                var errorResponse = new BaseResponse<Exception>
-                {
-                    Error = true,
-                    Message = baseResponse.Message,
-                    Exception = baseResponse.Exception
-                };
-                TempData["Error"] = errorResponse;
-                ViewBag.ErrorResponse = errorResponse;
-                return View();
-            }
-        }
 
         public async Task<IActionResult> TeachingClasses(int page = 1, int pageSize = 6)
         {
@@ -387,7 +382,7 @@ namespace View.Controllers
                 return View();
             }
         }
-        public async Task<IActionResult> TeachingClassesById(int classId)
+        public async Task<IActionResult> TeachingClassesById(int classId,int s)
         {
             var lecturerId = Request.Cookies["Id"];
             var response = await _httpClient.GetAsync($"{teachingClassApiUrl}?LecturerId={lecturerId}&ClassId={classId}");
@@ -406,6 +401,7 @@ namespace View.Controllers
                 {
                     //ViewBag.QueryString = queryStringWithoutPage;
                     return View(baseResponse.Result);
+                    ViewBag.ScheduleList = await GetSchedule(classId, s);
                 }
                 else
                 {

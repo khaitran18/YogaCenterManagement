@@ -5,6 +5,7 @@
 @{
     ViewData["Title"] = "StudyingClasssesById";
     var changeClassList = ViewBag.ChangeClassList as List<ClassDto>;
+    var listSchedule = ViewBag.Schedule as List<ScheduleDto>;
 }
 
 <partial name="_Notification" />
@@ -14,7 +15,55 @@
         <div class="col-md-12 col-sm-12"> <img src="@Model.Image" class="img-fluid animate-box" data-animate-effect="fadeInUp" alt=""> </div>
     </div>
 </div>
-
+<!-- Schedule Section -->
+<div class="yg-schedule-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="yg-details-block yg-text-center animate-box" data-animate-effect="fadeInUp">
+                    <h3 class="yg-details-title">OUR SCHEDULE</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 animate-box" data-animate-effect="fadeInUp">
+                <table class="table table-bordered">
+                    <thead class="yg-thead">
+                        <tr>
+                            <th scope="col">MONDAY</th>
+                            <th scope="col">TUESDAY</th>
+                            <th scope="col">WEDNESDAY</th>
+                            <th scope="col">THURSTDAY</th>
+                            <th scope="col">FRIDAY</th>
+                            <th scope="col">SATURDAY</th>
+                            <th scope="col">SUNDAY</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            @for (int i = 1; i <= 7; i++)
+                            {
+                                bool c = false;
+                                @foreach (var item in listSchedule)
+                                {
+                                    if (item.Date.DayOfWeek == (DayOfWeek)i)
+                                    {
+                                        c = true;
+                                        <td class="yg-schedule-full" rowspan="2">@Model.ClassName<br />@item.Date.ToString("dd/MM") <br/>@item.Slot.StartTime.ToString(@"hh\:mm") - @item.Slot.EndTime.ToString(@"hh\:mm")<br /><i class="ti-user"></i> @Model.Lecturer.FullName</td>
+                                    }
+                                }
+                                @if (!c)
+                                {
+                                    <td class="yg-schedule-empty">No Activities</td>
+                                }
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- About The Class -->
 <div class="yg-description-section">
     <div class="container">
@@ -25,8 +74,8 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Change Class</h5>
                         @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>*@
+                        <span aria-hidden="true">&times;</span>
+                        </button>*@
                     </div>
 
                     <div class="modal-body">
@@ -83,7 +132,8 @@
                     <form asp-controller="User" asp-action="CreateFeedback" method="post">
                         <input type="hidden" name="lecturerId" value="@Model.LecturerId" />
                         <input type="hidden" name="classId" value="@Model.ClassId" />
-                        <div class="form-group">a
+                        <div class="form-group">
+                            a
                             <textarea name="subject" class="form-control" rows="3" placeholder="Write your feedback..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary yg-btn">Submit</button>
@@ -159,41 +209,41 @@
 </div>
 
 @section Scripts {
-<script>
-    $(document).ready(function() {
-        $("#changeClassButton").click(function() {
-            // Clear the class list
-            $("#classList").empty();
+    <script>
+        $(document).ready(function() {
+            $("#changeClassButton").click(function() {
+                // Clear the class list
+                $("#classList").empty();
 
-            // Populate the class list dynamically
-            @if (changeClassList != null)
+                // Populate the class list dynamically
+        @if (changeClassList != null)
+        {
+            foreach (var classDto in changeClassList)
             {
-                foreach (var classDto in changeClassList)
-                {
-                    <text>
-                        var classId = @classDto.ClassId;
+                <text>
+                                                                                                                                                                                        var classId = @classDto.ClassId;
                         var className = '@classDto.ClassName';
                         var imageUrl = '@classDto.Image';
 
-                    var listItem = '<div class="class-item">' +
-                        '<div class="class-info">' +
-                        '<a href="https://localhost:7274/class/details/' + classId + '">' +
-                        '<img src="' + imageUrl + '" alt="' + className + '">' +
-                        '<span class="class-name">' + className + '</span>' +
-                        '</a>' +
-                        '</div>' +
-                        '<input type="radio" name="toClassId" value="' + classId + '">' +
-                        '<input type="hidden" name="fromClassId" value="' + @Model.ClassId + '"/>' +
-                        '</div>';
+                        var listItem = '<div class="class-item">' +
+                            '<div class="class-info">' +
+                            '<a href="https://localhost:7274/class/details/' + classId + '">' +
+                            '<img src="' + imageUrl + '" alt="' + className + '">' +
+                            '<span class="class-name">' + className + '</span>' +
+                            '</a>' +
+                            '</div>' +
+                            '<input type="radio" name="toClassId" value="' + classId + '">' +
+                            '<input type="hidden" name="fromClassId" value="' + @Model.ClassId + '"/>' +
+                            '</div>';
 
                         $("#classList").append(listItem);
-                    </text>
-                }
+                </text>
             }
+        }
 
-            // Show the modal
-            $("#changeClassModal").modal("show");
+                    // Show the modal
+                    $("#changeClassModal").modal("show");
+            });
         });
-    });
-</script>
+    </script>
 }
