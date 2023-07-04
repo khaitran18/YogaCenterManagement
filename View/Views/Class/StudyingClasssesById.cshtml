@@ -7,7 +7,7 @@
     var changeClassList = ViewBag.ChangeClassList as List<ClassDto>;
 }
 
-<partial name="_Notification"/>
+<partial name="_Notification" />
 <!-- Img Section  -->
 <div class="yg-img-section">
     <div class="row">
@@ -25,7 +25,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Change Class</h5>
                         @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                             </button>*@
                     </div>
 
@@ -76,7 +76,19 @@
                 <div class="col-md-8">
                     <button id="changeClassButton" class="btn btn-outline-success">Change Class</button>
                 </div>
-
+                <div class="col-md-4"></div>
+                <!-- Feedback Form -->
+                <div class="animate-box" data-animate-effect="fadeInUp">
+                    <h3>Write Feedback</h3>
+                    <form asp-controller="User" asp-action="CreateFeedback" method="post">
+                        <input type="hidden" name="lecturerId" value="@Model.LecturerId" />
+                        <input type="hidden" name="classId" value="@Model.ClassId" />
+                        <div class="form-group">
+                            <textarea name="subject" class="form-control" rows="3" placeholder="Write your feedback..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
             </div>
             <!-- Class Details & Class Hours -->
             <div class="col-md-4 col-sm-12">
@@ -126,6 +138,7 @@
     </div>
 </div>
 
+
 <!-- Testimonial Section -->
 <div class="yg-testimonial-section-first">
     <div class="container yg-container-full">
@@ -146,41 +159,41 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function() {
-            $("#changeClassButton").click(function() {
-                // Clear the class list
-                $("#classList").empty();
+<script>
+    $(document).ready(function() {
+        $("#changeClassButton").click(function() {
+            // Clear the class list
+            $("#classList").empty();
 
-                // Populate the class list dynamically
-                @if (changeClassList != null)
+            // Populate the class list dynamically
+            @if (changeClassList != null)
+            {
+                foreach (var classDto in changeClassList)
                 {
-                    foreach (var classDto in changeClassList)
-                    {
-                        <text>
-                            var classId = @classDto.ClassId;
-                            var className = '@classDto.ClassName';
-                            var imageUrl = '@classDto.Image';
+                    <text>
+                        var classId = @classDto.ClassId;
+                        var className = '@classDto.ClassName';
+                        var imageUrl = '@classDto.Image';
 
-                        var listItem = '<div class="class-item">' +
-                            '<div class="class-info">' +
-                            '<a href="https://localhost:7274/class/details/' + classId + '">' +
-                            '<img src="' + imageUrl + '" alt="' + className + '">' +
-                            '<span class="class-name">' + className + '</span>' +
-                            '</a>' +
-                            '</div>' +
-                            '<input type="radio" name="toClassId" value="' + classId + '">' +
-                            '<input type="hidden" name="fromClassId" value="' + @Model.ClassId + '"/>' +
-                            '</div>';
+                    var listItem = '<div class="class-item">' +
+                        '<div class="class-info">' +
+                        '<a href="https://localhost:7274/class/details/' + classId + '">' +
+                        '<img src="' + imageUrl + '" alt="' + className + '">' +
+                        '<span class="class-name">' + className + '</span>' +
+                        '</a>' +
+                        '</div>' +
+                        '<input type="radio" name="toClassId" value="' + classId + '">' +
+                        '<input type="hidden" name="fromClassId" value="' + @Model.ClassId + '"/>' +
+                        '</div>';
 
-                            $("#classList").append(listItem);
-                        </text>
-                    }
+                        $("#classList").append(listItem);
+                    </text>
                 }
+            }
 
-                // Show the modal
-                $("#changeClassModal").modal("show");
-            });
+            // Show the modal
+            $("#changeClassModal").modal("show");
         });
-    </script>
+    });
+</script>
 }
