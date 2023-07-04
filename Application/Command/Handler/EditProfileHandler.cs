@@ -44,7 +44,8 @@ namespace Application.Command.Handler
                         Uid = userId,
                         FullName = request.FullName,
                         Address = request.Address,
-                        Phone = request.Phone
+                        Phone = request.Phone,
+                        Email = request.Email,
                     };
 
                     var editedUser = await _unitOfWork.UserRepository.EditProfile(userModel);

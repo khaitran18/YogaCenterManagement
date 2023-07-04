@@ -1,0 +1,99 @@
+﻿@using View.Models.Response;
+@model View.Models.PaginatedResult<ClassDto>
+
+@{
+    ViewData["Title"] = "StudyingClasses";
+}
+
+<!-- Classes Section -->
+<div class="container yg-classes-section">
+    <div class="row">
+        <!-- Filter Section -->
+        <!-- End Filter Section -->
+        <!-- Classes List Section -->
+        <div class="col-md-9 col-sm-12 mt-5">
+            <h3 class="yg-details-title animate-box" data-animate-effect="fadeInUp">YOUR CLASSES</h3>
+            <div></div>
+            <div class="row">
+                @if (Model.Items == null || Model.Items.Count == 0)
+                {
+                    <div>No class found</div>
+                }
+                else
+                {
+                    @foreach (var classItem in Model.Items)
+                    {
+                        <div class="col-md-6 col-sm-12">
+                            <div class="yg-classes-wrap">
+                                <a href="@Url.Action("Details", "Class", new { id = classItem.ClassId })">
+                                    <img src="@classItem.Image" class="img-fluid" alt="">
+                                </a>
+                                <div class="yg-classes-bottom-content">
+                                    <div class="yg-classes-title">
+                                        <h2><a href="@Url.Action("Details", "Class", new { id = classItem.ClassId })">@classItem.ClassName</a></h2>
+                                    </div>
+                                    <p>
+                                        @Html.Raw(classItem.Description!.Length > 100 ? classItem.Description.Substring(0, 100) : classItem.Description)
+                                        <a href="@Url.Action("Details", "Class", new { id = classItem.ClassId })" class="yg-more">
+                                            <span class="ti-line-dotted"></span> ReadMore
+                                        </a>
+                                    </p>
+                                    <p class="yg-classes-date">
+                                        <span class="ti-time"></span> @classItem.StartDate.ToString("MM/dd/yyyy")
+                                        <span class="ti-medall-alt"></span> @classItem.Price.ToString("N0") VND
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- PAGING NAVIGATION -->
+            <nav class="text-center">
+                <ul class="pagination justify-content-center">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@(ViewBag.QueryString)&page=@(Model.Page - 1)">&lt;</a>
+                        </li>
+                    }
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.Page ? "active" : "")">
+                            <a class="page-link" href="@(ViewBag.QueryString)&page=@i">@i</a>
+                        </li>
+                    }
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@(ViewBag.QueryString)&page=@(Model.Page + 1)">&gt;</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+            <!-- END PAGING NAVIGATION -->
+        </div>
+        <!-- End Classes List Section -->
+    </div>
+</div>
+
+<!-- Testimonial Section -->
+<!--<div class="yg-testimonial-section-first">
+    <div class="container yg-container-full">
+        <div class="row yg-gutter-0">
+            <div class="col-md-7 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
+                <div class=""> <img src="images/testimonial.jpg" class="img-fluid" alt=""> </div>
+            </div>
+            <div class="col-md-5 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
+                <div class="yg-text-block yg-text-block-h700">
+                    <div class="yg-text-block-center yg-text-block-w60">
+                        <div class="yg-testimonial-section-first-title">"Great teacher, great environment, great energy. Awesome specials for new yogis."</div>
+                        <div class="yg-testimonial-section-first-subtitle">— Lee Buoy</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>-->

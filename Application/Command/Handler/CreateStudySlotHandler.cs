@@ -30,19 +30,28 @@ namespace Application.Command.Handler
             BaseResponse<StudySlotDto> response = new BaseResponse<StudySlotDto>();
             try
             {
-                Console.WriteLine("HEHE" + request.startTime);
+
                 ClaimsPrincipal claims = _tokenServices.ValidateToken(request.token ?? "");
                 if (claims != null)
                 {
-                    if (request.startTime > request.endTime)
+                    if (await _unitOfWork.ScheduleRepository.ExistStudySlot(request.startTime, request.endTime, request.dateIds))
                     {
                         response.Error = true;
-                        response.Exception = new BadRequestException("Start time can not be greater than end time");
+                        response.Exception = new BadRequestException("Same study slot can not be created");
                     }
                     else
                     {
-                        var studySlot = await _unitOfWork.ScheduleRepository.CreateSlot(request.startTime, request.endTime, request.dateIds);
-                        response.Result = new StudySlotDto { StartTime = studySlot.StartTime, EndTime = studySlot.EndTime, Day = _mapper.Map<List<DayDto>>(studySlot.Day) };
+
+                        if (request.startTime > request.endTime)
+                        {
+                            response.Error = true;
+                            response.Exception = new BadRequestException("Start time can not be greater than end time");
+                        }
+                        else
+                        {
+                            var studySlot = await _unitOfWork.ScheduleRepository.CreateSlot(request.startTime, request.endTime, request.dateIds);
+                            response.Result = new StudySlotDto { StartTime = studySlot.StartTime, EndTime = studySlot.EndTime, Day = _mapper.Map<List<DayDto>>(studySlot.Day) };
+                        }
                     }
                 }
                 else

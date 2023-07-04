@@ -23,6 +23,6 @@ namespace Domain.Interface
         public Task<ClassModel> EditClass(ClassModel model);
         public Task<(IEnumerable<ClassModel>, int)> GetStudingClass(int studentId, int page, int pageSize);
         public Task<ClassModel> GetStudyingClassByClassId(int studentId, int classId);
-
+        public Task UpdateClassStatus();
     }
 }

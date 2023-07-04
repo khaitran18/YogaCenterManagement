@@ -1,9 +1,13 @@
 ﻿@using View.Models.Enum
+@using View.Models.Response;
 @model View.Models.Response.ClassDto
+
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "StudyingClasssesById";
+    var changeClassList = ViewBag.ChangeClassList as List<ClassDto>;
 }
 
+<partial name="_Notification"/>
 <!-- Img Section  -->
 <div class="yg-img-section">
     <div class="row">
@@ -14,6 +18,30 @@
 <!-- About The Class -->
 <div class="yg-description-section">
     <div class="container">
+        <!-- Modal -->
+        <div id="changeClassModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change Class</h5>
+                        @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>*@
+                    </div>
+
+                    <div class="modal-body">
+                        <form asp-action="CreateChangeRequest" asp-controller="Class">
+                            <label for="content">Reason</label>
+                            <textarea id="content" name="content" placeholder="Reason"></textarea>
+                            <div id="classList">
+                                <!-- Class list will be dynamically populated here -->
+                            </div>
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12 col-sm-12 animate-box" data-animate-effect="fadeInUp">
                 <h1>About The Class</h1>
@@ -45,6 +73,10 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-8">
+                    <button id="changeClassButton" class="btn btn-outline-success">Change Class</button>
+                </div>
+
             </div>
             <!-- Class Details & Class Hours -->
             <div class="col-md-4 col-sm-12">
@@ -69,25 +101,21 @@
                         </ul>
                     </div>
                 </div>
-                <!-- Class Hours -->
                 <div class="yg-class-box animate-box" data-animate-effect="fadeInUp">
                     <h3>Class Hours</h3>
                     <div class="yg-class-table">
                         <ul>
                             @if (Model.Schedules != null)
                             {
-                                var groupedSchedules = Model.Schedules
-                                .GroupBy(s => new { Day = s.Date.DayOfWeek, SlotId = s.SlotId })
-                                .Select(g => new { Day = g.Key.Day, Schedules = g.ToList() });
-
-                                foreach (var group in groupedSchedules)
+                                @foreach (var schedule in Model.Schedules)
                                 {
-                                    var day = group.Day;
-                                    var slot = group.Schedules.First().Slot;
-                                    <li>
-                                        <span class="yg-class-table-light-text">@day</span>
-                                        <span>@slot.StartTime.ToString("hh\\:mm") - @slot.EndTime.ToString("hh\\:mm")</span>
-                                    </li>
+                                    foreach (var day in schedule.Slot.Day)
+                                    {
+                                        <li>
+                                            <span class="yg-class-table-light-text">@((Days)day.DayId)</span>
+                                            <span>@schedule.Slot.StartTime.ToString("hh\\:mm") - @schedule.Slot.EndTime.ToString("hh\\:mm")</span>
+                                        </li>
+                                    }
                                 }
                             }
                         </ul>
@@ -116,3 +144,43 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $("#changeClassButton").click(function() {
+                // Clear the class list
+                $("#classList").empty();
+
+                // Populate the class list dynamically
+                @if (changeClassList != null)
+                {
+                    foreach (var classDto in changeClassList)
+                    {
+                        <text>
+                            var classId = @classDto.ClassId;
+                            var className = '@classDto.ClassName';
+                            var imageUrl = '@classDto.Image';
+
+                        var listItem = '<div class="class-item">' +
+                            '<div class="class-info">' +
+                            '<a href="https://localhost:7274/class/details/' + classId + '">' +
+                            '<img src="' + imageUrl + '" alt="' + className + '">' +
+                            '<span class="class-name">' + className + '</span>' +
+                            '</a>' +
+                            '</div>' +
+                            '<input type="radio" name="toClassId" value="' + classId + '">' +
+                            '<input type="hidden" name="fromClassId" value="' + @Model.ClassId + '"/>' +
+                            '</div>';
+
+                            $("#classList").append(listItem);
+                        </text>
+                    }
+                }
+
+                // Show the modal
+                $("#changeClassModal").modal("show");
+            });
+        });
+    </script>
+}
