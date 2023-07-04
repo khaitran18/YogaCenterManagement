@@ -83,6 +83,25 @@ namespace Api.Controllers
             }
         }
 
+        [HttpGet("schedule")]
+        public async Task<IActionResult> GetSchedule([FromQuery] GetScheduleQuery query,
+            [FromHeader] string? Authorization)
+        {
+            query.token = Authorization;
+            var response = await _mediator.Send(query);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         //[Authorize(Roles = "Staff,Admin,Lecturer")]
         [HttpPost("assignLecturer")]

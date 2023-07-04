@@ -145,13 +145,9 @@ namespace Infrastructure.Repository
                 {
                     throw new Exception("Lecturer not found");
                 }
-
-                bool availableLecturer = false;
-                foreach (var schedule in theClass.Schedules.ToList())
-                {
-                    availableLecturer = lecturer.AvailableDates.Where(d => d.SlotId == schedule.SlotId).Any();
-                }
-                if (availableLecturer)
+                var schedule = await _context.Schedules.FirstAsync(s => s.ClassId == classId);
+                var availableDate = _context.AvailableDates.Where(ad => ad.LecturerId == lecId).ToList();
+                if(availableDate.Where(ad => ad.SlotId == schedule.SlotId).Any())
                 {
                     theClass.LecturerId = lecturer.Uid;
                     _context.Classes.Update(theClass);
