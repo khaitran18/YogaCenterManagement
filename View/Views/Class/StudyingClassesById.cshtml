@@ -30,6 +30,7 @@
                 <table class="table table-bordered">
                     <thead class="yg-thead">
                         <tr>
+                            <th scope="col"></th>
                             <th scope="col">MONDAY</th>
                             <th scope="col">TUESDAY</th>
                             <th scope="col">WEDNESDAY</th>
@@ -41,6 +42,7 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <th scope="row" class="yg-thead">Date</th>
                             @for (int i = 1; i <= 7; i++)
                             {
                                 bool c = false;
@@ -49,12 +51,31 @@
                                     if (item.Date.DayOfWeek == (DayOfWeek)i)
                                     {
                                         c = true;
-                                        <td class="yg-schedule-full" rowspan="2">@Model.ClassName<br />@item.Date.ToString("dd/MM") <br/>@item.Slot.StartTime.ToString(@"hh\:mm") - @item.Slot.EndTime.ToString(@"hh\:mm")<br /><i class="ti-user"></i> @Model.Lecturer.FullName</td>
+                                        <td class="yg-schedule-full">@Model.ClassName<br />@item.Date.ToString("dd/MM") <br/>@item.Slot.StartTime.ToString(@"hh\:mm") - @item.Slot.EndTime.ToString(@"hh\:mm")<br /><i class="ti-user"></i> @Model.Lecturer.FullName</td>
                                     }
                                 }
                                 @if (!c)
                                 {
                                     <td class="yg-schedule-empty">No Activities</td>
+                                }
+                            }
+                        </tr>
+                        <tr>
+                            <th scope="row" class="yg-thead">Notification</th>
+                            @for (int i = 1; i <= 7; i++)
+                            {
+                                bool c = false;
+                                @foreach (var item in listSchedule)
+                                {
+                                    if (item.Date.DayOfWeek == (DayOfWeek)i)
+                                    {
+                                        c = true;
+                                        <td class="yg-schedule-empty"><b>@item.DailyNote</b></td>
+                                    }
+                                }
+                                @if (!c)
+                                {
+                                    <td class="yg-schedule-empty"></td>
                                 }
                             }
                         </tr>
