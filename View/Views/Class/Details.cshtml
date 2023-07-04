@@ -150,21 +150,25 @@
                         </ul>
                     </div>
                 </div>
+                <!-- Class Hours -->
                 <div class="yg-class-box animate-box" data-animate-effect="fadeInUp">
                     <h3>Class Hours</h3>
                     <div class="yg-class-table">
                         <ul>
                             @if (Model.Schedules != null)
                             {
-                                @foreach (var schedule in Model.Schedules)
+                                var groupedSchedules = Model.Schedules
+                                .GroupBy(s => new { Day = s.Date.DayOfWeek, SlotId = s.SlotId })
+                                .Select(g => new { Day = g.Key.Day, Schedules = g.ToList() });
+
+                                foreach (var group in groupedSchedules)
                                 {
-                                    foreach (var day in schedule.Slot.Day)
-                                    {
-                                        <li>
-                                            <span class="yg-class-table-light-text">@((Days)day.DayId)</span>
-                                            <span>@schedule.Slot.StartTime.ToString("hh\\:mm") - @schedule.Slot.EndTime.ToString("hh\\:mm")</span>
-                                        </li>
-                                    }
+                                    var day = group.Day;
+                                    var slot = group.Schedules.First().Slot;
+                                    <li>
+                                        <span class="yg-class-table-light-text">@day</span>
+                                        <span>@slot.StartTime.ToString("hh\\:mm") - @slot.EndTime.ToString("hh\\:mm")</span>
+                                    </li>
                                 }
                             }
                         </ul>

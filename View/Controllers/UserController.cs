@@ -30,16 +30,27 @@ namespace View.Controllers
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
         }
 
-        public IActionResult Details()
+        public async Task<IActionResult> Details()
         {
-            var user = new UserDto
+            string url = apiUrl + "/profile";
+            AddAuthTokenToRequestHeaders();
+            var response = await _httpClient.GetAsync(url);
+            var resultJson = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
             {
-                FullName = "Nguyễn Thọ Nguyên",
-                Email = "gasshu49@gmail.com",
-                Address = "HCM",
-                Phone = "0933424515",
+                PropertyNameCaseInsensitive = true,
             };
-            return View(user);
+            if (response.IsSuccessStatusCode)
+            {
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<UserDto>>(resultJson, options);
+                return View(baseResponse.Result);
+            }
+            else
+            {
+                TempData["Error"] = "Error";
+                return RedirectToAction("Login", "Auth");
+            }
+            return View();
         }
 
         [HttpPost]
