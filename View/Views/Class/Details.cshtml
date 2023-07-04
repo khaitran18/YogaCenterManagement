@@ -1,4 +1,5 @@
 ﻿@using View.Models.Enum
+@using Microsoft.AspNetCore.Http
 @model View.Models.Response.ClassDto
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,9 +15,62 @@
 <!-- About The Class -->
 <div class="yg-description-section">
     <div class="container">
+        @if (Model.ClassStatus == 2)
+        {
+            <div class="modal fade" id="enrollModal" tabindex="-1" role="dialog" aria-labelledby="enrollModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="enrollModalLabel">Class Information</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="enrollForm" asp-controller="Class" asp-action="Enroll" method="POST">
+                            <div class="modal-body">
+                                <h4>Class Name: @Model.ClassName</h4>
+                                <p>Price: @Model.Price.ToString("N0")</p>
+                                <p>Start Time: @Model.StartDate.ToString("dd/MM/yyyy")</p>
+                                <p>End Time: @Model.EndDate.ToString("dd/MM/yyyy")</p>
+                                <input type="hidden" name="classId" value="@Model.ClassId" />
+                                <input type="hidden" class="form-control" id="amount" name="amount" value="@Model.Price" />
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Enroll</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        }
+
         <div class="row">
-            <div class="col-md-12 col-sm-12 animate-box" data-animate-effect="fadeInUp">
+            <div class="col-md-12 col-sm-12 animate-box d-flex justify-content-between align-items-center mb-3" data-animate-effect="fadeInUp">
                 <h1>About The Class</h1>
+                @if (Model.ClassStatus == 2)
+                {
+                    bool isEnrolled = false; // Flag to track enrollment status
+                    int studentId = 0; // Replace with the actual logic to retrieve the student ID
+
+                    if (Context.Request.Cookies["Id"] != null && int.TryParse(Context.Request.Cookies["Id"], out int currentStudentId))
+                    {
+                        // Check if the current student ID exists in the class's list of students
+                        isEnrolled = Model.Students.Any(s => s.Uid == currentStudentId);
+                        studentId = currentStudentId;
+                    }
+
+                    if (isEnrolled)
+                    {
+                        <a class="btn btn-outline-success pl-3" asp-action="StudyingClasssesById" asp-controller="Class" asp-route-classId="@Model.ClassId">View class</a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-success pl-3" data-toggle="modal" data-target="#enrollModal">Enroll class</button>
+                    }
+                }
+
             </div>
             <div class="col-md-8 col-sm-12 animate-box" data-animate-effect="fadeInUp">
                 <p>@Model.Description</p>
@@ -36,7 +90,7 @@
                             }
                             else
                             {
-                                <h3>N/A — <span>TRAINER</span></h3>
+                                <h3>N/A — <span>LECTURER</span></h3>
                             }
                             <p>Proin ultricies nibh non dolor maximus sceleue. Integer molliser faubs neque nec tincidunte. Aliquam erat vol tempor malader. Aliquam erat volutpat. Praeser tempor maladi quam, nec rutre arcuornare sed. Duru egiter ligula at nibh viverra ultricies. Nunctionter ranish libero maximus aliquet.</p>
                             <span class="yg-social-icon ti-facebook"></span>
@@ -64,8 +118,35 @@
                                     <span>N/A</span>
                                 }
                             </li>
-                            <li> <span class="yg-class-table-light-text"><i class="ti-user"></i>Members</span> <span>@Model.ClassCapacity</span> </li>
+                            <li> <span class="yg-class-table-light-text"><i class="ti-user"></i>Members</span> <span>@Model.Students.Count / @Model.ClassCapacity</span> </li>
                             <li> <span class="yg-class-table-light-text"><i class="ti-calendar"></i>Start Date</span> <span>@Model.StartDate.ToString("MMMM dd, yyyy")</span> </li>
+                            <li>
+                                <span class="yg-class-table-light-text"><i class="ti-time"></i>Length</span>
+                                @{
+                                    TimeSpan length = Model.EndDate - Model.StartDate;
+                                    int lengthInDays = length.Days;
+                                    int lengthInMonths = lengthInDays >= 30 ? lengthInDays / 30 : lengthInDays;
+                                }
+                                <span>@(lengthInDays >= 30 ? lengthInMonths + " Month(s)" : lengthInDays + " Day(s)")</span>
+                            </li>
+
+
+                            <li>
+                                <span class="yg-class-table-light-text"><i class="ti-stats-up"></i>Status</span>
+                                @if (Model.ClassStatus == 1)
+                                {
+                                    <span>Not Started</span>
+                                }
+                                else if (Model.ClassStatus == 2)
+                                {
+                                    <span>Started</span>
+                                }
+                                else if (Model.ClassStatus == 3)
+                                {
+                                    <span>Ended</span>
+                                }
+                            </li>
+
                         </ul>
                     </div>
                 </div>

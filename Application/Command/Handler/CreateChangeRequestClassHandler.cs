@@ -29,9 +29,17 @@ namespace Application.Command.Handler
             var resposne = new BaseResponse<ClassDto>();
             try
             {
-                var classModel =  await _unitOfWork.ClassRepository.RequestChangeClass(request.FromClassId, request.StudentId, request.ToClassId, request.Content);
-                var classDto = _mapper.Map<ClassDto>(classModel);
-                resposne.Result = classDto;
+                if (await _unitOfWork.ClassRepository.ExistChangeClassRequest(request.StudentId, request.FromClassId, request.ToClassId))
+                {
+                    resposne.Error = true;
+                    resposne.Message = "Same request already exist";
+                }
+                else
+                {
+                    var classModel = await _unitOfWork.ClassRepository.RequestChangeClass(request.FromClassId, request.StudentId, request.ToClassId, request.Content);
+                    var classDto = _mapper.Map<ClassDto>(classModel);
+                    resposne.Result = classDto;
+                }
 
             }
             catch (Exception)
