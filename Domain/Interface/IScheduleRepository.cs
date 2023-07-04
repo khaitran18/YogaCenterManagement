@@ -21,5 +21,6 @@ namespace Domain.Interface
         Task<bool> ExistSchedule(int scheduleId);
         Task<string> GetNotification(int scheduleId);
         public Task<bool> ExistStudySlot(TimeSpan startTime, TimeSpan endTime, List<int> dateIds);
+        Task<List<ScheduleModel>> GetScheduleByStartDateAndEndDate(DateTime startDate, DateTime endDate);
     }
 }

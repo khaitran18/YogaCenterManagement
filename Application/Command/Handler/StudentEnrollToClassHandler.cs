@@ -34,6 +34,16 @@ namespace Application.Command.Handler
                     response.Error = true;
                     response.Exception = new BadRequestException("Class is not able to enroll");
                 }
+                else if(@class.ClassCapacity < @class.Students.Count)
+                {
+                    response.Error = true;
+                    response.Exception = new BadRequestException("Class is full");
+                }
+                else if(@class.Price != (double)request.PaymentDto.Amount)
+                {
+                    response.Error = true;
+                    response.Exception = new BadRequestException("Transfer amount is not match");
+                }
                 else
                 {
                     var paymentModel = _mapper.Map<PaymentModel>(request.PaymentDto);

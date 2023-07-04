@@ -1,0 +1,67 @@
+﻿
+@model List<View.Models.Response.ScheduleDto>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+        <!-- Schedule Section -->
+        <div class="yg-schedule-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="yg-details-block yg-text-center animate-box" data-animate-effect="fadeInUp">
+                            <h3 class="yg-details-title">OUR SCHEDULE</h3>
+                            <p>Download Training Schema in PDF.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 animate-box" data-animate-effect="fadeInUp">
+                        <button type="button" class="yg-schedule btn">DOWNLOAD SCHEDULE <i class="ti-download"></i></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 animate-box" data-animate-effect="fadeInUp">
+                        <table class="table table-bordered">
+    <thead class="yg-thead">
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">MONDAY</th>
+            <th scope="col">TUESDAY</th>
+            <th scope="col">WEDNESDAY</th>
+            <th scope="col">THURSDAY</th>
+            <th scope="col">FRIDAY</th>
+            <th scope="col">SATURDAY</th>
+            <th scope="col">SUNDAY</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>             
+                <td>@item.DailyNote</td>
+            </tr>
+        }
+    </tbody>
+</table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Testimonial Section -->
+        <div class="yg-testimonial-section-first">
+            <div class="container yg-container-full">
+                <div class="row yg-gutter-0">
+                    <div class="col-md-7 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
+                        <div class=""> <img src="images/testimonial.jpg" class="img-fluid" alt=""> </div>
+                    </div>
+                    <div class="col-md-5 col-sm-12 animate-box" data-animate-effect="fadeInRight">
+                        <div class="yg-text-block yg-text-block-h700">
+                            <div class="yg-text-block-center yg-text-block-w60">
+                                <div class="yg-testimonial-section-first-title">"Great teacher, great environment, great energy. Awesome specials for new yogis."</div>
+                                <div class="yg-testimonial-section-first-subtitle">— Lee Buoy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

@@ -474,7 +474,6 @@ namespace View.Controllers
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
             var formData = new MultipartFormDataContent();
-            Console.WriteLine(model.Monday);
             var file = model.Image;
             if(file != null && file.Length > 0)
             {
@@ -495,7 +494,9 @@ namespace View.Controllers
             formData.Add(new StringContent(model.Description), "Description");
             formData.Add(new StringContent(model.StartDate.ToString("yyyy-MM-dd")), "StartDate");
             formData.Add(new StringContent(model.EndDate.ToString("yyyy-MM-dd")), "EndDate");
-            formData.Add(new StringContent(SelectDay(model)), "SelectedDayOfWeek");
+            Console.WriteLine(model.SlotId);
+            formData.Add(new StringContent(model.SlotId), "SlotId");
+            //formData.Add(new StringContent(SelectDay(model)), "SelectedDayOfWeek");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJraGFpdHJhbnF1YW5nIiwianRpIjoiMTgiLCJ1c2VybmFtZSI6ImtoYWl0cmFucXVhbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNjkwOTAyMzY0LCJpc3MiOiJqd3QiLCJhdWQiOiJqd3QifQ.-zZevseiqLHOfIR1pyrlg8mF5tTRx74w6-9aFZ3tyco");
 
             var response = await _httpClient.PostAsync(classApiUrl, formData);
@@ -507,6 +508,7 @@ namespace View.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var baseResponse = JsonSerializer.Deserialize<BaseResponse<ClassDto>>(responseBody, options);
+                Console.WriteLine(baseResponse);
                 TempData["Success"] = "Create successfully";
             }
             else
@@ -653,34 +655,34 @@ namespace View.Controllers
         private string SelectDay(CreateClassDto model)
         {
             List<string> dayList = new List<string>();
-            if (model.Monday != null)
-            {
-                dayList.Add("1");
-            }
-            if (model.Tuesday != null)
-            {
-                dayList.Add("2");
-            }
-            if (model.Wednesday != null)
-            {
-                dayList.Add("3");
-            }
-            if (model.Thursday != null)
-            {
-                dayList.Add("4");
-            }
-            if (model.Friday != null)
-            {
-                dayList.Add("5");
-            }
-            if (model.Saturday != null)
-            {
-                dayList.Add("6");
-            }
-            if (model.Sunday != null)
-            {
-                dayList.Add("7");
-            }
+            //if (model.Monday != null)
+            //{
+            //    dayList.Add("1");
+            //}
+            //if (model.Tuesday != null)
+            //{
+            //    dayList.Add("2");
+            //}
+            //if (model.Wednesday != null)
+            //{
+            //    dayList.Add("3");
+            //}
+            //if (model.Thursday != null)
+            //{
+            //    dayList.Add("4");
+            //}
+            //if (model.Friday != null)
+            //{
+            //    dayList.Add("5");
+            //}
+            //if (model.Saturday != null)
+            //{
+            //    dayList.Add("6");
+            //}
+            //if (model.Sunday != null)
+            //{
+            //    dayList.Add("7");
+            //}
             return String.Join(",",dayList.ToArray());
         }
     }
