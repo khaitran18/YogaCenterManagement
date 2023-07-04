@@ -20,7 +20,9 @@ namespace Infrastructure.Repository
             _mapper = mapper;
         }
 
+
         public async Task<ClassModel> CreateClassSchedule(string name, double price, int capacity,string description,string image, DateTime startDate, DateTime endDate, int? slotId)
+
         {
             Class newClass = new Class();
             try
@@ -550,8 +552,8 @@ namespace Infrastructure.Repository
                         .ThenInclude(sc => sc.Slot)
                             .ThenInclude(sl => sl.Days)
                     .Include(c => c.Lecturer)
-                    .FirstOrDefaultAsync(c => c.ClassStatus == 2 
-                                                                 && c.ClassId == classId 
+                    .FirstOrDefaultAsync(c => c.ClassStatus == 2
+                                                                 && c.ClassId == classId
                                                                  && c.Students.Any(s => s.Uid == studentId));
                 classModel = _mapper.Map<ClassModel>(@class);
             }
@@ -565,7 +567,7 @@ namespace Infrastructure.Repository
         #endregion
 
         #region Update class status with today time
-        public  async Task UpdateClassStatus()
+        public async Task UpdateClassStatus()
         {
             DateTime today = DateTime.Today;
             var classes = await _context.Classes.ToListAsync();
@@ -607,6 +609,78 @@ namespace Infrastructure.Repository
             }
         }
 
+        #endregion
+
+        #region Get class that student has studied
+        public async Task<(IEnumerable<ClassModel>, int)> GetStudiedClass(int studentId, int page, int pageSize)
+        {
+
+            var classModels = new List<ClassModel>();
+            int totalCount = 0;
+            try
+            {
+                var classes = await _context.Classes
+                                                    .Include(c => c.Students)
+                                                    .Where(c => c.ClassStatus == 3 && c.Students.Any(s => s.Uid == studentId))
+                                                    .ToListAsync();
+                classModels = _mapper.Map<List<ClassModel>>(classes.Skip((page - 1) * pageSize).Take(pageSize));
+                totalCount = classes.Count;
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in GetStudiedClass");
+            }
+            return (classModels, totalCount);
+        }
+        #endregion
+
+        #region Get teaching class with lecturer id 
+        public async Task<(IEnumerable<ClassModel>, int)> GetTeachingClass(int lecturerId, int page, int pageSize)
+        {
+            var classModels = new List<ClassModel>();
+            int totalCount = 0;
+            try
+            {
+                var classes = await _context.Classes
+                                                    .Where(c => c.ClassStatus == 2 && c.LecturerId == lecturerId)
+                                                    .ToListAsync();
+                classModels = _mapper.Map<List<ClassModel>>(classes.Skip((page - 1) * pageSize).Take(pageSize));
+                totalCount = classes.Count;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return (classModels, totalCount);
+        }
+        #endregion
+
+        #region Get teaching class with class id
+        public async Task<ClassModel> GetTeachingClassByClassId(int lecturerId, int classId)
+        {
+            var classModel = new ClassModel();
+            try
+            {
+                var @class = await _context.Classes
+                    .Include(c => c.Schedules)
+                        .ThenInclude(sc => sc.Slot)
+                            .ThenInclude(sl => sl.Days)
+                    .Include(c => c.Lecturer)
+                    .Include(c => c.Students)
+                    .FirstOrDefaultAsync(c => c.ClassStatus == 2
+                                                                 && c.ClassId == classId
+                                                                 && c.LecturerId == lecturerId);
+                classModel = _mapper.Map<ClassModel>(@class);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return classModel;
+        }
         #endregion
     }
 }

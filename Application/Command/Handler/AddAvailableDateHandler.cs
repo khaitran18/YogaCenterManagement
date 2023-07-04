@@ -34,13 +34,22 @@ namespace Application.Command.Handler
                 ClaimsPrincipal claims = _tokenServices.ValidateToken(request.Token ?? "");
                 if (claims != null)
                 {
-                    var availableDateModels = await _unitOfWork.ScheduleRepository.AddAvailableDate(request.LecturerId, request.SlotIds);
-                    var availableDateDtos = new List<AvailableDateDto>();
-                    foreach (var availableDateModel in availableDateModels)
+                    int lecturerIdToken = int.Parse(claims.FindFirst("jti")?.Value ?? "0");
+                    if (lecturerIdToken != request.LecturerId)
                     {
-                        availableDateDtos.Add(new AvailableDateDto { LecturerId = availableDateModel.LecturerId, SlotId = availableDateModel.SlotId, Slot = new StudySlotDto { StartTime = availableDateModel.Slot.StartTime, EndTime = availableDateModel.Slot.EndTime, Day = _mapper.Map<List<DayDto>>(availableDateModel.Slot.Day) } });
+                        response.Error = true;
+                        response.Exception = new BadRequestException("Lecturer id not match");
                     }
-                    response.Result = availableDateDtos;
+                    else
+                    {
+                        var availableDateModels = await _unitOfWork.ScheduleRepository.AddAvailableDate(request.LecturerId, request.SlotIds);
+                        var availableDateDtos = new List<AvailableDateDto>();
+                        foreach (var availableDateModel in availableDateModels)
+                        {
+                            availableDateDtos.Add(new AvailableDateDto { LecturerId = availableDateModel.LecturerId, SlotId = availableDateModel.SlotId, Slot = new StudySlotDto { StartTime = availableDateModel.Slot.StartTime, EndTime = availableDateModel.Slot.EndTime, Day = _mapper.Map<List<DayDto>>(availableDateModel.Slot.Day) } });
+                        }
+                        response.Result = availableDateDtos;
+                    }
                 }
                 else
                 {

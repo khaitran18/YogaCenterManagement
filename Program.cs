@@ -135,6 +135,10 @@ builder.Services.AddScoped<IRequestHandler<GetStudySlotsQuery, BaseResponse<IEnu
 builder.Services.AddScoped<IRequestHandler<GetChangeClassQuery, BaseResponse<IEnumerable<ClassDto>>>, GetChangeClassHandler>();
 builder.Services.AddScoped<IRequestHandler<GetStudyingClassQuery, BaseResponse<PaginatedResult<ClassDto>>>, GetStudyingClassHandler>();
 builder.Services.AddScoped<IRequestHandler<GetStudyingClassByClassIdQuery, BaseResponse<ClassDto>>, GetStudyingClassByClassIdHandler>();
+builder.Services.AddScoped<IRequestHandler<GetStudiedClassQuery, BaseResponse<PaginatedResult<ClassDto>>>, GetStudiedClassHandler>();
+builder.Services.AddScoped<IRequestHandler<GetTeachingClassQuery, BaseResponse<PaginatedResult<ClassDto>>>, GetTeachingClassHandler>();
+builder.Services.AddScoped<IRequestHandler<GetTeachingClassByClassIdQuery, BaseResponse<ClassDto>>, GetTeachingClassByClassIdHandler>();
+builder.Services.AddScoped<IRequestHandler<GetAvailableDateByLecturerId, BaseResponse<IEnumerable<AvailableDateDto>>>, GetAvailableDateByLecturerIdHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateClassCommand,BaseResponse<ClassDto>>, CreateClassHandler>();
 builder.Services.AddScoped<IRequestHandler<EditClassCommand,BaseResponse<ClassDto>>, EditClassHandler>();
