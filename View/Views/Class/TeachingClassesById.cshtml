@@ -18,30 +18,6 @@
 <!-- About The Class -->
 <div class="yg-description-section">
     <div class="container">
-        <!-- Modal -->
-        <div id="changeClassModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Change Class</h5>
-                        @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>*@
-                    </div>
-
-                    <div class="modal-body">
-                        <form asp-action="CreateChangeRequest" asp-controller="Class">
-                            <label for="content">Reason</label>
-                            <textarea id="content" name="content" placeholder="Reason"></textarea>
-                            <div id="classList">
-                                <!-- Class list will be dynamically populated here -->
-                            </div>
-                            <button type="submit" class="btn btn-success">Submit</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-12 col-sm-12 animate-box" data-animate-effect="fadeInUp">
                 <h1>About The Class</h1>
@@ -73,22 +49,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-8">
-                    <button id="changeClassButton" class="btn btn-outline-success">Change Class</button>
-                </div>
                 <div style="height:50px;"></div>
-                <!-- Feedback Form -->
-                <div class="animate-box" data-animate-effect="fadeInUp">
-                    <h3>Feedback For Your Lecturer</h3>
-                    <form asp-controller="User" asp-action="CreateFeedback" method="post">
-                        <input type="hidden" name="lecturerId" value="@Model.LecturerId" />
-                        <input type="hidden" name="classId" value="@Model.ClassId" />
-                        <div class="form-group">
-                            <textarea name="subject" class="form-control" rows="3" placeholder="Write your feedback..."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary yg-btn">Submit</button>
-                    </form>
-                </div>
+            
             </div>
             <!-- Class Details & Class Hours -->
             <div class="col-md-4 col-sm-12">
@@ -158,42 +120,3 @@
     </div>
 </div>
 
-@section Scripts {
-<script>
-    $(document).ready(function() {
-        $("#changeClassButton").click(function() {
-            // Clear the class list
-            $("#classList").empty();
-
-            // Populate the class list dynamically
-            @if (changeClassList != null)
-            {
-                foreach (var classDto in changeClassList)
-                {
-                    <text>
-                        var classId = @classDto.ClassId;
-                        var className = '@classDto.ClassName';
-                        var imageUrl = '@classDto.Image';
-
-                    var listItem = '<div class="class-item">' +
-                        '<div class="class-info">' +
-                        '<a href="https://localhost:7274/class/details/' + classId + '">' +
-                        '<img src="' + imageUrl + '" alt="' + className + '">' +
-                        '<span class="class-name">' + className + '</span>' +
-                        '</a>' +
-                        '</div>' +
-                        '<input type="radio" name="toClassId" value="' + classId + '">' +
-                        '<input type="hidden" name="fromClassId" value="' + @Model.ClassId + '"/>' +
-                        '</div>';
-
-                        $("#classList").append(listItem);
-                    </text>
-                }
-            }
-
-            // Show the modal
-            $("#changeClassModal").modal("show");
-        });
-    });
-</script>
-}

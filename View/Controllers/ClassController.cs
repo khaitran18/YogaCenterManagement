@@ -16,6 +16,7 @@ namespace View.Controllers
         private string changeClassApi = "";
         private string changeClassApi2 = "";
         private string enrollClassApiUrl = "";
+        private string teachingClassApiUrl = "";
         public ClassController()
         {
             _httpClient = new HttpClient();
@@ -25,6 +26,7 @@ namespace View.Controllers
             changeClassApi = "https://localhost:7241/api/Class/changeclasses";
             changeClassApi2 = "https://localhost:7241/api/Class/changeclass";
             enrollClassApiUrl = "https://localhost:7241/api/Class/enroll";
+            teachingClassApiUrl = "https://localhost:7241/api/Class/teachclass";
         }
 
         private string? GetAuthTokenFromCookie()
@@ -196,12 +198,12 @@ namespace View.Controllers
             }
         }        
         
-        public async Task<IActionResult> StudyingClasssesById(int classId)
+        public async Task<IActionResult> StudyingClassesById(int classId)
         {
             var studentId = Request.Cookies["Id"];
             var response = await _httpClient.GetAsync($"{studyingClassApiUrl}?StudentId={studentId}&ClassId={classId}");
-            var changeClassResponse = await _httpClient.GetAsync($"https://localhost:7241/api/Class/changeclasses/1");
-            
+            var changeClassResponse = await _httpClient.GetAsync($"https://localhost:7241/api/Class/changeclasses/{classId}");
+            Console.WriteLine($"{studyingClassApiUrl}?StudentId={studentId}&ClassId={classId}");
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
@@ -272,7 +274,7 @@ namespace View.Controllers
                 }
             }
             //Console.WriteLine(requestData);
-            return RedirectToAction(nameof(StudyingClasssesById), new { classId = fromClassId });
+            return RedirectToAction(nameof(StudyingClassesById), new { classId = fromClassId });
         }
 
         [HttpPost]
@@ -314,5 +316,70 @@ namespace View.Controllers
             //Console.WriteLine(requestData);
             return RedirectToAction(nameof(Details), new {classId});
         }
+
+        public async Task<IActionResult> TeachingClasses(int page = 1, int pageSize = 6)
+        {
+            var lecturerId = Request.Cookies["Id"];
+            Console.WriteLine(lecturerId);
+            Console.WriteLine($"{teachingClassApiUrl}/{lecturerId}?page={page}&pageSize={pageSize}");
+
+            var response = await _httpClient.GetAsync($"{teachingClassApiUrl}/{lecturerId}?page={page}&pageSize={pageSize}");
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<PaginatedResult<ClassDto>>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    //ViewBag.QueryString = queryStringWithoutPage;
+                    return View(baseResponse.Result);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public async Task<IActionResult> TeachingClassesById(int classId)
+        {
+            var lecturerId = Request.Cookies["Id"];
+            var response = await _httpClient.GetAsync($"{teachingClassApiUrl}?LecturerId={lecturerId}&ClassId={classId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<ClassDto>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    //ViewBag.QueryString = queryStringWithoutPage;
+                    return View(baseResponse.Result);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                return View();
+            }
+        }
+
     }
 }
