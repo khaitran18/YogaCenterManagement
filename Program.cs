@@ -152,6 +152,7 @@ builder.Services.AddScoped<IRequestHandler<DeleteStudySlotCommand,BaseResponse<b
 
 builder.Services.AddScoped<IRequestHandler<AssignLecturerCommand, BaseResponse<ClassDto>>, AssignLecturerHandler>();
 builder.Services.AddScoped<IRequestHandler<UserDetailQuery, BaseResponse<UserDto>>, UserDetailHandler>();
+builder.Services.AddScoped<IRequestHandler<GetScheduleQuery, BaseResponse<List<ScheduleDto>>>, GetScheduleHandler>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
