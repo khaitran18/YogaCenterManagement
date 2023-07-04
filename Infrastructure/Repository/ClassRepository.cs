@@ -20,7 +20,9 @@ namespace Infrastructure.Repository
             _mapper = mapper;
         }
 
-        public async Task<ClassModel> CreateClassSchedule(string name, double price, int capacity,string description,string image, DateTime startDate, DateTime endDate, List<int> dateIds)
+
+        public async Task<ClassModel> CreateClassSchedule(string name, double price, int capacity,string description,string image, DateTime startDate, DateTime endDate, int? slotId)
+
         {
             Class newClass = new Class();
             try
@@ -34,6 +36,7 @@ namespace Infrastructure.Repository
                     Image = image,
                     StartDate = startDate,
                     EndDate = endDate,
+                    ClassStatus = 1, //default value
                 };
                 _context.Classes.Add(newClass);
                 await _context.SaveChangesAsync();
@@ -43,7 +46,14 @@ namespace Infrastructure.Repository
                     throw new Exception("Failed to retrieve the newly created class.");
                 }
                 //return class with empty if no day is selected 
-                if (dateIds.Count() == 0 || startDate == null)
+                if (slotId == null || startDate == null)
+                {
+                    return _mapper.Map<ClassModel>(newClassWithEmptySchedules);
+                }
+                // validate slot
+                //StudySlot slot = _context.StudySlots.Find(slotId);
+                StudySlot slot = await _context.StudySlots.Include(ss => ss.Days).FirstOrDefaultAsync(ss => ss.SlotId == slotId);
+                if (slot == null || slot.Days == null)
                 {
                     return _mapper.Map<ClassModel>(newClassWithEmptySchedules);
                 }
@@ -51,17 +61,35 @@ namespace Infrastructure.Repository
                 for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
                 {
                     int selectedDay = (int)date.DayOfWeek;
-                    if (dateIds.Contains(selectedDay))
+                    if(selectedDay == 0)
                     {
-                        StudySlot studySlot = _context.StudySlots.First(s => s.Days.Where(d => d.DayId == selectedDay).Any());
+                        selectedDay = 7;
+                    }
+                    if (slot.Days.Where(d => d.DayId == selectedDay).Any())
+                    {
                         Schedule schedule = new Schedule()
                         {
                             ClassId = newClassWithEmptySchedules.ClassId,
-                            SlotId = studySlot.SlotId,
+                            SlotId = slot.SlotId,
                             Date = date,
                         };
                         _context.Schedules.Add(schedule);
                     }
+                    else
+                    {
+                        Console.WriteLine("Date not matched");
+                    }
+                    //if (dateIds.Contains(selectedDay))
+                    //{
+                    //    StudySlot studySlot = _context.StudySlots.First(s => s.Days.Where(d => d.DayId == selectedDay).Any());
+                    //    Schedule schedule = new Schedule()
+                    //    {
+                    //        ClassId = newClassWithEmptySchedules.ClassId,
+                    //        SlotId = studySlot.SlotId,
+                    //        Date = date,
+                    //    };
+                    //    _context.Schedules.Add(schedule);
+                    //}
                 }
                 await _context.SaveChangesAsync();
                 var newClassWithSchedules = _context.Classes.Single(c => c.ClassId == newClassWithEmptySchedules.ClassId);
@@ -117,13 +145,9 @@ namespace Infrastructure.Repository
                 {
                     throw new Exception("Lecturer not found");
                 }
-
-                bool availableLecturer = false;
-                foreach (var schedule in theClass.Schedules.ToList())
-                {
-                    availableLecturer = lecturer.AvailableDates.Where(d => d.SlotId == schedule.SlotId).Any();
-                }
-                if (availableLecturer)
+                var schedule = await _context.Schedules.FirstAsync(s => s.ClassId == classId);
+                var availableDate = _context.AvailableDates.Where(ad => ad.LecturerId == lecId).ToList();
+                if(availableDate.Where(ad => ad.SlotId == schedule.SlotId).Any())
                 {
                     theClass.LecturerId = lecturer.Uid;
                     _context.Classes.Update(theClass);
@@ -152,9 +176,14 @@ namespace Infrastructure.Repository
                     existingClass.Price = model.Price;
                     existingClass.ClassCapacity = model.ClassCapacity;
                     existingClass.Description = model.Description;
-                    existingClass.Image = model.Image;
-
-                    return _mapper.Map<ClassModel>(existingClass);
+                    if(model.Image != null && model.Image != "")
+                    {
+                        existingClass.Image = model.Image;
+                    }
+                    _context.Classes.Update(existingClass);
+                    await _context.SaveChangesAsync();
+                    var updatedClass = await _context.Classes.FirstOrDefaultAsync(c => c.ClassId == existingClass.ClassId);
+                    return _mapper.Map<ClassModel>(updatedClass);
                 }
                 else
                 {
@@ -523,8 +552,8 @@ namespace Infrastructure.Repository
                         .ThenInclude(sc => sc.Slot)
                             .ThenInclude(sl => sl.Days)
                     .Include(c => c.Lecturer)
-                    .FirstOrDefaultAsync(c => c.ClassStatus == 2 
-                                                                 && c.ClassId == classId 
+                    .FirstOrDefaultAsync(c => c.ClassStatus == 2
+                                                                 && c.ClassId == classId
                                                                  && c.Students.Any(s => s.Uid == studentId));
                 classModel = _mapper.Map<ClassModel>(@class);
             }
@@ -538,7 +567,7 @@ namespace Infrastructure.Repository
         #endregion
 
         #region Update class status with today time
-        public  async Task UpdateClassStatus()
+        public async Task UpdateClassStatus()
         {
             DateTime today = DateTime.Today;
             var classes = await _context.Classes.ToListAsync();
@@ -580,6 +609,78 @@ namespace Infrastructure.Repository
             }
         }
 
+        #endregion
+
+        #region Get class that student has studied
+        public async Task<(IEnumerable<ClassModel>, int)> GetStudiedClass(int studentId, int page, int pageSize)
+        {
+
+            var classModels = new List<ClassModel>();
+            int totalCount = 0;
+            try
+            {
+                var classes = await _context.Classes
+                                                    .Include(c => c.Students)
+                                                    .Where(c => c.ClassStatus == 3 && c.Students.Any(s => s.Uid == studentId))
+                                                    .ToListAsync();
+                classModels = _mapper.Map<List<ClassModel>>(classes.Skip((page - 1) * pageSize).Take(pageSize));
+                totalCount = classes.Count;
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in GetStudiedClass");
+            }
+            return (classModels, totalCount);
+        }
+        #endregion
+
+        #region Get teaching class with lecturer id 
+        public async Task<(IEnumerable<ClassModel>, int)> GetTeachingClass(int lecturerId, int page, int pageSize)
+        {
+            var classModels = new List<ClassModel>();
+            int totalCount = 0;
+            try
+            {
+                var classes = await _context.Classes
+                                                    .Where(c => c.ClassStatus == 2 && c.LecturerId == lecturerId)
+                                                    .ToListAsync();
+                classModels = _mapper.Map<List<ClassModel>>(classes.Skip((page - 1) * pageSize).Take(pageSize));
+                totalCount = classes.Count;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return (classModels, totalCount);
+        }
+        #endregion
+
+        #region Get teaching class with class id
+        public async Task<ClassModel> GetTeachingClassByClassId(int lecturerId, int classId)
+        {
+            var classModel = new ClassModel();
+            try
+            {
+                var @class = await _context.Classes
+                    .Include(c => c.Schedules)
+                        .ThenInclude(sc => sc.Slot)
+                            .ThenInclude(sl => sl.Days)
+                    .Include(c => c.Lecturer)
+                    .Include(c => c.Students)
+                    .FirstOrDefaultAsync(c => c.ClassStatus == 2
+                                                                 && c.ClassId == classId
+                                                                 && c.LecturerId == lecturerId);
+                classModel = _mapper.Map<ClassModel>(@class);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return classModel;
+        }
         #endregion
     }
 }

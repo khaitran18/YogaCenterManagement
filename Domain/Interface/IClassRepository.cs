@@ -10,7 +10,7 @@ namespace Domain.Interface
 {
     public interface IClassRepository : IBaseRepository<ClassModel>
     {
-        public Task<ClassModel> CreateClassSchedule(string name, double price, int capacity, string Description, string image, DateTime startDate, DateTime endDate, List<int> dateIds);
+        public Task<ClassModel> CreateClassSchedule(string name, double price, int capacity, string Description, string image, DateTime startDate, DateTime endDate, int? dateIds);
         public Task<ClassModel> AssignLecturer(int classId, int lecturerId);
         public Task<bool> CheckLecturerAuthority(int scheduleid, int userId);
         public Task<ClassModel> GetClassById(int classId);
@@ -25,5 +25,9 @@ namespace Domain.Interface
         public Task<ClassModel> GetStudyingClassByClassId(int studentId, int classId);
         public Task UpdateClassStatus();
         public Task<bool> ExistChangeClassRequest(int studentId, int fromClassId, int toClassId);
+        public Task<(IEnumerable<ClassModel>, int)> GetStudiedClass(int studentId, int page, int pageSize);
+        public Task<(IEnumerable<ClassModel>, int)> GetTeachingClass(int lecturerId, int page, int pageSize);
+        public Task<ClassModel> GetTeachingClassByClassId(int lecturerId, int classId);
+
     }
 }

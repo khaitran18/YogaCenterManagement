@@ -36,24 +36,16 @@ namespace Application.Command.Handler
 
                 ClaimsPrincipal claims = _tokenServices.ValidateToken(request.token ?? "");
                 if (claims != null)
-                {
-                    List<int> dateIds = new List<int>();
+                {   
                     string ImageUrl = "";
-                    if(request.SelectedDayOfWeek != null)
-                    {
-                        foreach (string day in request.SelectedDayOfWeek.Split(','))
-                        {
-                            dateIds.Add(int.Parse(day));
-                        }
-                    }
                     if(request.Image != null)
                     {
                         ImageUrl = await _cloudStorageService.UploadFileAsync(request.Image, "image/" + request.ClassName);
                     }
-                    var newClass = await _unitOfWork.ClassRepository.CreateClassSchedule(request.ClassName, request.Price, request.ClassCapacity,request.Description,ImageUrl, request.StartDate,request.EndDate,dateIds);
+                    var newClass = await _unitOfWork.ClassRepository.CreateClassSchedule(request.ClassName, request.Price, request.ClassCapacity,request.Description,ImageUrl, request.StartDate,request.EndDate,request.SlotId);
                     var classDto = _mapper.Map<ClassDto>(newClass);
                     response.Result = classDto;
-                    response.Message = newClass.Schedules != null ? "Schedules generated" : "No schedule yet";
+                    response.Message = newClass.Schedules != null || newClass.Schedules.Count > 0 ? "Schedules generated" : "No schedule yet";
                 }
                 else
                 {

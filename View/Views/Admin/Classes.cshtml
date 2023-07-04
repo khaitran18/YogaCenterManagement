@@ -63,7 +63,13 @@
                                 <p class="font-weight-bold">End Date:<p />
                                 <input type="date" id="end-date" name="EndDate" class="ml-3 border" />
                             </div>
-                            <label for="days-input" class="font-weight-bold">Days of the Week:</label><br>
+                            <div class="mx-2">
+                                <p class="font-weight-bold">Select the study slot:<p />
+                                <select id="selectSlot" name="SlotId">
+                                    <option value="" selected>None</option>
+                                </select>
+                            </div>
+                           @* <label for="days-input" class="font-weight-bold">Days of the Week:</label><br>
                             <input type="checkbox" id="monday" name="Monday" value="Monday" class="ml-4">
                             <label for="monday">Monday</label>
                             <br>
@@ -83,7 +89,7 @@
                             <label for="saturday">Saturday</label>
                             <br>
                             <input type="checkbox" id="sunday" name="Sunday" value="Sunday" class="ml-4">
-                            <label for="sunday">Sunday</label>
+                            <label for="sunday">Sunday</label>*@
                         </div>
                     </form>
                 </div>
@@ -173,12 +179,12 @@
                             <td>@(classItem.Lecturer != null ? classItem.Lecturer.FullName : "N/A")</td>
                             <td>
                                 <div class="table-data-feature">
-                                    <button class="item edit-class-btn" data-class='@Json.Serialize(classItem)' data-toggle="tooltip" data-placement="top" title="Edit">
+                                    @*<button class="item edit-class-btn" data-class='@Json.Serialize(classItem)' data-toggle="tooltip" data-placement="top" title="Edit">
                                         <i class="zmdi zmdi-edit"></i>
                                     </button>
                                     <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
                                         <i class="zmdi zmdi-delete"></i>
-                                    </button>
+                                    </button>*@
                                     <div class="dropdown">
                                         <button class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="zmdi zmdi-more"></i>
@@ -291,6 +297,35 @@
 
             window.location.href = url;
         }
+
+        $.ajax({
+          url: 'https://localhost:7241/api/Class/slot',
+          method: 'GET',
+          dataType: 'json',
+          headers: {
+            'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI'
+          },
+          success: function(data) {
+            const selectSlot = $('#selectSlot');
+            console.log(data.result);
+            // Loop through the sections and create options with custom content
+            $.each(data.result, function(index, slot) {
+                //days of slot
+                const days = slot.day.map(item => item.day);
+                const str = days.join(",");
+              // Create an option element with custom content
+              const option = $('<option></option>')
+                .attr('value', slot.slotId)
+                .html('<strong>' + slot.startTime + " - " + slot.endTime + '</strong>: ' + str);
+
+              // Append the option to the select element
+              selectSlot.append(option);
+            });
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            console.log('Error fetching sections:', errorThrown);
+          }
+        });
     });
 
 </script>

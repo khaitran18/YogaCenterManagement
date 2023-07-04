@@ -38,6 +38,7 @@ namespace Application.Command.Handler
                 ClaimsPrincipal claims = _tokenServices.ValidateToken(request.token ?? "");
                 if (claims != null)
                 {
+                    //update image on need
                     string ImageUrl = "";
                     if (request.Image != null)
                     {
