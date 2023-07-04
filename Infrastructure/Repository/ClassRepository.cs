@@ -20,7 +20,9 @@ namespace Infrastructure.Repository
             _mapper = mapper;
         }
 
-        public async Task<ClassModel> CreateClassSchedule(string name, double price, int capacity, string description, string image, DateTime startDate, DateTime endDate, List<int> dateIds)
+
+        public async Task<ClassModel> CreateClassSchedule(string name, double price, int capacity,string description,string image, DateTime startDate, DateTime endDate, int? slotId)
+
         {
             Class newClass = new Class();
             try
@@ -34,6 +36,7 @@ namespace Infrastructure.Repository
                     Image = image,
                     StartDate = startDate,
                     EndDate = endDate,
+                    ClassStatus = 1, //default value
                 };
                 _context.Classes.Add(newClass);
                 await _context.SaveChangesAsync();
@@ -43,7 +46,14 @@ namespace Infrastructure.Repository
                     throw new Exception("Failed to retrieve the newly created class.");
                 }
                 //return class with empty if no day is selected 
-                if (dateIds.Count() == 0 || startDate == null)
+                if (slotId == null || startDate == null)
+                {
+                    return _mapper.Map<ClassModel>(newClassWithEmptySchedules);
+                }
+                // validate slot
+                //StudySlot slot = _context.StudySlots.Find(slotId);
+                StudySlot slot = await _context.StudySlots.Include(ss => ss.Days).FirstOrDefaultAsync(ss => ss.SlotId == slotId);
+                if (slot == null || slot.Days == null)
                 {
                     return _mapper.Map<ClassModel>(newClassWithEmptySchedules);
                 }
@@ -51,17 +61,35 @@ namespace Infrastructure.Repository
                 for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
                 {
                     int selectedDay = (int)date.DayOfWeek;
-                    if (dateIds.Contains(selectedDay))
+                    if(selectedDay == 0)
                     {
-                        StudySlot studySlot = _context.StudySlots.First(s => s.Days.Where(d => d.DayId == selectedDay).Any());
+                        selectedDay = 7;
+                    }
+                    if (slot.Days.Where(d => d.DayId == selectedDay).Any())
+                    {
                         Schedule schedule = new Schedule()
                         {
                             ClassId = newClassWithEmptySchedules.ClassId,
-                            SlotId = studySlot.SlotId,
+                            SlotId = slot.SlotId,
                             Date = date,
                         };
                         _context.Schedules.Add(schedule);
                     }
+                    else
+                    {
+                        Console.WriteLine("Date not matched");
+                    }
+                    //if (dateIds.Contains(selectedDay))
+                    //{
+                    //    StudySlot studySlot = _context.StudySlots.First(s => s.Days.Where(d => d.DayId == selectedDay).Any());
+                    //    Schedule schedule = new Schedule()
+                    //    {
+                    //        ClassId = newClassWithEmptySchedules.ClassId,
+                    //        SlotId = studySlot.SlotId,
+                    //        Date = date,
+                    //    };
+                    //    _context.Schedules.Add(schedule);
+                    //}
                 }
                 await _context.SaveChangesAsync();
                 var newClassWithSchedules = _context.Classes.Single(c => c.ClassId == newClassWithEmptySchedules.ClassId);
@@ -152,9 +180,14 @@ namespace Infrastructure.Repository
                     existingClass.Price = model.Price;
                     existingClass.ClassCapacity = model.ClassCapacity;
                     existingClass.Description = model.Description;
-                    existingClass.Image = model.Image;
-
-                    return _mapper.Map<ClassModel>(existingClass);
+                    if(model.Image != null && model.Image != "")
+                    {
+                        existingClass.Image = model.Image;
+                    }
+                    _context.Classes.Update(existingClass);
+                    await _context.SaveChangesAsync();
+                    var updatedClass = await _context.Classes.FirstOrDefaultAsync(c => c.ClassId == existingClass.ClassId);
+                    return _mapper.Map<ClassModel>(updatedClass);
                 }
                 else
                 {

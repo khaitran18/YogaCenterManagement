@@ -25,7 +25,7 @@
                             <input class="au-input" type="text" name="searchKeyword" placeholder="Search by Class Name" />
                             @*<button class="au-btn--submit" type="submit">
                                 <i class="zmdi zmdi-search"></i>
-                            </button>*@
+                                </button>*@
                         </div>
                     </form>
 
@@ -82,9 +82,9 @@
                                     <h2><a href="@Url.Action("Details", "Class", new { id = classItem.ClassId })">@classItem.ClassName</a></h2>
                                 </div>
                                 <p>
-                                    @Html.Raw(classItem.Description!.Length > 100 ? classItem.Description.Substring(0, 100) : classItem.Description)
+                                    @(classItem.Description != null ? Html.Raw(classItem.Description.Length > 100 ? classItem.Description.Substring(0, 100) : classItem.Description) : string.Empty)
                                     <a href="@Url.Action("Details", "Class", new { id = classItem.ClassId })" class="yg-more">
-                                        <span class="ti-line-dotted"></span> ReadMore
+                                        <span class="ti-line-dotted"></span> Read More
                                     </a>
                                 </p>
                                 <p class="yg-classes-date">

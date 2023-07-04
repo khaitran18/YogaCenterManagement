@@ -6,7 +6,6 @@ using View.Models.Response;
 
 namespace View.Controllers
 {
-    [Route("User")]
     public class UserController : Controller
     {
         private readonly HttpClient _httpClient;
@@ -85,6 +84,49 @@ namespace View.Controllers
             else
             {
                 return View(user);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateFeedback(string subject, int lecturerId, int classId)
+        {
+            AddAuthTokenToRequestHeaders();
+
+            var command = new FeedbackDto
+            {
+                Content = subject,
+                LecturerId = lecturerId
+            };
+
+            var jsonCommand = JsonSerializer.Serialize(command);
+            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
+
+            var url = apiUrl + "/feedback";
+            var response = await _httpClient.PostAsync(url, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<FeedbackDto>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    TempData["Success"] = "Send feedback success";
+                    return RedirectToAction("StudyingClasssesById", "Class", new { classId = classId });
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return RedirectToAction("StudyingClasssesById", "Class", new { classId = classId });
+                }
+            }
+            else
+            {
+                return RedirectToAction("StudyingClasssesById", "Class", new { classId = classId });
             }
         }
     }

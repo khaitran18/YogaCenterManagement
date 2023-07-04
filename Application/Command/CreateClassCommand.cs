@@ -20,6 +20,6 @@ namespace Application.Command
         public IFormFile? Image { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string? SelectedDayOfWeek { get; set; }
+        public int? SlotId { get; set; }
     }
 }

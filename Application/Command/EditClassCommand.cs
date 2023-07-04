@@ -18,7 +18,7 @@ namespace Application.Command
         public double Price { get; set; }
         public int ClassCapacity { get; set; }
         public string? Description { get; set; }
-        public IFormFile Image { get; set; }
+        public IFormFile? Image { get; set; }
         //public DateTime StartDate { get; set; }
         //public DateTime EndDate { get; set; }
         //public string SelectedDayOfWeek { get; set; } = null!;
