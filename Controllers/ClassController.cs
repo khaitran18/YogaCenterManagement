@@ -277,7 +277,7 @@ namespace Api.Controllers
             }
         }
 
-        [HttpGet("availabledate/{slotId}")]
+        [HttpGet("availabledate/byslotid/{slotId}")]
         public async Task<IActionResult> GetAvailableDateBySlotId([FromRoute] int slotId)
         {
             //command.token = Authorization;
@@ -334,7 +334,7 @@ namespace Api.Controllers
             }
         }
 
-        [HttpGet("availabledate/{lecturerId}")]
+        [HttpGet("availabledate/bylecturerid/{lecturerId}")]
         public async Task<IActionResult> GetAvailableDateByLecturerId([FromRoute] int lecturerId)
         {
             //command.token = Authorization;
@@ -435,6 +435,44 @@ namespace Api.Controllers
             //command.token = Authorization;
 
             var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpGet("teachclass/{lecturerId}")]
+        public async Task<IActionResult> GetTeachingClass([FromRoute] int lecturerId, [FromQuery] int page, [FromQuery] int pageSize)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(new GetTeachingClassQuery { LecturerId = lecturerId, Page = page, PageSize = pageSize });
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpGet("teachclass")]
+        public async Task<IActionResult> GetTeachingClassByClassID([FromQuery] GetTeachingClassByClassIdQuery query)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(query);
             if (!response.Error)
                 return Ok(response);
             else

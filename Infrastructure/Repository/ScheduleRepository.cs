@@ -240,7 +240,7 @@ namespace Infrastructure.Repository
             var availableDateModels = new List<AvailableDateModel>()
 ; try
             {
-                var availableDates = await _context.AvailableDates.Where(ad => ad.LecturerId == lecturerId).ToListAsync();
+                var availableDates = await _context.AvailableDates.Include(ad => ad.Slot).Where(ad => ad.LecturerId == lecturerId).ToListAsync();
                 availableDateModels = _mapper.Map<List<AvailableDateModel>>(availableDates);
             }
             catch (Exception)
