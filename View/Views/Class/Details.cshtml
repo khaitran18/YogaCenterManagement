@@ -5,12 +5,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Img Section  -->
+<!-- Img Section -->
 <div class="yg-img-section">
     <div class="row">
-        <div class="col-md-12 col-sm-12"> <img src="@Model.Image" class="img-fluid animate-box" data-animate-effect="fadeInUp" alt=""> </div>
+        <div class="col-md-12 col-sm-12">
+            <div class="yg-image-container">
+                <img src="@Model.Image" class="img-fluid animate-box" data-animate-effect="fadeInUp" alt="">
+            </div>
+            <div class="yg-slider-caption">
+                <div class="yg-class-title animate-box" data-animate-effect="fadeInUp">@Model.ClassName</div>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <!-- About The Class -->
 <div class="yg-description-section">
@@ -63,7 +71,7 @@
 
                     if (isEnrolled)
                     {
-                        <a class="btn btn-outline-success pl-3" asp-action="StudyingClasssesById" asp-controller="Class" asp-route-classId="@Model.ClassId">View class</a>
+                        <a class="btn btn-outline-success pl-3" asp-action="StudyingClassesById" asp-controller="Class" asp-route-classId="@Model.ClassId">View class</a>
                     }
                     else
                     {
@@ -198,3 +206,20 @@
         </div>
     </div>
 </div>
+<style>
+    .yg-class-title {
+        font-size: 60px;
+        line-height: 1.5em;
+        font-weight: 400;
+        margin-bottom: 10px;
+        color: #fff;
+        padding: 0 20px;
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+    }
+
+    .yg-image-container {
+        height: 100vh;
+        overflow: hidden;
+    }
+</style>

@@ -9,10 +9,17 @@
 }
 
 <partial name="_Notification" />
-<!-- Img Section  -->
+<!-- Img Section -->
 <div class="yg-img-section">
     <div class="row">
-        <div class="col-md-12 col-sm-12"> <img src="@Model.Image" class="img-fluid animate-box" data-animate-effect="fadeInUp" alt=""> </div>
+        <div class="col-md-12 col-sm-12">
+            <div class="yg-image-container">
+                <img src="@Model.Image" class="img-fluid animate-box" data-animate-effect="fadeInUp" alt="">
+            </div>
+            <div class="yg-slider-caption">
+                <div class="yg-class-title animate-box" data-animate-effect="fadeInUp">@Model.ClassName</div>
+            </div>
+        </div>
     </div>
 </div>
 <!-- Schedule Section -->
@@ -162,7 +169,6 @@
                         <input type="hidden" name="lecturerId" value="@Model.LecturerId" />
                         <input type="hidden" name="classId" value="@Model.ClassId" />
                         <div class="form-group">
-                            a
                             <textarea name="subject" class="form-control" rows="3" placeholder="Write your feedback..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary yg-btn">Submit</button>
@@ -207,15 +213,19 @@
                         <ul>
                             @if (Model.Schedules != null)
                             {
-                                @foreach (var schedule in Model.Schedules)
+                                var groupedSchedules = Model.Schedules
+                                .GroupBy(s => new { Day = s.Date.DayOfWeek, SlotId = s.SlotId })
+                                .OrderBy(g => g.Key.Day)
+                                .Select(g => new { Day = g.Key.Day, Schedules = g.ToList() });
+
+                                foreach (var group in groupedSchedules)
                                 {
-                                    foreach (var day in schedule.Slot.Day)
-                                    {
-                                        <li>
-                                            <span class="yg-class-table-light-text">@((Days)day.DayId)</span>
-                                            <span>@schedule.Slot.StartTime.ToString("hh\\:mm") - @schedule.Slot.EndTime.ToString("hh\\:mm")</span>
-                                        </li>
-                                    }
+                                    var day = group.Day;
+                                    var slot = group.Schedules.First().Slot;
+                                    <li>
+                                        <span class="yg-class-table-light-text">@day</span>
+                                        <span>@slot.StartTime.ToString("hh\\:mm") - @slot.EndTime.ToString("hh\\:mm")</span>
+                                    </li>
                                 }
                             }
                         </ul>
@@ -309,7 +319,6 @@
     }
     document.getElementById('nextWeekLink').setAttribute('href', nextWeekURL);
 </script>
-<a id="previousWeekLink" style="cursor: pointer;" href="">Previous week</a>
 
 <script>
     // Get the current URL
@@ -334,3 +343,24 @@
     }
     document.getElementById('previousWeekLink').setAttribute('href', previousWeekURL);
 </script>
+<style>
+    .yg-class-title {
+        font-size: 60px;
+        line-height: 1.5em;
+        font-weight: 400;
+        margin-bottom: 10px;
+        color: #fff;
+        padding: 0 20px;
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+    }
+
+    .yg-image-container {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .yg-schedule-section {
+        padding-bottom: 0;
+    }
+</style>
