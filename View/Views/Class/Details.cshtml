@@ -5,12 +5,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Img Section  -->
+<!-- Img Section -->
 <div class="yg-img-section">
     <div class="row">
-        <div class="col-md-12 col-sm-12"> <img src="@Model.Image" class="img-fluid animate-box" data-animate-effect="fadeInUp" alt=""> </div>
+        <div class="col-md-12 col-sm-12">
+            <div class="yg-image-container">
+                <img src="@Model.Image" class="img-fluid animate-box" data-animate-effect="fadeInUp" alt="">
+            </div>
+            <div class="yg-slider-caption">
+                <div class="yg-class-title animate-box" data-animate-effect="fadeInUp">@Model.ClassName</div>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <!-- About The Class -->
 <div class="yg-description-section">
@@ -63,7 +71,7 @@
 
                     if (isEnrolled)
                     {
-                        <a class="btn btn-outline-success pl-3" asp-action="StudyingClasssesById" asp-controller="Class" asp-route-classId="@Model.ClassId">View class</a>
+                        <a class="btn btn-outline-success pl-3" asp-action="StudyingClassesById" asp-controller="Class" asp-route-classId="@Model.ClassId">View class</a>
                     }
                     else
                     {
@@ -85,14 +93,14 @@
                             @if (Model.Lecturer != null)
                             {
                                 <h3>
-                                    <span>@Model.Lecturer.FullName</span> — <span>TRAINER</span>
+                                    <span>@Model.Lecturer.FullName</span> — <span>LECTURER</span>
                                 </h3>
                             }
                             else
                             {
                                 <h3>N/A — <span>LECTURER</span></h3>
                             }
-                            <p>Proin ultricies nibh non dolor maximus sceleue. Integer molliser faubs neque nec tincidunte. Aliquam erat vol tempor malader. Aliquam erat volutpat. Praeser tempor maladi quam, nec rutre arcuornare sed. Duru egiter ligula at nibh viverra ultricies. Nunctionter ranish libero maximus aliquet.</p>
+                            <p>I am a passionate yoga lecturer dedicated to guiding individuals on their transformative journey through the practice of yoga. With years of experience and a deep understanding of various yoga styles, I strive to create a nurturing and uplifting environment in my classes.</p>
                             <span class="yg-social-icon ti-facebook"></span>
                             <span class="yg-social-icon ti-instagram"></span>
                             <span class="yg-social-icon ti-twitter"></span>
@@ -159,6 +167,7 @@
                             {
                                 var groupedSchedules = Model.Schedules
                                 .GroupBy(s => new { Day = s.Date.DayOfWeek, SlotId = s.SlotId })
+                                .OrderBy(g => g.Key.Day)
                                 .Select(g => new { Day = g.Key.Day, Schedules = g.ToList() });
 
                                 foreach (var group in groupedSchedules)
@@ -197,3 +206,20 @@
         </div>
     </div>
 </div>
+<style>
+    .yg-class-title {
+        font-size: 60px;
+        line-height: 1.5em;
+        font-weight: 400;
+        margin-bottom: 10px;
+        color: #fff;
+        padding: 0 20px;
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+    }
+
+    .yg-image-container {
+        height: 100vh;
+        overflow: hidden;
+    }
+</style>

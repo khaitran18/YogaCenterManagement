@@ -5,6 +5,7 @@
 @{
     ViewData["Title"] = "StudyingClasssesById";
     var changeClassList = ViewBag.ChangeClassList as List<ClassDto>;
+    var listSchedule = ViewBag.ScheduleList as List<ScheduleDto>;
 }
 
 <partial name="_Notification" />
@@ -12,6 +13,87 @@
 <div class="yg-img-section">
     <div class="row">
         <div class="col-md-12 col-sm-12"> <img src="@Model.Image" class="img-fluid animate-box" data-animate-effect="fadeInUp" alt=""> </div>
+    </div>
+</div>
+<!-- Schedule Section -->
+<div class="yg-schedule-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="yg-details-block yg-text-center animate-box" data-animate-effect="fadeInUp">
+                    <h3 class="yg-details-title">OUR SCHEDULE</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between">
+            <span class="pl-3">
+                <a id="previousWeekLink" style="cursor: pointer;" href=""> < Previous week</a>
+            </span>
+            <span class="pr-3">
+                <a id="nextWeekLink" style="cursor: pointer;" href="">Next week ></a>
+            </span>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 animate-box" data-animate-effect="fadeInUp">
+                <table class="table table-bordered">
+                    <thead class="yg-thead">
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">MONDAY</th>
+                            <th scope="col">TUESDAY</th>
+                            <th scope="col">WEDNESDAY</th>
+                            <th scope="col">THURSTDAY</th>
+                            <th scope="col">FRIDAY</th>
+                            <th scope="col">SATURDAY</th>
+                            <th scope="col">SUNDAY</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row" class="yg-thead">Date</th>
+                            @for (int i = 1; i <= 7; i++)
+                            {
+                                bool c = false;
+                                @foreach (var item in listSchedule)
+                                {
+                                    if (item.Date.DayOfWeek == (DayOfWeek)i)
+                                    {
+                                        c = true;
+                                        <td class="yg-schedule-full">@Model.ClassName<br />@item.Date.ToString("dd/MM") <br />@item.Slot.StartTime.ToString(@"hh\:mm") - @item.Slot.EndTime.ToString(@"hh\:mm")<br /></td>
+                                    }
+                                }
+                                @if (!c)
+                                {
+                                    <td class="yg-schedule-empty">No Activities</td>
+                                }
+                            }
+                        </tr>
+                        <tr id="notificationRow">
+                            <th scope="row" class="yg-thead">Notification</th>
+                            @for (int i = 1; i <= 7; i++)
+                            {
+                                bool c = false;
+                                @foreach (var item in listSchedule)
+                                {
+                                    if (item.Date.DayOfWeek == (DayOfWeek)i)
+                                    {
+                                        c = true;
+                                        <td class="yg-schedule-empty schedule-notification"><b>@item.DailyNote</b></td>
+                                    }
+                                }
+                                @if (!c)
+                                {
+                                    <td class="yg-schedule-empty"></td>
+                                }
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row mr-2">
+            <button class="ml-auto yg-button" id="createNotification" style="cursor: pointer;">Create notification</button>
+        </div>
     </div>
 </div>
 
@@ -50,7 +132,7 @@
                     </div>
                 </div>
                 <div style="height:50px;"></div>
-            
+
             </div>
             <!-- Class Details & Class Hours -->
             <div class="col-md-4 col-sm-12">
@@ -120,3 +202,53 @@
     </div>
 </div>
 
+<script>
+    // Get the current URL
+    var currentURL = window.location.href;
+
+    // Extract the value of the 's' variable from the URL
+    var urlParams = new URLSearchParams(currentURL);
+    var sValue = urlParams.get('s');
+
+    // Check if the 's' value is not present or not a number, default it to 0
+    var s = isNaN(parseInt(sValue)) ? 0 : parseInt(sValue);
+
+    // Increment the 's' value by 1
+    var incrementedS = s + 1;
+
+    // Update the URL for the 'Next week' link with the incremented 's' value
+    var nextWeekURL = currentURL;
+    if (sValue) {
+        nextWeekURL = nextWeekURL.replace('s=' + sValue, 's=' + incrementedS);
+    } else {
+        nextWeekURL += nextWeekURL.includes('?') ? '&s=' + incrementedS : '?s=' + incrementedS;
+    }
+    document.getElementById('nextWeekLink').setAttribute('href', nextWeekURL);
+</script>
+
+
+@section Scripts{
+    <script>
+        // Get the current URL
+        var currentURL = window.location.href;
+
+        // Extract the value of the 's' variable from the URL
+        var urlParams = new URLSearchParams(currentURL);
+        var sValue = urlParams.get('s');
+
+        // Check if the 's' value is not present or not a number, default it to 0
+        var s = isNaN(parseInt(sValue)) ? 0 : parseInt(sValue);
+
+        // Reduce the 's' value by 1
+        var reducedS = s - 1;
+
+        // Update the URL for the 'Previous week' link with the reduced 's' value
+        var previousWeekURL = currentURL;
+        if (sValue) {
+            previousWeekURL = previousWeekURL.replace('s=' + sValue, 's=' + reducedS);
+        } else {
+            previousWeekURL += previousWeekURL.includes('?') ? '&s=' + reducedS : '?s=' + reducedS;
+        }
+        document.getElementById('previousWeekLink').setAttribute('href', previousWeekURL);
+    </script>
+}

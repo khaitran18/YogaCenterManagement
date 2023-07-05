@@ -50,13 +50,13 @@
                         {
                             <li><a asp-controller="User" asp-action="Details">Your Profile</a></li>
                         }
-                        <li><a href="about.html">About Us</a></li>
                         <li><a class="active" asp-controller="Class" asp-action="Index">Classes</a></li>
                         <li><a href="schedule.html">Schedule</a></li>
-                        <li><a href="pricing.html">Pricing</a></li>
-                        <li><a href="gallery.html">Gallery</a></li>
-                        <li><a href="blog.html">Blog</a></li>
-                        <li><a href="contact.html">Contact Us</a></li>
+                        @if (Context.Request.Cookies["Role"] == "Lecturer")
+                        {
+                            <li><a asp-controller="User" asp-action="Feedback">Feedback</a></li>
+                        }
+                        <li><a asp-controller="Home" asp-action="AboutUs">About Us</a></li>
                     </ul>
                     <a href="classes-page.html#" class="yg-nav-overlay-close" id="yg-nav-overlay-close">
                         <span></span>
@@ -94,24 +94,21 @@
                 <div class="row">
                     <div class="col-md-8 col-sm-8">
                         <ul class="yg-footer-list">
-                            <li><a href="about.html">About Us</a></li>
                             <li><a asp-controller="Class" asp-action="Index">Classes</a></li>
                             <li><a href="schedule.html">Schedule</a></li>
-                            <li><a href="pricing.html">Pricing</a></li>
-                            <li><a href="blog.html">Blog</a></li>
-                            <li><a href="contact.html">Contact Us</a></li>
+                            <li><a asp-controller="Home" asp-action="AboutUs">About Us</a></li>
                         </ul>
                     </div>
                     <div class="col-md-4 col-sm-4">
                         <ul class="yg-social-icons">
                             <li class="yg-social-icons-item">
-                                <a class="yg-social-link" href="index.html#"> <span class="yg-social-icon ti-twitter-alt"></span> </a>
+                                <a class="yg-social-link" href="https://twitter.com/elonmusk?s=20"> <span class="yg-social-icon ti-twitter-alt"></span> </a>
                             </li>
                             <li class="yg-social-icons-item">
-                                <a class="yg-social-link" href="index.html#"> <span class="yg-social-icon ti-instagram"></span> </a>
+                                <a class="yg-social-link" href="https://www.instagram.com/cristiano/"> <span class="yg-social-icon ti-instagram"></span> </a>
                             </li>
                             <li class="yg-social-icons-item">
-                                <a class="yg-social-link" href="index.html#"> <span class="yg-social-icon ti-facebook"></span> </a>
+                                <a class="yg-social-link" href="https://www.facebook.com/WillSmith/"> <span class="yg-social-icon ti-facebook"></span> </a>
                             </li>
                         </ul>
                     </div>
@@ -119,7 +116,7 @@
                         <div class="yg-separator"></div>
                     </div>
                     <div class="col-md-12 col-sm-12">
-                        <p class="yg-copyright">Copyright &copy; 2022. <span>Yogaguru</span> All rights reserved.</p>
+                        <p class="yg-copyright">Copyright &copy; 2023. <span>Yogaguru</span> All rights reserved.</p>
                     </div>
                 </div>
             </div>

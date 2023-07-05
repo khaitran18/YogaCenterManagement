@@ -1,0 +1,16 @@
+﻿
+@{
+    @addTagHelper "*, Microsoft.AspNetCore.Mvc.TagHelpers"
+}
+@model View.Models.DailyNoteDto
+<partial name="_Notification" />
+<form asp-controller="Class" asp-action="CreateNotification" method="post">
+    <div>
+        <label for="inputTitle">Title:</label>
+        <input type="text" id="Content" name="Content" required>
+    </div>
+    <div>
+       <input hidden id="ScheduleId" name="ScheduleId" value="26">
+    </div>
+    <button type="submit">Create Notification</button>
+</form>

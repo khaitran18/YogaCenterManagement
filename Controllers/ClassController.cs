@@ -146,15 +146,13 @@ namespace Api.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Roles = "Lecturer,Staff,Admin")]
-        [HttpPost("notification/{id}")]
+        [HttpPost("notification")]
         [ProducesDefaultResponseType(typeof(ClassNotificationDto))]
         public async Task<IActionResult> ClassNotification(
             [FromHeader] string? Authorization
-            , [FromRoute] int id
             , [FromBody] CreateNotificationCommand command)
         {
             command.token = Authorization;
-            command.scheduleid = id;
             var response = await _mediator.Send(command);
             if (!response.Error)
                 return Ok(response);

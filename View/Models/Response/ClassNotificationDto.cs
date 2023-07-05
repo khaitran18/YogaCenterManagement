@@ -8,6 +8,7 @@ namespace View.Models.Response
 {
     public class ClassNotificationDto
     {
-        public string content { get; set; }
+        public string Content { get; set; } = null!;
+        public int ScheduleId { get; set; }
     }
 }
