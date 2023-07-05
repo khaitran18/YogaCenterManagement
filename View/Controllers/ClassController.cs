@@ -214,7 +214,7 @@ namespace View.Controllers
             DateTime startDate = today.AddDays(-daysUntilMonday).Date; // Beginning of the week (Monday)
             DateTime endDate = startDate.AddDays(6).Date; // End of the week (Sunday)
             AddAuthTokenToRequestHeaders();
-            var response = await _httpClient.GetAsync(url + "?classId=" + classId + "&startDate=" + startDate + "&endDate=" + endDate);
+            var response = await _httpClient.GetAsync(url + "?classId=" + classId + "&startDate=" + startDate.ToString("MM/dd/yyyy") + "&endDate=" + endDate.ToString("MM/dd/yyyy"));
             var resultJson = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions
             {
@@ -320,14 +320,18 @@ namespace View.Controllers
             var studentId = Request.Cookies["Id"];
             var requestData = new
             {
-
-                StudentId = studentId,
-                ClassId = classId,
-                Amount = amount,
-                Method = "Online"
+                paymentDto = new
+                {
+                    studentId,
+                    classId,
+                    amount,
+                    method = "Online"
+                }
             };
-            Console.WriteLine(requestData);
+
             var json = JsonSerializer.Serialize(requestData);
+            Console.WriteLine(json);
+
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(enrollClassApiUrl, stringContent);
             Console.WriteLine(response);
