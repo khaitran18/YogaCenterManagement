@@ -8,6 +8,6 @@ namespace Application.Common.Dto
 {
     public class ClassNotificationDto
     {
-        public string content { get; set; }
+        public string? content { get; set; }
     }
 }

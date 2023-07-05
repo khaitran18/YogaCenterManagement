@@ -506,15 +506,11 @@ namespace View.Controllers
                 if (!baseResponse!.Error)
                 {
                     TempData["Success"] = "Notification created";
-                    return RedirectToAction("TeachingClassesById");
-                }
-                else
-                {
-                    TempData["Error"] = "Error";
-                    return RedirectToAction("TeachingClassesById");
+                    return RedirectToAction("TeachingClassesById",new {classId=dto.ClassId});
                 }
             }
-            return RedirectToAction("TeachingClassesById");
+            TempData["Error"] = "Error";
+            return RedirectToAction("TeachingClassesById", new { classId = dto.ClassId });
         }
 
         [HttpPost]
