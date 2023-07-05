@@ -416,5 +416,42 @@ namespace View.Controllers
             }
         }
 
+        public async Task<IActionResult> CreateNotification()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateNotification(ClassNotificationDto dto)
+        {
+            AddAuthTokenToRequestHeaders();
+            var url = apiUrl + "/notification";
+            var jsonCommand = JsonSerializer.Serialize(dto);
+            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(url, content);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<UserDto>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    TempData["Success"] = "Notification created";
+                    return RedirectToAction("CreateNotification");
+                }
+                else
+                {
+                    TempData["Error"] = "Error";
+                    return RedirectToAction("CreateNotification");
+                }
+            }
+            return RedirectToAction("CreateNotification");
+        }
+
     }
 }
