@@ -59,14 +59,14 @@
                             @if (Model.Lecturer != null)
                             {
                                 <h3>
-                                    <span>@Model.Lecturer.FullName</span> — <span>TRAINER</span>
+                                    <span>@Model.Lecturer.FullName</span> — <span>LECTURER</span>
                                 </h3>
                             }
                             else
                             {
                                 <h3>N/A — <span>LECTURER</span></h3>
                             }
-                            <p>Proin ultricies nibh non dolor maximus sceleue. Integer molliser faubs neque nec tincidunte. Aliquam erat vol tempor malader. Aliquam erat volutpat. Praeser tempor maladi quam, nec rutre arcuornare sed. Duru egiter ligula at nibh viverra ultricies. Nunctionter ranish libero maximus aliquet.</p>
+                            <p>I am a passionate yoga lecturer dedicated to guiding individuals on their transformative journey through the practice of yoga. With years of experience and a deep understanding of various yoga styles, I strive to create a nurturing and uplifting environment in my classes.</p>
                             <span class="yg-social-icon ti-facebook"></span>
                             <span class="yg-social-icon ti-instagram"></span>
                             <span class="yg-social-icon ti-twitter"></span>
@@ -83,7 +83,8 @@
                     <form asp-controller="User" asp-action="CreateFeedback" method="post">
                         <input type="hidden" name="lecturerId" value="@Model.LecturerId" />
                         <input type="hidden" name="classId" value="@Model.ClassId" />
-                        <div class="form-group">a
+                        <div class="form-group">
+                            a
                             <textarea name="subject" class="form-control" rows="3" placeholder="Write your feedback..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary yg-btn">Submit</button>
@@ -108,8 +109,17 @@
                                     <span>N/A</span>
                                 }
                             </li>
-                            <li> <span class="yg-class-table-light-text"><i class="ti-user"></i>Members</span> <span>@Model.ClassCapacity</span> </li>
+                            <li> <span class="yg-class-table-light-text"><i class="ti-user"></i>Members</span> <span>@Model.Students.Count / @Model.ClassCapacity</span> </li>
                             <li> <span class="yg-class-table-light-text"><i class="ti-calendar"></i>Start Date</span> <span>@Model.StartDate.ToString("MMMM dd, yyyy")</span> </li>
+                            <li>
+                                <span class="yg-class-table-light-text"><i class="ti-time"></i>Length</span>
+                                @{
+                                    TimeSpan length = Model.EndDate - Model.StartDate;
+                                    int lengthInDays = length.Days;
+                                    int lengthInMonths = lengthInDays >= 30 ? lengthInDays / 30 : lengthInDays;
+                                }
+                                <span>@(lengthInDays >= 30 ? lengthInMonths + " Month(s)" : lengthInDays + " Day(s)")</span>
+                            </li>
                         </ul>
                     </div>
                 </div>

@@ -49,17 +49,13 @@
                         {
                             <li><a asp-controller="User" asp-action="Details">Your Profile</a></li>
                         }
-                        <li><a href="about.html">About Us</a></li>
                         <li><a class="active" asp-controller="Class" asp-action="Index">Classes</a></li>
                         <li><a href="schedule.html">Schedule</a></li>
                         @if (Context.Request.Cookies["Role"] == "Lecturer")
                         {
                             <li><a asp-controller="User" asp-action="Feedback">Feedback</a></li>
                         }
-                        <li><a href="pricing.html">Pricing</a></li>
-                        <li><a href="gallery.html">Gallery</a></li>
-                        <li><a href="blog.html">Blog</a></li>
-                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="contact.html">About Us</a></li>
                     </ul>
                     <a href="classes-page.html#" class="yg-nav-overlay-close" id="yg-nav-overlay-close">
                         <span></span>
@@ -97,12 +93,9 @@
                 <div class="row">
                     <div class="col-md-8 col-sm-8">
                         <ul class="yg-footer-list">
-                            <li><a href="about.html">About Us</a></li>
                             <li><a asp-controller="Class" asp-action="Index">Classes</a></li>
                             <li><a href="schedule.html">Schedule</a></li>
-                            <li><a href="pricing.html">Pricing</a></li>
-                            <li><a href="blog.html">Blog</a></li>
-                            <li><a href="contact.html">Contact Us</a></li>
+                            <li><a href="contact.html">About Us</a></li>
                         </ul>
                     </div>
                     <div class="col-md-4 col-sm-4">
