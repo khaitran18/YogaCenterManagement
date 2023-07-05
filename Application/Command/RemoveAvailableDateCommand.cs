@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Application.Common;
+using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Common.Dto
+namespace Application.Command
 {
-    public class AvailableDateDto
+    public class RemoveAvailableDateCommand : IRequest<BaseResponse<bool>>
     {
         public int LecturerId { get; set; }
         public int SlotId { get; set; }
-        public DateTime? Date { get; set; }
-        public StudySlotDto Slot { get; set; } = null!;
     }
 }

@@ -24,10 +24,9 @@
         <div class="modal fade overflow-auto" id="myModal" data-backdrop="false">
         <div class="modal-dialog">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">Select Days</h4>
+                    <h4 class="modal-title">Create class</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
@@ -69,27 +68,6 @@
                                     <option value="" selected>None</option>
                                 </select>
                             </div>
-                           @* <label for="days-input" class="font-weight-bold">Days of the Week:</label><br>
-                            <input type="checkbox" id="monday" name="Monday" value="Monday" class="ml-4">
-                            <label for="monday">Monday</label>
-                            <br>
-                            <input type="checkbox" id="tuesday" name="Tuesday" value="Tuesday" class="ml-4">
-                            <label for="tuesday">Tuesday</label>
-                            <br>
-                            <input type="checkbox" id="wednesday" name="Wednesday" value="Wednesday" class="ml-4">
-                            <label for="wednesday">Wednesday</label>
-                            <br>
-                            <input type="checkbox" id="thursday" name="Thursday" value="Thursday" class="ml-4">
-                            <label for="thursday">Thursday</label>
-                            <br>
-                            <input type="checkbox" id="friday" name="Friday" value="Friday" class="ml-4">
-                            <label for="friday">Friday</label>
-                            <br>
-                            <input type="checkbox" id="saturday" name="Saturday" value="Saturday" class="ml-4">
-                            <label for="saturday">Saturday</label>
-                            <br>
-                            <input type="checkbox" id="sunday" name="Sunday" value="Sunday" class="ml-4">
-                            <label for="sunday">Sunday</label>*@
                         </div>
                     </form>
                 </div>
@@ -102,7 +80,75 @@
 
             </div>
         </div>
+        </div>
+        <!-- Update modal-->
+        <div class="modal fade overflow-auto" id="updateModal" data-backdrop="false">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal header-->
+              <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Update Class</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <!-- Modal body-->
+              <div class="modal-body">
+                <!-- Class basic information-->
+                <div id="basicInfoSection">
+                  <h6>Basic Information</h6>
+                  <form id="basicInfoForm">
+                    <input type="hidden" id="update-class-id" name="classId" style="display: none;"/>
+                    <div class="form-group">
+                      <label for="className">Class Name</label>
+                      <input type="text" class="form-control" id="update-class-name" name="className">
+                    </div>
+                    <div class="form-group">
+                      <label for="price">Price</label>
+                      <input type="number" class="form-control" id="update-price" name="price">
+                    </div>
+                    <div class="form-group">
+                      <label for="capacity">Capacity</label>
+                      <input type="number" class="form-control" id="update-capacity" name="classCapacity">
+                    </div>
+                    <div class="form-group">
+                      <label for="description">Description</label>
+                      <textarea class="form-control" id="update-description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label for="image">Image</label>
+                      <input type="file" class="form-control-file" id="update-image" name="image">
+                    </div>
+                    <button type="submit" class="btn btn-outline btn-primary">Update Info</button>
+                  </form>
+                </div>
+                <!-- Lecturer -->
+                <div id="lecturerInfoSection">
+                  <h4>Lecturer Information:</h4>
+                  <form id="lecturerForm">
+                    <h5>Id: <span id="lecturerId" class="font-weight-normal"></span></h5>
+                    <h5 id="lecturer-name"></h5>
+                    <p id="lecturer-email"></p>
+                    <p class="mt-1 text-dark font-weight-bold"> Assign new lecturer: </p>
+                    <input type="hidden" id="assignClassId" name="classId" style="display: none;"/>
+                    <select id="lecturer" name="lecturerId" >
+                        <option value="0">None</option>
+                    </select>
+                    <button type="submit" id="assignLecturerBtn" class="btn btn-outline btn-success">Assign Lecturer</button>
+                  </form>
+                <!--Schedule -->
+                <div id="studySlotsSection">
+                  <h6>Class Schedule</h6>
+                  <ul id="studySlotsList"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
+
+    
+
         <!-- DATA TABLE -->
         <h3 class="title-5 m-b-35">data table</h3>
         <!-- Filter/sort -->
@@ -179,10 +225,10 @@
                             <td>@(classItem.Lecturer != null ? classItem.Lecturer.FullName : "N/A")</td>
                             <td>
                                 <div class="table-data-feature">
-                                    @*<button class="item edit-class-btn" data-class='@Json.Serialize(classItem)' data-toggle="tooltip" data-placement="top" title="Edit">
+                                    <button class="item edit-class-btn" data-class-id='@classItem.ClassId' data-placement="top" title="Edit">
                                         <i class="zmdi zmdi-edit"></i>
                                     </button>
-                                    <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
+                                    @*<button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
                                         <i class="zmdi zmdi-delete"></i>
                                     </button>*@
                                     <div class="dropdown">
@@ -297,7 +343,7 @@
 
             window.location.href = url;
         }
-
+        //fetch study slot
         $.ajax({
           url: 'https://localhost:7241/api/Class/slot',
           method: 'GET',
@@ -323,10 +369,143 @@
             });
           },
           error: function(jqXHR, textStatus, errorThrown) {
-            console.log('Error fetching sections:', errorThrown);
+            console.log('Error fetching study slots:', errorThrown);
           }
         });
-    });
+        //fetch lecturer list
+        $.ajax({
+          url: 'https://localhost:7241/api/User?RoleId=2',
+          method: 'GET',
+          dataType: 'json',
+          headers: {
+            'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI'
+          },
+          success: function(data) {
+            const select = $('#lecturer');
+            console.log(data.result);
+            // Loop through the sections and create options with custom content
+            $.each(data.result.items, function(index, lec) {
+              // Create an option element with custom content
+              const option = $('<option></option>')
+                .attr('value', lec.uid)
+                .html('<strong>' + lec.fullName + '</strong> ');
+              // Append the option to the select element
+              select.append(option);
+            });
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            console.log('Error fetching lecturers:', errorThrown);
+          }
+        });
 
+        $('.edit-class-btn').on('click', function() {
+            var classId = $(this).data('class-id');
+            openUpdateModal(classId);
+        });
+
+        $('#basicInfoForm').on('submit', function(event) {
+          event.preventDefault();
+          var formData = new FormData(this);
+          updateBasicInfo(formData);
+        }); 
+        
+        $('#lecturerForm').on('submit', function(event) {
+          event.preventDefault();
+          var formData = $(this).serializeArray();
+          assignLecturer(formData);
+        }); 
+
+        //$('#assignLecturerBtn').on('click', function() {
+        //    var classId = $('#assignClassId').val();
+        //    var lecturerId = $('#lecturer').val();
+        //    assignLecturer(lecturerId,classId);
+        //});
+
+
+
+    });
+        //fetch data for update modal
+        function openUpdateModal(classId) {
+            $.ajax({
+                url: 'https://localhost:7241/api/Class/' + classId,
+                method: 'GET',
+                dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI'
+                },    
+                success: function(data) {
+                    // Populate basic information section
+                    $('#update-class-id').val(data.result.classId);
+                    $('#update-class-name').val(data.result.className);
+                    $('#update-price').val(data.result.price);
+                    $('#update-capacity').val(data.result.classCapacity);
+                    $('#update-description').val(data.result.description);
+                    $('#assignClassId').val(data.result.classId);
+
+                    // Populate lecturer information
+                    if(data.result.lecturer != null){
+                    $('#lecturer').val(data.result.lecturer.uid);
+                    $('#lecturerId').text(data.result.lecturer.uid);
+                    $('#lecturer-name').text(data.result.lecturer.fullName);
+                    $('#lecturer-email').html("<span class=\"font-weight-bold text-dark\">Email: </span>"+data.result.lecturer.email);
+                    }
+                    
+                    //show the modal
+                    $('#updateModal').modal('show');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log('Error fetching class data:', errorThrown);
+                }
+            });
+        }
+
+        function assignLecturer(formData) {
+            var formDataJSON = {};
+            $.each(formData, function() {
+                formDataJSON[this.name] = this.value;
+            });
+            formDataJSON['token'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI';
+            $.ajax({
+              url: 'https://localhost:7241/api/Class/assignLecturer',
+              method: 'POST',
+              contentType: 'application/json',
+              headers: {
+                    'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI'
+              },
+              data: JSON.stringify(formDataJSON),
+              success: function(response) {
+                console.log('Lecturer assigned successfully');
+                location.reload();
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                console.log('Error assigning lecturer:', errorThrown);
+                location.reload();
+              }
+            });
+          }
+
+          function updateBasicInfo(formData) {
+            formData.append('token','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI');
+            console.log(formData);
+            $.ajax({
+              url: 'https://localhost:7241/api/Class/',
+              method: 'PUT',
+              data: formData,
+              processData: false,
+              contentType: false,
+              headers: {
+                    'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI'
+              },
+              success: function(response) {
+                console.log('Basic info updated successfully');
+                $('#updateModal').modal('hide');
+                location.reload();
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                console.log('Error updating basic info:', errorThrown);
+                $('#updateModal').modal('hide');
+              }
+            });
+          }
 </script>
 }
