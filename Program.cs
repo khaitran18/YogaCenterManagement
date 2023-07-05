@@ -139,6 +139,7 @@ builder.Services.AddScoped<IRequestHandler<GetStudiedClassQuery, BaseResponse<Pa
 builder.Services.AddScoped<IRequestHandler<GetTeachingClassQuery, BaseResponse<PaginatedResult<ClassDto>>>, GetTeachingClassHandler>();
 builder.Services.AddScoped<IRequestHandler<GetTeachingClassByClassIdQuery, BaseResponse<ClassDto>>, GetTeachingClassByClassIdHandler>();
 builder.Services.AddScoped<IRequestHandler<GetAvailableDateByLecturerId, BaseResponse<IEnumerable<AvailableDateDto>>>, GetAvailableDateByLecturerIdHandler>();
+builder.Services.AddScoped<IRequestHandler<GetAllAvailableDatesQuery, BaseResponse<IEnumerable<AvailableDateDto>>>, GetAllAvailableDatesHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateClassCommand,BaseResponse<ClassDto>>, CreateClassHandler>();
 builder.Services.AddScoped<IRequestHandler<EditClassCommand,BaseResponse<ClassDto>>, EditClassHandler>();
@@ -153,6 +154,7 @@ builder.Services.AddScoped<IRequestHandler<VerifyEmailCommand,BaseResponse<bool>
 builder.Services.AddScoped<IRequestHandler<UpdateStudySlotCommand,BaseResponse<bool>>, UpdateStudySlotHandler>();
 builder.Services.AddScoped<IRequestHandler<StudentEnrollToClassCommand,BaseResponse<PaymentDto>>, StudentEnrollToClassHandler>();
 builder.Services.AddScoped<IRequestHandler<DeleteStudySlotCommand,BaseResponse<bool>>, DeleteStudySlotHandler>();
+builder.Services.AddScoped<IRequestHandler<RemoveAvailableDateCommand,BaseResponse<bool>>, RemoveAvailableDateHandler>();
 
 builder.Services.AddScoped<IRequestHandler<AssignLecturerCommand, BaseResponse<ClassDto>>, AssignLecturerHandler>();
 builder.Services.AddScoped<IRequestHandler<UserDetailQuery, BaseResponse<UserDto>>, UserDetailHandler>();

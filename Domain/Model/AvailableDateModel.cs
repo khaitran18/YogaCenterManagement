@@ -10,6 +10,7 @@ namespace Domain.Model
     {
         public int LecturerId { get; set; }
         public int SlotId { get; set; }
+        public DateTime? Date { get; set; }
         public StudySlotModel Slot { get; set; } = null!;
     }
 }

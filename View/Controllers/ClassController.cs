@@ -17,6 +17,8 @@ namespace View.Controllers
         private string changeClassApi2 = "";
         private string enrollClassApiUrl = "";
         private string teachingClassApiUrl = "";
+        private string availableDateApiUrl = "";
+        private string slotApiUrl = "";
         public ClassController()
         {
             _httpClient = new HttpClient();
@@ -27,6 +29,8 @@ namespace View.Controllers
             changeClassApi2 = "https://localhost:7241/api/Class/changeclass";
             enrollClassApiUrl = "https://localhost:7241/api/Class/enroll";
             teachingClassApiUrl = "https://localhost:7241/api/Class/teachclass";
+            availableDateApiUrl = "https://localhost:7241/api/Class/availabledate";
+            slotApiUrl = "https://localhost:7241/api/Class/slot";
         }
 
         private string? GetAuthTokenFromCookie()
@@ -197,8 +201,8 @@ namespace View.Controllers
                 return View();
             }
 
-        }        
-        
+        }
+
         public async Task<IActionResult> StudyingClassesById(int classId)
         {
             var studentId = Request.Cookies["Id"];
@@ -355,6 +359,7 @@ namespace View.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> TeachingClasses(int page = 1, int pageSize = 6)
         {
             var lecturerId = Request.Cookies["Id"];
@@ -387,6 +392,7 @@ namespace View.Controllers
                 return View();
             }
         }
+        [HttpGet]
         public async Task<IActionResult> TeachingClassesById(int classId)
         {
             var lecturerId = Request.Cookies["Id"];
@@ -418,6 +424,118 @@ namespace View.Controllers
                 return View();
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> AvailableDates()
+        {
+            var lecturerId = Request.Cookies["Id"];
 
+            var response = await _httpClient.GetAsync($"{availableDateApiUrl}/bylecturerid/{lecturerId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<IEnumerable<AvailableDateDto>>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    //ViewBag.QueryString = queryStringWithoutPage;
+                    var allAvailableDatesResponse = await _httpClient.GetAsync($"{slotApiUrl}");
+                    if (allAvailableDatesResponse.IsSuccessStatusCode)
+                    {
+                        var allAvailableDatesResponseBody = await allAvailableDatesResponse.Content.ReadAsStringAsync();
+                        var allAvailableDatesBaseResponse = JsonSerializer.Deserialize<BaseResponse<IEnumerable<StudySlotDto>>>(allAvailableDatesResponseBody, options);
+
+                        var slotsToAdd = allAvailableDatesBaseResponse?.Result
+                                                        .Where(slot => !baseResponse.Result.Any(existingDate => existingDate.Slot.SlotId == slot.SlotId))
+                                                        .ToList();
+
+                        ViewBag.AvailableDates = slotsToAdd;
+                    }
+                    return View(baseResponse.Result);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAvailableDate(List<int> selectedSlots)
+        {
+            var lecturerId = Request.Cookies["Id"];
+            var token = GetAuthTokenFromCookie();
+            //foreach (var item in selectedSlots)
+            //{
+            //    Console.WriteLine(item);
+            //}
+            var requestData = new { 
+                Token = token,
+                LecturerId = lecturerId,
+                SlotIds = selectedSlots
+            };
+            var json = JsonSerializer.Serialize(requestData);
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(availableDateApiUrl, stringContent);
+            var resultJson = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(response);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<BaseResponse<IEnumerable<AvailableDateDto>>>(resultJson, options);
+                if (!result!.Error)
+                {
+                    if (result.Result.Count() != 0)
+                    {
+                        TempData["Success"] = "Enroll successfully";
+                    }
+                }
+                else
+                {
+                    TempData["Error"] = result.Message;
+                }
+            }
+            //Console.WriteLine(requestData);
+
+            return RedirectToAction(nameof(AvailableDates));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StudySlotsDelete([FromForm] int slotId)
+        {
+            var response = await _httpClient.DeleteAsync($"{availableDateApiUrl}");
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            if (response.IsSuccessStatusCode)
+            {
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<bool>>(responseBody, options);
+                TempData["Success"] = "Delete successfully";
+            }
+            else
+            {
+                var error = JsonSerializer.Deserialize<string>(responseBody, options);
+                Console.WriteLine(error);
+                TempData["Error"] = string.Join("\n", error);
+                return RedirectToAction(nameof(AvailableDates));
+            }
+            //Console.WriteLine(baseResponse);
+
+            return RedirectToAction(nameof(AvailableDates));
+        }
     }
 }

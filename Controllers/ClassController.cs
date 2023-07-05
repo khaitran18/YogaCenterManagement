@@ -505,5 +505,42 @@ namespace Api.Controllers
             }
         }
 
+        [HttpGet("availabledate")]
+        public async Task<IActionResult> GetAllAvailableDates()
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(new GetAllAvailableDatesQuery());
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
+        [HttpDelete("availabledate")]
+        public async Task<IActionResult> RemoveLecturerAvailableDate([FromQuery] RemoveAvailableDateCommand command)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
     }
 }
