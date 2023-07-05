@@ -167,6 +167,7 @@ builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddScoped<IValidator<AuthCommand>, AuthCommandValidator>();
 builder.Services.AddScoped<IValidator<CreateNotificationCommand>, CreateNotificationCommandValidator>();
 builder.Services.AddScoped<IValidator<SignUpCommand>, SignupCommandValidator>();
+builder.Services.AddScoped<IValidator<EditProfileCommand>, EditProfileCommandValidator>();
 
 //Behaviour registration
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

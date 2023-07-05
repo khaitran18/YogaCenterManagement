@@ -62,29 +62,32 @@ namespace View.Controllers
             var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PutAsync(url, content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
 
             if (response.IsSuccessStatusCode)
-            {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
+            {    
                 var baseResponse = JsonSerializer.Deserialize<BaseResponse<UserDto>>(responseBody, options);
 
                 if (!baseResponse!.Error)
                 {
+                    TempData["Success"] = "Edit success";
                     return RedirectToAction("Details");
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = baseResponse.Message;
-                    return View(user);
+                    TempData["Error"] = baseResponse.Message;
+                    return RedirectToAction("Details");
                 }
             }
             else
             {
-                return View(user);
+                var error = JsonSerializer.Deserialize<string>(responseBody, options);
+                TempData["Error"] = string.Join("\n", error);
+                return RedirectToAction("Details");
             }
         }
 
