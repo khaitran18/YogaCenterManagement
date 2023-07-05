@@ -289,12 +289,12 @@ namespace Infrastructure.Repository
             return Task.FromResult(slotExists);
         }
 
-        public async Task<List<ScheduleModel>> GetScheduleByStartDateAndEndDate(DateTime startDate, DateTime endDate)
+        public async Task<List<ScheduleModel>> GetScheduleByStartDateAndEndDateAndClassId(DateTime startDate, DateTime endDate,int classId)
         {
             List<ScheduleModel> result = new List<ScheduleModel>();
             try
             {
-                List<Schedule> list =  _context.Schedules.Where(s => (s.Date >= startDate) && (s.Date <= endDate)).ToList();
+                List<Schedule> list =  _context.Schedules.Where(s => (s.Date >= startDate) && (s.Date <= endDate)&&(s.ClassId==classId)).ToList();
                 if (list != null)
                 {
                     result = _mapper.Map<List<ScheduleModel>>(list);
