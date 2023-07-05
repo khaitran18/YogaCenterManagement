@@ -383,6 +383,31 @@
         }
         });
     });
+        //input number validator
+          $('#class-capacity').on('change', function() {
+            var value = $(this).val();
+            var min = parseFloat($(this).attr('min'));
+            var max = parseFloat($(this).attr('max'));
+
+            if (value < min) {
+              $(this).val(min);
+            } else if (value > max) {
+              $(this).val(max);
+            }
+          });                                                      
+          $('#price').on('change', function() {
+            var value = $(this).val();
+            var min = parseFloat($(this).attr('min'));
+            var max = parseFloat($(this).attr('max'));
+
+            if (value < min) {
+              $(this).val(min);
+            } else if (value > max) {
+              $(this).val(max);
+            }
+          });
+
+
 
         //Style with status
         $('.class-status').each(function(index, element) {
