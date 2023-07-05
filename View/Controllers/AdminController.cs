@@ -28,7 +28,14 @@ namespace View.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            if (Request.Cookies["Role"] == "Admin" || Request.Cookies["Role"] == "Staff")
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public async Task<IActionResult> Users(string? searchKeyword, int? roleId, bool? isDisabled, bool? isVerified, string? sortBy, int? page, int? pageSize)
