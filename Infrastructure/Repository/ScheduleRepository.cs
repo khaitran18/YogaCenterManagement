@@ -188,7 +188,7 @@ namespace Infrastructure.Repository
                 foreach (var slotId in slotIds)
                 {
                     var studySlot = await _context.StudySlots.FindAsync(slotId);
-                    AvailableDate availableDate = new AvailableDate { LecturerId = lectuterId };
+                    AvailableDate availableDate = new AvailableDate { LecturerId = lectuterId, Date = DateTime.Now };
                     if (studySlot != null)
                     {
                         availableDate.SlotId = slotId;
@@ -240,7 +240,7 @@ namespace Infrastructure.Repository
             var availableDateModels = new List<AvailableDateModel>()
 ; try
             {
-                var availableDates = await _context.AvailableDates.Include(ad => ad.Slot).Where(ad => ad.LecturerId == lecturerId).ToListAsync();
+                var availableDates = await _context.AvailableDates.Include(ad => ad.Slot).ThenInclude(s => s.Days).Where(ad => ad.LecturerId == lecturerId).ToListAsync();
                 availableDateModels = _mapper.Map<List<AvailableDateModel>>(availableDates);
             }
             catch (Exception)
@@ -295,6 +295,7 @@ namespace Infrastructure.Repository
             try
             {
                 List<Schedule> list =  _context.Schedules.Where(s => (s.Date >= startDate) && (s.Date <= endDate)&&(s.ClassId==classId)).ToList();
+
                 if (list != null)
                 {
                     result = _mapper.Map<List<ScheduleModel>>(list);
@@ -305,6 +306,47 @@ namespace Infrastructure.Repository
                 throw e;
             }
             return await Task.FromResult(result);
+        }
+        #endregion
+
+        #region Get all available dates
+        public async Task<IEnumerable<AvailableDateModel>> GetAllAvailableDates()
+        {
+            var availableDateModels = new List<AvailableDateModel>();
+            try
+            {
+                var availableDates = await _context.AvailableDates.Include(ad => ad.Slot).ThenInclude(s => s.Days).ToListAsync();
+                availableDateModels = _mapper.Map<List<AvailableDateModel>>(availableDates);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in GetAllAvailableDates");
+            }
+            return availableDateModels;
+        }
+        #endregion
+
+        #region Lecturer remove one of their available date
+        public async Task<bool> RemoveLecturerAvailableDate(int lecturerId, int slotId)
+        {
+            var check = false;
+            try
+            {
+                var availableDate = await _context.AvailableDates.FirstOrDefaultAsync(ad => ad.LecturerId == lecturerId && ad.SlotId == slotId);
+                if(availableDate != null)
+                {
+                    _context.AvailableDates.Remove(availableDate);
+                }
+                await _context.SaveChangesAsync();
+                check = true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return check;
         }
         #endregion
     }

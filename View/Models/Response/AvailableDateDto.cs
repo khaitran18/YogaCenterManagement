@@ -10,6 +10,7 @@ namespace View.Models.Response
     {
         public int LecturerId { get; set; }
         public int SlotId { get; set; }
+        public DateTime? Date { get; set; }
         public StudySlotDto Slot { get; set; } = null!;
     }
 }
