@@ -135,20 +135,32 @@ namespace Infrastructure.Repository
             Class result = new Class();
             try
             {
+                //check class exist
                 var theClass = _context.Classes.Find(classId);
                 if (theClass == null)
                 {
                     throw new Exception("Class not found");
                 }
+                //set null to lecturer
+                if(lecId == 0)
+                {
+                    theClass.LecturerId = null;
+                    _context.Classes.Update(theClass);
+                    await _context.SaveChangesAsync();
+                    return _mapper.Map<ClassModel>(theClass);
+                }
+                //check lecturer exist
                 var lecturer = _context.Users.Single(u => u.Uid == lecId && u.RoleId == 2);
                 if (lecturer == null)
                 {
                     throw new Exception("Lecturer not found");
                 }
+                //get assigning schedule from the classId
                 var assigningSchedule = await _context.Schedules.FirstAsync(s => s.ClassId == classId);
+                //get available date of the assigning lecturer
                 var availableDate = _context.AvailableDates.Where(ad => ad.LecturerId == lecId).ToList();
                 //check if lecturer is free
-                var currentTeachingClass = await _context.Classes.Include(c => c.Schedules).FirstAsync(c => c.ClassStatus != 3 && c.LecturerId == lecId);
+                var currentTeachingClass = await _context.Classes.Include(c => c.Schedules).FirstOrDefaultAsync(c => c.ClassStatus != 3 && c.LecturerId == lecId);
                 if(currentTeachingClass != null && currentTeachingClass.Schedules.First().SlotId == assigningSchedule.SlotId)
                 {
                     throw new Exception("This slot is currently assigned to the lecturer.");
