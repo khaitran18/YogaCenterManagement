@@ -179,12 +179,13 @@ namespace View.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseBody);
                 var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
                 };
                 var baseResponse = JsonSerializer.Deserialize<BaseResponse<PaginatedResult<ClassDto>>>(responseBody, options);
-
+                Console.WriteLine(baseResponse.Result);
                 if (!baseResponse!.Error)
                 {
                     //ViewBag.QueryString = queryStringWithoutPage;
@@ -319,17 +320,19 @@ namespace View.Controllers
             var studentId = Request.Cookies["Id"];
             var requestData = new
             {
+
                 StudentId = studentId,
                 ClassId = classId,
                 Amount = amount,
                 Method = "Online"
             };
-
+            Console.WriteLine(requestData);
             var json = JsonSerializer.Serialize(requestData);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(enrollClassApiUrl, stringContent);
-            var resultJson = await response.Content.ReadAsStringAsync();
             Console.WriteLine(response);
+            var resultJson = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(resultJson);
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -351,7 +354,7 @@ namespace View.Controllers
             }
             //Console.WriteLine(requestData);
 
-            return RedirectToAction(nameof(Details), new { classId });
+            return RedirectToAction("Details", new {classId = classId});
         }
 
 
@@ -578,6 +581,39 @@ namespace View.Controllers
             //Console.WriteLine(baseResponse);
 
             return RedirectToAction(nameof(AvailableDates));
+        }
+
+        public async Task<IActionResult> StudiedClasses(int page = 1, int pageSize = 6)
+        {
+            var studentId = Request.Cookies["Id"];
+            Console.WriteLine(studentId);
+            var response = await _httpClient.GetAsync($"{apiUrl}/studiedclass/{studentId}?page={page}&pageSize={pageSize}");
+            Console.WriteLine($"{studyingClassApiUrl}/{studentId}");
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<PaginatedResult<ClassDto>>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    //ViewBag.QueryString = queryStringWithoutPage;
+                    return View(baseResponse.Result);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                return View();
+            }
+
         }
     }
 }
