@@ -96,7 +96,7 @@
               <div class="modal-body">
                 <!-- Class basic information-->
                 <div id="basicInfoSection">
-                  <h6>Basic Information</h6>
+                  <h4>Basic Information</h4>
                   <form id="basicInfoForm">
                     <input type="hidden" id="update-class-id" name="classId" style="display: none;"/>
                     <div class="form-group">
@@ -119,27 +119,39 @@
                       <label for="image">Image</label>
                       <input type="file" class="form-control-file" id="update-image" name="image">
                     </div>
-                    <button type="submit" class="btn btn-outline btn-primary">Update Info</button>
+                    <button type="submit" class="btn btn-outline-primary">Update Info</button>
                   </form>
                 </div>
+                <hr style="border-top: 3px dashed #999999;">
                 <!-- Lecturer -->
                 <div id="lecturerInfoSection">
                   <h4>Lecturer Information:</h4>
                   <form id="lecturerForm">
-                    <h5>Id: <span id="lecturerId" class="font-weight-normal"></span></h5>
-                    <h5 id="lecturer-name"></h5>
-                    <p id="lecturer-email"></p>
+                    <h5 id="lecturer-name" class="mt-1 ml-1"></h5>
+                    <h5 class="mt-1 ml-1">Id: <span id="lecturerId" class="font-weight-normal"></span></h5>
+                    <p id="lecturer-email" class="mt-1 ml-1"></p>
                     <p class="mt-1 text-dark font-weight-bold"> Assign new lecturer: </p>
                     <input type="hidden" id="assignClassId" name="classId" style="display: none;"/>
                     <select id="lecturer" name="lecturerId" >
                         <option value="0">None</option>
                     </select>
-                    <button type="submit" id="assignLecturerBtn" class="btn btn-outline btn-success">Assign Lecturer</button>
+                    <button type="submit" id="assignLecturerBtn" class="btn btn-outline-success">Assign Lecturer</button>
                   </form>
+                <hr style="border-top: 3px dashed #999999;">
                 <!--Schedule -->
                 <div id="studySlotsSection">
-                  <h6>Class Schedule</h6>
-                  <ul id="studySlotsList"></ul>
+                  <h4>Class Schedule</h4>
+                  <table id="schedule" class="table table-striped table-bordered mt-3">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>Index</th>
+                      <th>Start Time</th>
+                      <th>End Time</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="scheduleItem"></tbody>
+                </table>
                 </div>
               </div>
             </div>
@@ -235,11 +247,11 @@
                                         <button class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="zmdi zmdi-more"></i>
                                         </button>
-                                        <div class="dropdown-menu dropdown-menu-right">
+                                        @*<div class="dropdown-menu dropdown-menu-right">
                                             <a class="dropdown-item" href="@Url.Action("ClassDetails", "Admin", new { classId = classItem.ClassId })">
                                                 View Details
                                             </a>
-                                        </div>
+                                        </div>*@
                                     </div>
                                 </div>
                             </td>
@@ -450,6 +462,24 @@
                     $('#lecturer-email').html("<span class=\"font-weight-bold text-dark\">Email: </span>"+data.result.lecturer.email);
                     }
                     
+                    //Populate schedule list
+                    var tableHTML = '';
+                    data.result.schedules.forEach(function(item, index) {
+                        //format date
+                        var date = new Date(item.date).toLocaleDateString(undefined,{
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        })
+                        tableHTML += '<tr>';
+                        tableHTML += '<td>' + ++index + '</td>';
+                        tableHTML += '<td>' + item.slot.startTime + '</td>';
+                        tableHTML += '<td>' + item.slot.endTime + '</td>';
+                        tableHTML += '<td>' + date+ '</td>';
+                        tableHTML += '</tr>';
+                    });
+                    $('#scheduleItem').html(tableHTML);
                     //show the modal
                     $('#updateModal').modal('show');
                 },
@@ -479,7 +509,7 @@
               },
               error: function(jqXHR, textStatus, errorThrown) {
                 console.log('Error assigning lecturer:', errorThrown);
-                location.reload();
+                alert('Fail to assign the lecturer! Make sure that the lecturer is available for the slot and not currently assigned to the slot.');
               }
             });
           }
@@ -503,7 +533,8 @@
               },
               error: function(jqXHR, textStatus, errorThrown) {
                 console.log('Error updating basic info:', errorThrown);
-                $('#updateModal').modal('hide');
+                //$('#updateModal').modal('hide');
+                alert('Fail to update the information!');
               }
             });
           }
