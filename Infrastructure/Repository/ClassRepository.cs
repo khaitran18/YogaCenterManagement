@@ -145,9 +145,16 @@ namespace Infrastructure.Repository
                 {
                     throw new Exception("Lecturer not found");
                 }
-                var schedule = await _context.Schedules.FirstAsync(s => s.ClassId == classId);
+                var assigningSchedule = await _context.Schedules.FirstAsync(s => s.ClassId == classId);
                 var availableDate = _context.AvailableDates.Where(ad => ad.LecturerId == lecId).ToList();
-                if(availableDate.Where(ad => ad.SlotId == schedule.SlotId).Any())
+                //check if lecturer is free
+                var currentTeachingClass = await _context.Classes.Include(c => c.Schedules).FirstAsync(c => c.ClassStatus != 3 && c.LecturerId == lecId);
+                if(currentTeachingClass != null && currentTeachingClass.Schedules.First().SlotId == assigningSchedule.SlotId)
+                {
+                    throw new Exception("This slot is currently assigned to the lecturer.");
+                }
+                //check availableDate then assign the lecturer to the class
+                if(availableDate.Where(ad => ad.SlotId == assigningSchedule.SlotId).Any())
                 {
                     theClass.LecturerId = lecturer.Uid;
                     _context.Classes.Update(theClass);
