@@ -116,7 +116,7 @@ namespace View.Controllers
         public async Task<IActionResult> StudySlots()
         {
             var role = Request.Cookies["Role"];
-            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role == null) return RedirectToAction("Index", "Home");
             if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
                 AddAuthTokenToRequestHeaders();
@@ -168,7 +168,7 @@ namespace View.Controllers
         public async Task<IActionResult> ChangeClassRequests()
         {
             var role = Request.Cookies["Role"];
-            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role == null) return RedirectToAction("Index", "Home");
             if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
                 AddAuthTokenToRequestHeaders();
@@ -220,7 +220,7 @@ namespace View.Controllers
         public async Task<IActionResult> UpdateSlot(int slotId, TimeSpan start, TimeSpan end, List<int> days)
         {
             var role = Request.Cookies["Role"];
-            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role == null) return RedirectToAction("Index", "Home");
             if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
                 List<DayDto> dayDtos = days.Select(dayId => new DayDto
@@ -284,7 +284,7 @@ namespace View.Controllers
         public async Task<IActionResult> StudySlots(TimeSpan start, TimeSpan end, List<int> days)
         {
             var role = Request.Cookies["Role"];
-            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role == null) return RedirectToAction("Index", "Home");
             if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
                 var requestData = new
@@ -333,7 +333,7 @@ namespace View.Controllers
         public async Task<IActionResult> StudySlotsDelete([FromForm] int slotId)
         {
             var role = Request.Cookies["Role"];
-            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role == null) return RedirectToAction("Index", "Home");
             if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
                 AddAuthTokenToRequestHeaders();

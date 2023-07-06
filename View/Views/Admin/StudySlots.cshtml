@@ -11,96 +11,97 @@
     <link rel="stylesheet" href="~/css/TimePickerStyles.css" />
 }
 <partial name="_Notification" />
+<div class="modal fade overflow-auto" id="myModal" data-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Select Days</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form asp-controller="Admin" asp-action="StudySlots" method="post" id="study-slots">
+                    <div class="mb-2 text-start d-flex flex-row  align-items-center justify-content-center">
+                        <div class="mx-2">
+                            <p>Start time:</p>
+                            <input type="time" id="start" name="start">
+                        </div>
+                        <div class="mx-2">
+                            <p>End time:<p />
+                            <input type="time" id="end" name="end">
+                        </div>
+                    </div>
+                    <!-- Include the provided section inside the modal body -->
+                    <section>
+                        <div class="tile">
+                            <input class="day-checkbox" type="checkbox" name="days" id="monday" value="1">
+                            <label for="monday">
+                                <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-monday-icon.svg" width="100" />
+                                <span>Monday</span>
+                            </label>
+                        </div>
+                        <div class="tile">
+                            <input class="day-checkbox" type="checkbox" name="days" id="tuesday" value="2">
+                            <label for="tuesday">
+                                <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-tuesday-icon.svg" width="100" />
+                                <span>Tuesday</span>
+                            </label>
+                        </div>
+                        <div class="tile">
+                            <input class="day-checkbox" type="checkbox" name="days" id="wednesday" value="3">
+                            <label for="wednesday">
+                                <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-wednesday-icon.svg" width="100" />
+                                <span>Wednesday</span>
+                            </label>
+                        </div>
+                        <div class="tile">
+                            <input class="day-checkbox" type="checkbox" name="days" id="thursday" value="4">
+                            <label for="thursday">
+                                <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-thursday-icon.svg" width="100" />
+                                <span>Thursday</span>
+                            </label>
+                        </div>
+                        <div class="tile">
+                            <input class="day-checkbox" type="checkbox" name="days" id="friday" value="5">
+                            <label for="friday">
+                                <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-friday-icon.svg" width="100" />
+                                <span>Friday</span>
+                            </label>
+                        </div>
+                        <div class="tile">
+                            <input class="day-checkbox" type="checkbox" name="days" id="saturday" value="6">
+                            <label for="saturday">
+                                <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-saturday-icon.svg" width="100" />
+                                <span>Saturday</span>
+                            </label>
+                        </div>
+                        <div class="tile">
+                            <input class="day-checkbox" type="checkbox" name="days" id="sunday" value="7">
+                            <label for="sunday">
+                                <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-sunday-icon.svg" width="100" />
+                                <span>Sunday</span>
+                            </label>
+                        </div>
+                    </section>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="study-slots">Save slot</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 <div class="col-12">
     <button class="btn btn-outline-info m-b-10" data-toggle="modal" data-target="#myModal">Add new slot</button>
     <!-- The Modal -->
-    <div class="modal fade overflow-auto" id="myModal" data-backdrop="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
 
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Select Days</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-
-                <!-- Modal Body -->
-                <div class="modal-body">
-                    <form asp-controller="Admin" asp-action="StudySlots" method="post" id="study-slots">
-                        <div class="mb-2 text-start d-flex flex-row  align-items-center justify-content-center">
-                            <div class="mx-2">
-                                <p>Start time:</p>
-                                <input type="time" id="start" name="start">
-                            </div>
-                            <div class="mx-2">
-                                <p>End time:<p />
-                                <input type="time" id="end" name="end">
-                            </div>
-                        </div>
-                        <!-- Include the provided section inside the modal body -->
-                        <section>
-                            <div class="tile">
-                                <input class="day-checkbox" type="checkbox" name="days" id="monday" value="1">
-                                <label for="monday">
-                                    <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-monday-icon.svg" width="100" />
-                                    <span>Monday</span>
-                                </label>
-                            </div>
-                            <div class="tile">
-                                <input class="day-checkbox" type="checkbox" name="days" id="tuesday" value="2">
-                                <label for="tuesday">
-                                    <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-tuesday-icon.svg" width="100" />
-                                    <span>Tuesday</span>
-                                </label>
-                            </div>
-                            <div class="tile">
-                                <input class="day-checkbox" type="checkbox" name="days" id="wednesday" value="3">
-                                <label for="wednesday">
-                                    <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-wednesday-icon.svg" width="100" />
-                                    <span>Wednesday</span>
-                                </label>
-                            </div>
-                            <div class="tile">
-                                <input class="day-checkbox" type="checkbox" name="days" id="thursday" value="4">
-                                <label for="thursday">
-                                    <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-thursday-icon.svg" width="100" />
-                                    <span>Thursday</span>
-                                </label>
-                            </div>
-                            <div class="tile">
-                                <input class="day-checkbox" type="checkbox" name="days" id="friday" value="5">
-                                <label for="friday">
-                                    <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-friday-icon.svg" width="100" />
-                                    <span>Friday</span>
-                                </label>
-                            </div>
-                            <div class="tile">
-                                <input class="day-checkbox" type="checkbox" name="days" id="saturday" value="6">
-                                <label for="saturday">
-                                    <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-saturday-icon.svg" width="100" />
-                                    <span>Saturday</span>
-                                </label>
-                            </div>
-                            <div class="tile">
-                                <input class="day-checkbox" type="checkbox" name="days" id="sunday" value="7">
-                                <label for="sunday">
-                                    <img src="https://img.uxwing.com/wp-content/themes/uxwing/download/time-date-calendar/week-day-sunday-icon.svg" width="100" />
-                                    <span>Sunday</span>
-                                </label>
-                            </div>
-                        </section>
-                    </form>
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" form="study-slots">Save slot</button>
-                </div>
-
-            </div>
-        </div>
-    </div>    
     <div class="modal fade overflow-auto" id="updateModal" data-backdrop="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -114,7 +115,7 @@
                 <!-- Modal Body -->
                 <div class="modal-body">
                     <form asp-controller="Admin" asp-action="UpdateSlot" method="post" id="update-slot">
-                        <input type="hidden" name="slotId" id="slotId"/>
+                        <input type="hidden" name="slotId" id="slotId" />
                         <div class="mb-2 text-start d-flex flex-row  align-items-center justify-content-center">
                             <div class="mx-2">
                                 <p>Start time:</p>
@@ -261,9 +262,9 @@
                                 }
                             </td>
                             @*<td>
-                                <button class="p-r-10 edit-button" style="font-size:1.5rem"><i class="fas fa-edit"></i></button>
-                                <button data-toggle="modal" data-target="#deleteModal" class="p-r-10 delete-button" style="font-size:1.5rem"><i class="fas fa-trash-alt"></i></button>
-                            </td>*@
+                                    <button class="p-r-10 edit-button" style="font-size:1.5rem"><i class="fas fa-edit"></i></button>
+                                    <button data-toggle="modal" data-target="#deleteModal" class="p-r-10 delete-button" style="font-size:1.5rem"><i class="fas fa-trash-alt"></i></button>
+                                </td>*@
                         </tr>
                     }
                 }
