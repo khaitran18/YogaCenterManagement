@@ -17,6 +17,6 @@ namespace Application.Service
         /// </summary>
         /// <param name="jwtToken"></param>
         /// <returns></returns>
-        public ClaimsPrincipal ValidateToken(string jwtToken);
+        public ClaimsPrincipal? ValidateToken(string jwtToken);
     }
 }

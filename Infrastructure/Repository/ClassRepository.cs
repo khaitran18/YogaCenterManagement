@@ -240,11 +240,16 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<(List<ClassModel>, int)> GetClasses(string? searchKeyword, string? sortBy, DateTime? startingFromDate, int? durationMonths, string? classCapacity, int page, int pageSize)
+        public async Task<(List<ClassModel>, int)> GetClasses(string? searchKeyword, string? sortBy, DateTime? startingFromDate, int? durationMonths, string? classCapacity, int page, int pageSize, bool isAdmin)
         {
             IQueryable<Class> query = _context.Classes
                 .Include(c => c.Schedules)
                 .Include(c => c.Lecturer);
+
+            if (!isAdmin)
+            {
+                query = query.Where(c => c.ClassStatus != null && c.ClassStatus != 0);
+            }
 
             // Search
             if (!string.IsNullOrEmpty(searchKeyword))
