@@ -57,7 +57,7 @@
         <div class="row">
             <div class="col-md-12 col-sm-12 animate-box d-flex justify-content-between align-items-center mb-3" data-animate-effect="fadeInUp">
                 <h1>About The Class</h1>
-                @if (Model.ClassStatus == 1 && Context.Request.Cookies["Role"] == "Student")
+                @if (Model.ClassStatus == 1 && Context.Request.Cookies["Role"] == "User")
                 {
                     bool isEnrolled = false; // Flag to track enrollment status
                     int studentId = 0; // Replace with the actual logic to retrieve the student ID
@@ -78,6 +78,32 @@
                         <button class="btn btn-outline-success pl-3" data-toggle="modal" data-target="#enrollModal">Enroll class</button>
                     }
                 }
+                else if (Model.ClassStatus == 2 && Context.Request.Cookies["Role"] == "User")
+                {
+                    bool isEnrolled = false; // Flag to track enrollment status
+                    int studentId = 0; // Replace with the actual logic to retrieve the student ID
+
+                    if (Context.Request.Cookies["Id"] != null && int.TryParse(Context.Request.Cookies["Id"], out int currentStudentId))
+                    {
+                        // Check if the current student ID exists in the class's list of students
+                        isEnrolled = Model.Students.Any(s => s.Uid == currentStudentId);
+                        studentId = currentStudentId;
+                    }
+
+                    if (isEnrolled)
+                    {
+                        <a class="btn btn-outline-success pl-3" asp-action="StudyingClassesById" asp-controller="Class" asp-route-classId="@Model.ClassId">View class</a>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Class on started</span>
+                    }
+                }
+                else if (Model.ClassStatus == 3)
+                {
+                    <span class="text-danger">Class has ended</span>
+                }
+
 
             </div>
             <div class="col-md-8 col-sm-12 animate-box" data-animate-effect="fadeInUp">
