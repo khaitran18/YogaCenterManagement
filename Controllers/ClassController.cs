@@ -69,6 +69,8 @@ namespace Api.Controllers
         [ProducesDefaultResponseType(typeof(PaginatedResult<ClassDto>))]
         public async Task<IActionResult> GetClasses([FromQuery] GetClassesQuery query)
         {
+            var authorization = HttpContext.Request.Headers["Authorization"].ToString();
+            query.Token = authorization;
             var response = await _mediator.Send(query);
             if (!response.Error)
                 return Ok(response);

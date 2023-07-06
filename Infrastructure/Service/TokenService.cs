@@ -48,8 +48,12 @@ namespace Infrastructure.Services
             return encodedToken;
         }
 
-        public ClaimsPrincipal ValidateToken(string jwtToken)
+        public ClaimsPrincipal? ValidateToken(string jwtToken)
         {
+            if (jwtToken == "")
+            {
+                return null;
+            }
             // token now include bearer, we dont need bearer
             var index = jwtToken.IndexOf(" ");
             if (index != -1)
