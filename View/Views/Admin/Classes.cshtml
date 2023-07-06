@@ -1,9 +1,11 @@
 ﻿@using System.Globalization
 @using View.Models.Enum
 @using View.Models.Response;
+@using System.Web;
 @model View.Models.PaginatedResult<ClassDto>
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    string token = ViewBag.MyToken;
 }
 <partial name="_Notification"/>
 <div class="row">
@@ -120,6 +122,14 @@
                     <div class="form-group">
                       <label for="image">Image</label>
                       <input type="file" class="form-control-file" id="update-image" name="image">
+                    </div>
+                    <div class="form-group">
+                        <select id="update-class-status" name="classStatus" class="form-control">
+                            <option value="0">Unavailable</option>
+                            <option value="1">Not Started</option>
+                            <option value="2">Started</option>
+                            <option value="3">Ended</option>
+                        </select >
                     </div>
                     <button type="submit" class="btn btn-outline-primary">Update Info</button>
                   </form>
@@ -248,9 +258,9 @@
                                         <i class="zmdi zmdi-delete"></i>
                                     </button>*@
                                     <div class="dropdown">
-                                        <button class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        @*<button class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="zmdi zmdi-more"></i>
-                                        </button>
+                                        </button>*@
                                         @*<div class="dropdown-menu dropdown-menu-right">
                                             <a class="dropdown-item" href="@Url.Action("ClassDetails", "Admin", new { classId = classItem.ClassId })">
                                                 View Details
@@ -295,6 +305,7 @@
 </div>
 
 @section Scripts {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script>
     $(document).ready(function () {
         var searchKeywordParam = '@Context.Request.Query["searchKeyword"]';
@@ -373,14 +384,14 @@
         });
 
         $('#end-date').on('change', function() {
-        var endDate = new Date($(this).val());
-        var startDateInput = $('#start-date');
-        if (endDate) {
-            endDate.setDate(endDate.getDate() - 1); // Subtract one day from end date
-            startDateInput.attr('max', endDate.toISOString().split('T')[0]);
-        } else {
-            startDateInput.attr('max', null); // Remove the maximum constraint
-        }
+            var endDate = new Date($(this).val());
+            var startDateInput = $('#start-date');
+            if (endDate) {
+                endDate.setDate(endDate.getDate() - 1); // Subtract one day from end date
+                startDateInput.attr('max', endDate.toISOString().split('T')[0]);
+            } else {
+                startDateInput.attr('max', null); // Remove the maximum constraint
+            }
         });
     });
         //input number validator
@@ -406,20 +417,14 @@
               $(this).val(max);
             }
           });
-
-
-
         //Style with status
         $('.class-status').each(function(index, element) {
-            console.log('Check');
-            console.log($(element).text());
             switch($(element).text()){
                 case 'NotStarted': $(element).addClass('text-warning'); break;
                 case 'Started': $(element).addClass('text-primary'); break;
                 case 'Ended': $(element).addClass('text-success'); break;
                 default: $(element).addClass('text-secondary'); break;
             };
-          //$(element).addClass('badge badge-primary');
         });
         //fetch study slot
         $.ajax({
@@ -427,7 +432,7 @@
           method: 'GET',
           dataType: 'json',
           headers: {
-            'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI'
+            'Authorization': 'Bearer ' + '@token'
           },
           success: function(data) {
             const selectSlot = $('#selectSlot');
@@ -456,7 +461,7 @@
           method: 'GET',
           dataType: 'json',
           headers: {
-            'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI'
+            'Authorization': 'Bearer ' + '@token'
           },
           success: function(data) {
             const select = $('#lecturer');
@@ -509,7 +514,7 @@
                 method: 'GET',
                 dataType: 'json',
                 headers: {
-                    'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI'
+                    'Authorization': 'Bearer ' + '@token'
                 },    
                 success: function(data) {
                     // Populate basic information section
@@ -518,6 +523,7 @@
                     $('#update-price').val(data.result.price);
                     $('#update-capacity').val(data.result.classCapacity);
                     $('#update-description').val(data.result.description);
+                    $('#update-class-status').val(data.result.classStatus);
                     $('#assignClassId').val(data.result.classId);
 
                     // Populate lecturer information
@@ -551,6 +557,7 @@
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.log('Error fetching class data:', errorThrown);
+                    alert("Fail to get the class detail");
                 }
             });
         }
@@ -560,13 +567,13 @@
             $.each(formData, function() {
                 formDataJSON[this.name] = this.value;
             });
-            formDataJSON['token'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI';
+            formDataJSON['token'] = '@token';
             $.ajax({
               url: 'https://localhost:7241/api/Class/assignLecturer',
               method: 'POST',
               contentType: 'application/json',
               headers: {
-                    'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI'
+                    'Authorization': 'Bearer ' + '@token'
               },
               data: JSON.stringify(formDataJSON),
               success: function(response) {
@@ -581,7 +588,7 @@
           }
 
           function updateBasicInfo(formData) {
-            formData.append('token','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI');
+            formData.append('token','@token');
             console.log(formData);
             $.ajax({
               url: 'https://localhost:7241/api/Class/',
@@ -590,7 +597,7 @@
               processData: false,
               contentType: false,
               headers: {
-                    'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGluaG5ndHJpIiwianRpIjoiMjMiLCJ1c2VybmFtZSI6InRoaW5obmd0cmkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY5MTA2NDI2NywiaXNzIjoiand0IiwiYXVkIjoiand0In0.iUrZf1nljXt0dTTQymlLyBXsY1b6Dho0e8wY2rfVKLI'
+                    'Authorization': 'Bearer ' + '@token'
               },
               success: function(response) {
                 console.log('Basic info updated successfully');
