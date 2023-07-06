@@ -36,7 +36,7 @@ namespace Infrastructure.Repository
                     Image = image,
                     StartDate = startDate,
                     EndDate = endDate,
-                    ClassStatus = 1, //default value
+                    ClassStatus = 0, //default value
                 };
                 _context.Classes.Add(newClass);
                 await _context.SaveChangesAsync();
@@ -552,7 +552,7 @@ namespace Infrastructure.Repository
             {
                 var classes = await _context.Classes
                                                     .Include(c => c.Students)
-                                                    .Where(c => c.ClassStatus == 2 && c.Students.Any(s => s.Uid == studentId))
+                                                    .Where(c => (c.ClassStatus == 2|| c.ClassStatus==1) && c.Students.Any(s => s.Uid == studentId))
                                                     .ToListAsync();
                 classModels = _mapper.Map<List<ClassModel>>(classes.Skip((page - 1) * pageSize).Take(pageSize));
                 totalCount = classes.Count;
@@ -577,7 +577,7 @@ namespace Infrastructure.Repository
                         .ThenInclude(sc => sc.Slot)
                             .ThenInclude(sl => sl.Days)
                     .Include(c => c.Lecturer)
-                    .FirstOrDefaultAsync(c => c.ClassStatus == 2
+                    .FirstOrDefaultAsync(c => (c.ClassStatus == 2 || c.ClassStatus==1)
                                                                  && c.ClassId == classId
                                                                  && c.Students.Any(s => s.Uid == studentId));
                 classModel = _mapper.Map<ClassModel>(@class);
