@@ -115,9 +115,39 @@
                 <div class="row">
                     <div class="col-md-8 col-sm-8">
                         <ul class="yg-footer-list">
-                            <li><a asp-controller="Class" asp-action="Index">Classes</a></li>
-                            <li><a href="schedule.html">Schedule</a></li>
+                            <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                            @if (Context.Request.Cookies["AuthToken"] != null)
+                            {
+                                <li><a asp-controller="User" asp-action="Details">Your Profile</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-controller="Auth" asp-action="Login">Login/Signup</a></li>
+                            }
+                            <li><a class="active" asp-controller="Class" asp-action="Index">Classes</a></li>
+                            @if (Context.Request.Cookies["Role"] == "Lecturer")
+                            {
+                                <li><a asp-controller="User" asp-action="Feedback">Feedback</a></li>
+                            }
+                            @if (Context.Request.Cookies["AuthToken"] != null)
+                            {
+                                @if (Context.Request.Cookies["Role"] == "User")
+                                {
+                                    <li><a asp-controller="Class" asp-action="StudyingClasses">Studying classes</a></li>
+                                    <li><a asp-controller="Class" asp-action="StudiedClasses">Studied classes</a></li>
+                                }
+                                else if (Context.Request.Cookies["Role"] == "Lecturer")
+                                {
+                                    <li><a asp-controller="Class" asp-action="TeachingClasses">Teaching classes</a></li>
+                                    <li><a asp-controller="Class" asp-action="TaughtClasses">Taught classes</a></li>
+                                    <li><a asp-controller="Class" asp-action="AvailableDates">Available dates</a></li>
+                                }
+                            }
                             <li><a asp-controller="Home" asp-action="AboutUs">About Us</a></li>
+                            @if (Context.Request.Cookies["AuthToken"] != null)
+                            {
+                                <li><a asp-controller="Auth" asp-action="Logout">Logout</a></li>
+                            }
                         </ul>
                     </div>
                     <div class="col-md-4 col-sm-4">

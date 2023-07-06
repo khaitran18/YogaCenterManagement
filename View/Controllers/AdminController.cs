@@ -117,45 +117,50 @@ namespace View.Controllers
         {
             var role = Request.Cookies["Role"];
             if (role == null) return RedirectToAction("Index", "Admin");
-            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
-                return RedirectToAction("Index", "Admin");
-            }
-            AddAuthTokenToRequestHeaders();
-            var response = await _httpClient.GetAsync(studySlotApiUrl);
+                AddAuthTokenToRequestHeaders();
+                var response = await _httpClient.GetAsync(studySlotApiUrl);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var responseBody = await response.Content.ReadAsStringAsync();
-
-
-                var options = new JsonSerializerOptions
+                if (response.IsSuccessStatusCode)
                 {
-                    PropertyNameCaseInsensitive = true,
-                };
-                var baseResponse = JsonSerializer.Deserialize<BaseResponse<IEnumerable<StudySlotDto>>>(responseBody, options);
-                //Console.WriteLine(baseResponse);
-                if (!baseResponse!.Error)
-                {
-                    return View(baseResponse.Result);
+                    var responseBody = await response.Content.ReadAsStringAsync();
+
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    };
+                    var baseResponse = JsonSerializer.Deserialize<BaseResponse<IEnumerable<StudySlotDto>>>(responseBody, options);
+                    //Console.WriteLine(baseResponse);
+                    if (!baseResponse!.Error)
+                    {
+                        return View(baseResponse.Result);
+                    }
+                    else
+                    {
+                        var errorResponse = new BaseResponse<Exception>
+                        {
+                            Error = true,
+                            Message = baseResponse.Message,
+                            Exception = baseResponse.Exception
+                        };
+
+                        ViewBag.ErrorResponse = errorResponse;
+                        return View();
+                    }
+
                 }
                 else
                 {
-                    var errorResponse = new BaseResponse<Exception>
-                    {
-                        Error = true,
-                        Message = baseResponse.Message,
-                        Exception = baseResponse.Exception
-                    };
-
-                    ViewBag.ErrorResponse = errorResponse;
                     return View();
                 }
 
             }
             else
             {
-                return View();
+                return RedirectToAction("Index", "Home");
+
             }
         }
 
@@ -164,106 +169,115 @@ namespace View.Controllers
         {
             var role = Request.Cookies["Role"];
             if (role == null) return RedirectToAction("Index", "Admin");
-            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
-                return RedirectToAction("Index", "Admin");
-            }
-            AddAuthTokenToRequestHeaders();
-            var response = await _httpClient.GetAsync(changeClassRequestsApiUrl);
+                AddAuthTokenToRequestHeaders();
+                var response = await _httpClient.GetAsync(changeClassRequestsApiUrl);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var responseBody = await response.Content.ReadAsStringAsync();
-
-                var options = new JsonSerializerOptions
+                if (response.IsSuccessStatusCode)
                 {
-                    PropertyNameCaseInsensitive = true,
-                };
-                var baseResponse = JsonSerializer.Deserialize<BaseResponse<IEnumerable<ChangeClassRequestDto>>>(responseBody, options);
-                Console.WriteLine(baseResponse);
-                if (!baseResponse!.Error)
-                {
+                    var responseBody = await response.Content.ReadAsStringAsync();
 
-                    return View(baseResponse.Result);
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    };
+                    var baseResponse = JsonSerializer.Deserialize<BaseResponse<IEnumerable<ChangeClassRequestDto>>>(responseBody, options);
+                    Console.WriteLine(baseResponse);
+                    if (!baseResponse!.Error)
+                    {
+
+                        return View(baseResponse.Result);
+                    }
+                    else
+                    {
+                        var errorResponse = new BaseResponse<Exception>
+                        {
+                            Error = true,
+                            Message = baseResponse.Message,
+                            Exception = baseResponse.Exception
+                        };
+
+                        ViewBag.ErrorResponse = errorResponse;
+                        return View();
+                    }
+
                 }
                 else
                 {
-                    var errorResponse = new BaseResponse<Exception>
-                    {
-                        Error = true,
-                        Message = baseResponse.Message,
-                        Exception = baseResponse.Exception
-                    };
-
-                    ViewBag.ErrorResponse = errorResponse;
                     return View();
                 }
 
             }
             else
             {
-                return View();
+                return RedirectToAction("Index", "Home");
+
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateSlot(int slotId,TimeSpan start, TimeSpan end, List<int> days)
+        public async Task<IActionResult> UpdateSlot(int slotId, TimeSpan start, TimeSpan end, List<int> days)
         {
             var role = Request.Cookies["Role"];
             if (role == null) return RedirectToAction("Index", "Admin");
-            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
-                return RedirectToAction("Index", "Admin");
-            }
-            List<DayDto> dayDtos = days.Select(dayId => new DayDto
-            {
-                DayId = dayId,
-                Day = ((Days)dayId).ToString()
-            }).ToList();
-
-            var requestData = new
-            {
-                studySlot = new
+                List<DayDto> dayDtos = days.Select(dayId => new DayDto
                 {
-                    slotId = slotId,
-                    startTime = start.ToString(),
-                    endTime = end.ToString(),
-                    day = dayDtos
-                }
-            };
+                    DayId = dayId,
+                    Day = ((Days)dayId).ToString()
+                }).ToList();
 
-            var jsonCommand = JsonSerializer.Serialize(requestData);
-            Console.WriteLine(jsonCommand);
-            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PutAsync(studySlotApiUrl, content);
-            Console.WriteLine(response);
-            if (response.IsSuccessStatusCode)
-            {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions
+                var requestData = new
                 {
-                    PropertyNameCaseInsensitive = true,
+                    studySlot = new
+                    {
+                        slotId = slotId,
+                        startTime = start.ToString(),
+                        endTime = end.ToString(),
+                        day = dayDtos
+                    }
                 };
-                var baseResponse = JsonSerializer.Deserialize<BaseResponse<bool>>(responseBody, options);
 
-                if (!baseResponse!.Error)
+                var jsonCommand = JsonSerializer.Serialize(requestData);
+                Console.WriteLine(jsonCommand);
+                var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PutAsync(studySlotApiUrl, content);
+                Console.WriteLine(response);
+                if (response.IsSuccessStatusCode)
                 {
-                    TempData["Success"] = "Update Successfully";
-                    return RedirectToAction(nameof(StudySlots));
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    };
+                    var baseResponse = JsonSerializer.Deserialize<BaseResponse<bool>>(responseBody, options);
+
+                    if (!baseResponse!.Error)
+                    {
+                        TempData["Success"] = "Update Successfully";
+                        return RedirectToAction(nameof(StudySlots));
+                    }
+                    else
+                    {
+                        TempData["Error"] = baseResponse.Message;
+                        return RedirectToAction(nameof(StudySlots));
+                    }
                 }
                 else
                 {
-                    TempData["Error"] = baseResponse.Message;
+                    TempData["Error"] = "Error update study slot";
                     return RedirectToAction(nameof(StudySlots));
                 }
+                //return RedirectToAction(nameof(StudySlots));
+
             }
             else
             {
-                TempData["Error"] = "Error update study slot";
-                return RedirectToAction(nameof(StudySlots));
+                return RedirectToAction("Index", "Home");
             }
-            //return RedirectToAction(nameof(StudySlots));
         }
 
         [HttpPost]
@@ -271,43 +285,48 @@ namespace View.Controllers
         {
             var role = Request.Cookies["Role"];
             if (role == null) return RedirectToAction("Index", "Admin");
-            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
-                return RedirectToAction("Index", "Admin");
-            }
-            var requestData = new
-            {
-                token = "",
-                startTime = start.ToString(),
-                endTime = end.ToString(),
-                dateIds = days
-            };
-            AddAuthTokenToRequestHeaders();
-            var json = JsonSerializer.Serialize(requestData);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJraGFpdHJhbnF1YW5nIiwianRpIjoiMTgiLCJ1c2VybmFtZSI6ImtoYWl0cmFucXVhbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNjkwOTAyMzY0LCJpc3MiOiJqd3QiLCJhdWQiOiJqd3QifQ.-zZevseiqLHOfIR1pyrlg8mF5tTRx74w6-9aFZ3tyco");
+                var requestData = new
+                {
+                    token = "",
+                    startTime = start.ToString(),
+                    endTime = end.ToString(),
+                    dateIds = days
+                };
+                AddAuthTokenToRequestHeaders();
+                var json = JsonSerializer.Serialize(requestData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJraGFpdHJhbnF1YW5nIiwianRpIjoiMTgiLCJ1c2VybmFtZSI6ImtoYWl0cmFucXVhbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNjkwOTAyMzY0LCJpc3MiOiJqd3QiLCJhdWQiOiJqd3QifQ.-zZevseiqLHOfIR1pyrlg8mF5tTRx74w6-9aFZ3tyco");
 
-            var response = await _httpClient.PostAsync(studySlotApiUrl, content);
-            var responseBody = await response.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
-            if (response.IsSuccessStatusCode)
-            {
-                var baseResponse = JsonSerializer.Deserialize<BaseResponse<StudySlotDto>>(responseBody, options);
-                TempData["Success"] = "Create successfully";
+                var response = await _httpClient.PostAsync(studySlotApiUrl, content);
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                if (response.IsSuccessStatusCode)
+                {
+                    var baseResponse = JsonSerializer.Deserialize<BaseResponse<StudySlotDto>>(responseBody, options);
+                    TempData["Success"] = "Create successfully";
+                }
+                else
+                {
+                    var error = JsonSerializer.Deserialize<string>(responseBody, options);
+                    Console.WriteLine(error);
+                    TempData["Error"] = string.Join("\n", error);
+                    return RedirectToAction(nameof(StudySlots));
+                }
+                //Console.WriteLine(baseResponse);
+
+                return RedirectToAction(nameof(StudySlots));
             }
             else
             {
-                var error = JsonSerializer.Deserialize<string>(responseBody, options);
-                Console.WriteLine(error);
-                TempData["Error"] = string.Join("\n", error);
-                return RedirectToAction(nameof(StudySlots));
-            }
-            //Console.WriteLine(baseResponse);
+                return RedirectToAction("Index", "Home");
 
-            return RedirectToAction(nameof(StudySlots));
+            }
+
         }
 
         [HttpPost]
@@ -315,32 +334,37 @@ namespace View.Controllers
         {
             var role = Request.Cookies["Role"];
             if (role == null) return RedirectToAction("Index", "Admin");
-            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
-                return RedirectToAction("Index", "Admin");
-            }
-            AddAuthTokenToRequestHeaders();
-            var response = await _httpClient.DeleteAsync($"{studySlotApiUrl}/{slotId}");
-            var responseBody = await response.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
-            if (response.IsSuccessStatusCode)
-            {
-                var baseResponse = JsonSerializer.Deserialize<BaseResponse<bool>>(responseBody, options);
-                TempData["Success"] = "Delete successfully";
+                AddAuthTokenToRequestHeaders();
+                var response = await _httpClient.DeleteAsync($"{studySlotApiUrl}/{slotId}");
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                if (response.IsSuccessStatusCode)
+                {
+                    var baseResponse = JsonSerializer.Deserialize<BaseResponse<bool>>(responseBody, options);
+                    TempData["Success"] = "Delete successfully";
+                }
+                else
+                {
+                    var error = JsonSerializer.Deserialize<string>(responseBody, options);
+                    Console.WriteLine(error);
+                    TempData["Error"] = string.Join("\n", error);
+                    return RedirectToAction(nameof(StudySlots));
+                }
+                //Console.WriteLine(baseResponse);
+
+                return RedirectToAction(nameof(StudySlots));
+
             }
             else
             {
-                var error = JsonSerializer.Deserialize<string>(responseBody, options);
-                Console.WriteLine(error);
-                TempData["Error"] = string.Join("\n", error);
-                return RedirectToAction(nameof(StudySlots));
-            }
-            //Console.WriteLine(baseResponse);
+                return RedirectToAction("Index", "Home");
 
-            return RedirectToAction(nameof(StudySlots));
+            }
         }
 
         [HttpPost]
@@ -430,48 +454,53 @@ namespace View.Controllers
         public async Task<IActionResult> UpdateApprovalStatus(int requestId, short isApproved)
         {
             var role = Request.Cookies["Role"];
-            if (role == null) return RedirectToAction("Index", "Admin");
-            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() == Role.Admin.ToString() || role.ToString() == Role.Staff.ToString())
             {
-                return RedirectToAction("Index", "Admin");
-            }
-
-            var requestData = new
-            {
-                RequestId = requestId,
-                IsApproved = isApproved
-            };
-            AddAuthTokenToRequestHeaders();
-            var jsonCommand = JsonSerializer.Serialize(requestData);
-            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PutAsync(changeClassRequestsApiUrl, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions
+                var requestData = new
                 {
-                    PropertyNameCaseInsensitive = true,
+                    RequestId = requestId,
+                    IsApproved = isApproved
                 };
-                var baseResponse = JsonSerializer.Deserialize<BaseResponse<bool>>(responseBody, options);
+                AddAuthTokenToRequestHeaders();
+                var jsonCommand = JsonSerializer.Serialize(requestData);
+                var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
 
-                if (!baseResponse!.Error)
+                var response = await _httpClient.PutAsync(changeClassRequestsApiUrl, content);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    TempData["Success"] = isApproved == 0 ? "Deny successfully" : "Approve successfully";
-                    return RedirectToAction(nameof(ChangeClassRequests));
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    };
+                    var baseResponse = JsonSerializer.Deserialize<BaseResponse<bool>>(responseBody, options);
+
+                    if (!baseResponse!.Error)
+                    {
+                        TempData["Success"] = isApproved == 0 ? "Deny successfully" : "Approve successfully";
+                        return RedirectToAction(nameof(ChangeClassRequests));
+                    }
+                    else
+                    {
+                        TempData["Error"] = baseResponse.Message;
+                        return RedirectToAction(nameof(ChangeClassRequests));
+                    }
                 }
                 else
                 {
-                    TempData["Error"] = baseResponse.Message;
+                    TempData["Error"] = "Error occur while approve/deny request";
                     return RedirectToAction(nameof(ChangeClassRequests));
                 }
+
             }
             else
             {
-                TempData["Error"] = "Error occur while approve/deny request";
-                return RedirectToAction(nameof(ChangeClassRequests));
+                return RedirectToAction("Index", "Home");
+
             }
+
         }
 
         [HttpPost]
@@ -517,7 +546,7 @@ namespace View.Controllers
         {
 
             string? role = GetRoleFromCookie();
-            if (role == null) 
+            if (role == null)
             {
                 TempData["Error"] = "Invalid credential \n Please login again";
             }
@@ -529,7 +558,7 @@ namespace View.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SignupDto signupDto)
         {
-            var signup = "https://localhost:7241/api/auth/signup/"+signupDto.Role;
+            var signup = "https://localhost:7241/api/auth/signup/" + signupDto.Role;
 
             // Add auth token to request header
             AddAuthTokenToRequestHeaders();
@@ -558,7 +587,7 @@ namespace View.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Classes([FromForm]CreateClassDto model )
+        public async Task<IActionResult> Classes([FromForm] CreateClassDto model)
         {
             //Add auth token to request header
             string authToken = Request.Cookies["AuthToken"];
@@ -566,7 +595,7 @@ namespace View.Controllers
 
             var formData = new MultipartFormDataContent();
             var file = model.Image;
-            if(file != null && file.Length > 0)
+            if (file != null && file.Length > 0)
             {
                 byte[] data;
                 using (var br = new BinaryReader(file.OpenReadStream()))
@@ -774,7 +803,7 @@ namespace View.Controllers
             //{
             //    dayList.Add("7");
             //}
-            return String.Join(",",dayList.ToArray());
+            return String.Join(",", dayList.ToArray());
         }
     }
     #endregion
