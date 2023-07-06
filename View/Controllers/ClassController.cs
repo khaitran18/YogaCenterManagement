@@ -376,7 +376,7 @@ namespace View.Controllers
             }
             //Console.WriteLine(requestData);
 
-            return RedirectToAction("Details", new { classId = classId });
+            return Redirect(Url.Action("Details", "Class", new { classId = classId }));
         }
 
 
@@ -614,6 +614,39 @@ namespace View.Controllers
             var studentId = Request.Cookies["Id"];
             AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync($"{apiUrl}/studiedclass/{studentId}?page={page}&pageSize={pageSize}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<PaginatedResult<ClassDto>>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    //ViewBag.QueryString = queryStringWithoutPage;
+                    return View(baseResponse.Result);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                return View();
+            }
+
+        }
+
+        public async Task<IActionResult> TaughtClasses(int page = 1, int pageSize = 6)
+        {
+            var lecturerId = Request.Cookies["Id"];
+            AddAuthTokenToRequestHeaders();
+            var response = await _httpClient.GetAsync($"{apiUrl}/taughtclass/{lecturerId}?page={page}&pageSize={pageSize}");
 
             if (response.IsSuccessStatusCode)
             {
