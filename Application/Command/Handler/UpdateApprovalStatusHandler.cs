@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Application.Service;
 using MediatR;
@@ -25,12 +26,21 @@ namespace Application.Command.Handler
             try
             {
                 var result = await _unitOfWork.ClassRepository.UpdateApprovalStatus(request.requestId, request.isApproved);
-                response.Result = result;
-                response.Message = "Success";
+                if (!result)
+                {
+                    response.Error = true;
+                    response.Exception = new BadRequestException("Fail to update request");
+                }
+                else
+                {
+                    response.Result = result;
+                    response.Message = "Success";
+                }
             }
             catch (Exception)
             {
                 response.Error = true;
+                response.Message = "Fail to update status";
                 throw;
             }
             return response;

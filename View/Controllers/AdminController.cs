@@ -114,6 +114,12 @@ namespace View.Controllers
         [HttpGet]
         public async Task<IActionResult> StudySlots()
         {
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync(studySlotApiUrl);
 
@@ -155,6 +161,12 @@ namespace View.Controllers
         [HttpGet]
         public async Task<IActionResult> ChangeClassRequests()
         {
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync(changeClassRequestsApiUrl);
 
@@ -196,6 +208,12 @@ namespace View.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateSlot(int slotId,TimeSpan start, TimeSpan end, List<int> days)
         {
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             List<DayDto> dayDtos = days.Select(dayId => new DayDto
             {
                 DayId = dayId,
@@ -250,6 +268,12 @@ namespace View.Controllers
         [HttpPost]
         public async Task<IActionResult> StudySlots(TimeSpan start, TimeSpan end, List<int> days)
         {
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             var requestData = new
             {
                 token = "",
@@ -288,8 +312,13 @@ namespace View.Controllers
         [HttpPost]
         public async Task<IActionResult> StudySlotsDelete([FromForm] int slotId)
         {
-            Console.WriteLine(slotId);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJraGFpdHJhbnF1YW5nIiwianRpIjoiMTgiLCJ1c2VybmFtZSI6ImtoYWl0cmFucXVhbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNjkwOTAyMzY0LCJpc3MiOiJqd3QiLCJhdWQiOiJqd3QifQ.-zZevseiqLHOfIR1pyrlg8mF5tTRx74w6-9aFZ3tyco");
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+            AddAuthTokenToRequestHeaders();
             var response = await _httpClient.DeleteAsync($"{studySlotApiUrl}/{slotId}");
             var responseBody = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions
@@ -399,6 +428,13 @@ namespace View.Controllers
 
         public async Task<IActionResult> UpdateApprovalStatus(int requestId, short isApproved)
         {
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Admin");
+            if (role.ToString() != Role.Admin.ToString() || role.ToString() != Role.Staff.ToString())
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
             var requestData = new
             {
                 RequestId = requestId,
@@ -550,7 +586,7 @@ namespace View.Controllers
             Console.WriteLine(model.SlotId);
             formData.Add(new StringContent(model.SlotId), "SlotId");
             //formData.Add(new StringContent(SelectDay(model)), "SelectedDayOfWeek");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJraGFpdHJhbnF1YW5nIiwianRpIjoiMTgiLCJ1c2VybmFtZSI6ImtoYWl0cmFucXVhbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNjkwOTAyMzY0LCJpc3MiOiJqd3QiLCJhdWQiOiJqd3QifQ.-zZevseiqLHOfIR1pyrlg8mF5tTRx74w6-9aFZ3tyco");
+            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJraGFpdHJhbnF1YW5nIiwianRpIjoiMTgiLCJ1c2VybmFtZSI6ImtoYWl0cmFucXVhbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNjkwOTAyMzY0LCJpc3MiOiJqd3QiLCJhdWQiOiJqd3QifQ.-zZevseiqLHOfIR1pyrlg8mF5tTRx74w6-9aFZ3tyco");
 
             var response = await _httpClient.PostAsync(classApiUrl, formData);
             var responseBody = await response.Content.ReadAsStringAsync();

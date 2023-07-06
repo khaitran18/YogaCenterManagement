@@ -269,6 +269,8 @@ namespace View.Controllers
 
                 if (!baseResponse!.Error)
                 {
+                    if (baseResponse.Result.ClassId == 0) return RedirectToAction(nameof(StudyingClasses));
+
                     if (changeClassResponse.IsSuccessStatusCode)
                     {
                         var changeClassResponseBody = await changeClassResponse.Content.ReadAsStringAsync();
@@ -295,6 +297,12 @@ namespace View.Controllers
         public async Task<IActionResult> CreateChangeRequest(int toClassId, int fromClassId, string content)
         {
             var studentId = Request.Cookies["Id"];
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.User.ToString())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             AddAuthTokenToRequestHeaders();
             var requestData = new
             {
@@ -336,6 +344,12 @@ namespace View.Controllers
         public async Task<IActionResult> Enroll(int classId, decimal amount)
         {
             var studentId = Request.Cookies["Id"];
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.User.ToString())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var requestData = new
             {
                 paymentDto = new
@@ -376,7 +390,7 @@ namespace View.Controllers
             }
             //Console.WriteLine(requestData);
 
-            return Redirect(Url.Action("Details", "Class", new { classId = classId }));
+            return RedirectToAction("Details", "Class", new { id = classId });
         }
 
 
@@ -385,6 +399,12 @@ namespace View.Controllers
         public async Task<IActionResult> TeachingClasses(int page = 1, int pageSize = 6)
         {
             var lecturerId = Request.Cookies["Id"];
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.Lecturer.ToString())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             AddAuthTokenToRequestHeaders();
 
             var response = await _httpClient.GetAsync($"{teachingClassApiUrl}/{lecturerId}?page={page}&pageSize={pageSize}");
@@ -420,6 +440,12 @@ namespace View.Controllers
 
         {
             var lecturerId = Request.Cookies["Id"];
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.Lecturer.ToString())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync($"{teachingClassApiUrl}?LecturerId={lecturerId}&ClassId={classId}");
 
@@ -435,6 +461,7 @@ namespace View.Controllers
 
                 if (!baseResponse!.Error)
                 {
+                    if (baseResponse.Result.ClassId == 0) return RedirectToAction(nameof(TeachingClasses));
                     //ViewBag.QueryString = queryStringWithoutPage;
                     ViewBag.ScheduleList = await GetSchedule(classId, s);
                     return View(baseResponse.Result);
@@ -456,6 +483,12 @@ namespace View.Controllers
         public async Task<IActionResult> AvailableDates()
         {
             var lecturerId = Request.Cookies["Id"];
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.Lecturer.ToString())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync($"{availableDateApiUrl}/bylecturerid/{lecturerId}");
 
@@ -535,6 +568,12 @@ namespace View.Controllers
         public async Task<IActionResult> AddAvailableDate(List<int> selectedSlots)
         {
             var lecturerId = Request.Cookies["Id"];
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.Lecturer.ToString())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var token = GetAuthTokenFromCookie();
             AddAuthTokenToRequestHeaders();
             //foreach (var item in selectedSlots)
@@ -584,6 +623,12 @@ namespace View.Controllers
         public async Task<IActionResult> RemoveAvailableDate([FromForm] int slotId)
         {
             var lecturerId = Request.Cookies["Id"];
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.Lecturer.ToString())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             AddAuthTokenToRequestHeaders();
             var response = await _httpClient.DeleteAsync($"{availableDateApiUrl}?LecturerId={lecturerId}&SlotId={slotId}");
 
@@ -612,6 +657,12 @@ namespace View.Controllers
         public async Task<IActionResult> StudiedClasses(int page = 1, int pageSize = 6)
         {
             var studentId = Request.Cookies["Id"];
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.User.ToString())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync($"{apiUrl}/studiedclass/{studentId}?page={page}&pageSize={pageSize}");
 
@@ -645,6 +696,12 @@ namespace View.Controllers
         public async Task<IActionResult> TaughtClasses(int page = 1, int pageSize = 6)
         {
             var lecturerId = Request.Cookies["Id"];
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.Lecturer.ToString())
+            {
+                return RedirectToAction("Index", "Home");
+            }
             AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync($"{apiUrl}/taughtclass/{lecturerId}?page={page}&pageSize={pageSize}");
 
