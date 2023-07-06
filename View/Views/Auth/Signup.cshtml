@@ -3,28 +3,36 @@
 *@
 @{
 }
-<partial name="_Notification"/>
+<partial name="_Notification" />
 <div class="yg-testimonial">
     <div class="container yg-container-full">
         <div class="row yg-gutter-0" style="padding-top: 6rem;">
             <div class="col-md-5 col-sm-12 animate-box d-flex align-items-center justify-content-center" data-animate-effect="fadeInLeft" style="background-color: rgb(247, 247, 247);">
-                <div class="testimonial-image" >
+                <div class="testimonial-image">
                     <img src="~/images/testimonial.jpg" class="img-fluid" alt="">
                 </div>
             </div>
             <div class="col-md-6 col-sm-12 animate-box d-flex align-items-center justify-content-center fadeInRight animated" data-animate-effect="fadeInRight">
-                <div class="container" style="background-color:white" >
+                <div class="container" style="background-color:white">
                     <div class="row justify-content-center">
                         <div class="col-md-6 ml-6">
                             <h2 class="text-center mb-4">Signup</h2>
-                            <form asp-action="Signup" asp-controller="Auth" method="post"> 
+                            <form asp-action="Signup" asp-controller="Auth" method="post" id="signupForm">
                                 <div class="mb-3">
                                     <label for="Username" class="form-label">Username *</label>
                                     <input type="text" class="form-control" id="Username" placeholder="Enter your username" name="Username" required>
+                                    <small id="usernameError" style="display:none; color:red"></small>
                                 </div>
                                 <div class="mb-3">
                                     <label for="Password" class="form-label">Password *</label>
                                     <input type="password" class="form-control" id="Password" placeholder="Enter your password" name="Password" required>
+                                    <small id="passwordError" style="display:none; color:red"></small>
+                                    <small>Password must contain at least one uppercase letter and one digit</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="ConfirmPassword" class="form-label">Confirm password</label>
+                                    <input type="password" class="form-control" id="ConfirmPassword" placeholder="Re-enter the password" name="ConfirmPassword" required>
+                                    <small id="passwordConfirmError" style="display:none; color:red"></small>
                                 </div>
                                 <div class="mb-3">
                                     <label for="Fullname" class="form-label">Fullname *</label>
@@ -56,3 +64,94 @@
         </div>
     </div>
 </div>
+<script>
+const signupForm = document.getElementById("signupForm");
+const username = document.getElementById("Username");
+const password = document.getElementById("Password");
+const password2 = document.getElementById("ConfirmPassword");
+const usernameError = document.getElementById("usernameError");
+const passwordError = document.getElementById("passwordError");
+const password2Error = document.getElementById("passwordConfirmError");
+signupForm.addEventListener("submit", e => {
+  e.preventDefault();
+  checkInputs();
+});
+function checkInputs() { 
+    var error = false;
+    const usernameValue = username.value.trim();
+    const passwordValue = password.value.trim();
+    const password2Value = password2.value.trim();
+    console.log(password2Value);
+    if (usernameValue === "") {
+        usernameError.style.display = "block";
+        usernameError.textContent = "Username must not be empty";
+        error = true;
+    }
+    else {
+        usernameError.style.display = "none";
+        usernameError.textContent = "";
+    }
+    if (usernameValue.length < 6 || usernameValue.length > 30) {
+        usernameError.style.display = "block";
+        usernameError.textContent = "Username must be between 6 to 30 characters";
+        error = true;
+    }
+    else {
+        usernameError.style.display = "none";
+        usernameError.textContent = "";
+    }
+    if (passwordValue === "") {
+        passwordError.style.display = "block";
+        passwordError.textContent = "Password must not be empty";
+        error = true;
+    }
+    else {
+        passwordError.style.display = "none";
+        passwordError.textContent = "";
+    }
+    if (passwordValue.length < 6 || passwordValue.length > 40) {
+        passwordError.style.display = "block";
+        passwordError.textContent = "Password must be between 6 to 40 characters";
+        error = true;
+    }
+    else {
+        passwordError.style.display = "none";
+        passwordError.textContent = "";
+    }
+    if (!isValidPassword(passwordValue)) {
+        passwordError.style.display = "block";
+        passwordError.textContent = "Password must contain at least one uppercase letter and one digit";
+        error = true;
+    }
+    else {
+        passwordError.style.display = "none";
+        passwordError.textContent = "";
+    }
+    if (password2Value === "") {
+        password2Error.style.display = "block";
+        password2Error.textContent = "Password confirm must not be empty";
+        error = true;
+    }
+    else {
+        password2Error.style.display = "none";
+        password2Error.textContent = "";
+    }
+    if (passwordValue!==password2Value) {
+        password2Error.style.display = "block";
+        password2Error.textContent = "Password confirm is not the same";
+        error = true;
+    }
+    else {
+        password2Error.style.display = "none";
+        password2Error.textContent = "";
+    }
+    if (!error) {
+        signupForm.submit();
+    }
+}
+  function isValidPassword(password) {
+    // Regex pattern to check for at least one uppercase letter and one digit
+    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
+    return pattern.test(password);
+  }
+</script>

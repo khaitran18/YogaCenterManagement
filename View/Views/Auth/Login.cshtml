@@ -18,14 +18,16 @@
                     <div class="row justify-content-center">
                         <div class="col-md-6">
                             <h2 class="text-center mb-4">Login</h2>
-                            <form asp-action="Login" asp-controller="Auth" method="post"> 
+                            <form asp-action="Login" asp-controller="Auth" method="post" id="loginForm"> 
                                 <div class="mb-3">
                                     <label for="Username" class="form-label">Username</label>
                                     <input type="text" class="form-control" id="Username" placeholder="Enter your username" name="Username" required>
+                                    <small id="usernameError" style="display:none; color:red"></small>
                                 </div>
                                 <div class="mb-3">
                                     <label for="Password" class="form-label">Password</label>
                                     <input type="password" class="form-control" id="Password" placeholder="Enter your password" name="Password" required>
+                                    <small id="passwordError" style="display:none; color:red"></small>
                                 </div>
                                 <div class="d-grid gap-2">
                                     <button type="submit" class="btn btn-primary">Login</button>
@@ -41,4 +43,54 @@
         </div>
     </div>
 </div>
-
+<script>
+const loginForm = document.getElementById("loginForm");
+const username = document.getElementById("Username");
+const password = document.getElementById("Password");
+const usernameError = document.getElementById("usernameError");
+const passwordError = document.getElementById("passwordError");
+loginForm.addEventListener("submit", e => {
+  e.preventDefault();
+  checkInputs();
+});
+function checkInputs() { 
+    var error = false;
+    const usernameValue = username.value.trim();
+    const passwordValue = password.value.trim();
+    if (usernameValue === "") {
+        usernameError.style.display = "block";
+        usernameError.textContent = "Username must not be empty";
+        error = true;
+    }
+    else {
+        usernameError.style.display = "none";
+    }
+    if (usernameValue.length < 6 || usernameValue.length > 30) {
+        usernameError.style.display = "block";
+        usernameError.textContent = "Username must be between 6 to 30 characters";
+        error = true;
+    }
+    else {
+        usernameError.style.display = "none";
+    }
+    if (passwordValue === "") {
+        passwordError.style.display = "block";
+        passwordError.textContent = "Password must not be empty";
+        error = true;
+    }
+    else {
+        passwordError.style.display = "none";
+    }
+    if (passwordValue.length < 6 || passwordValue.length > 40) {
+        passwordError.style.display = "block";
+        passwordError.textContent = "Password must be between 6 to 40 characters";
+        error = true;
+    }
+    else {
+        passwordError.style.display = "none";
+    }
+    if (!error) {
+        loginForm.submit();
+    }
+}
+</script>

@@ -50,6 +50,10 @@
                         {
                             <li><a asp-controller="User" asp-action="Details">Your Profile</a></li>
                         }
+                        else
+                        {
+                            <li><a asp-controller="Auth" asp-action="Login">Login/Signup</a></li>
+                        }
                         <li><a class="active" asp-controller="Class" asp-action="Index">Classes</a></li>
                         <li><a href="schedule.html">Schedule</a></li>
                         @if (Context.Request.Cookies["Role"] == "Lecturer")
@@ -57,6 +61,10 @@
                             <li><a asp-controller="User" asp-action="Feedback">Feedback</a></li>
                         }
                         <li><a asp-controller="Home" asp-action="AboutUs">About Us</a></li>
+                        @if (Context.Request.Cookies["AuthToken"] != null)
+                        {
+                            <li><a asp-controller="Auth" asp-action="Logout">Logout</a></li>
+                        }
                     </ul>
                     <a href="classes-page.html#" class="yg-nav-overlay-close" id="yg-nav-overlay-close">
                         <span></span>
