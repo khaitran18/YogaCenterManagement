@@ -443,6 +443,7 @@ namespace Infrastructure.Repository
                         }
                         return true;
                     }
+                    return true;
                 }
 
                 return false;

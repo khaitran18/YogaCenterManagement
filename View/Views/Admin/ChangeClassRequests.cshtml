@@ -6,78 +6,90 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <partial name="_Notification" />
+<section class="welcome p-t-10">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="title-4">
+                    Manage Slots
+                </h1>
+                <hr>
+            </div>
+        </div>
+    </div>
+</section>
 <div class="table-responsive m-b-40" style="font-weight: 500">
     @*<form asp-controller="Admin" asp-action="UpdateApprovalStatus" method="post" id="update-form">
         <input type="hidden" id="requestId" name="requestId" />
         <input type="hidden" id="isApproved" name="isApproved" />*@
 
-        <table class="table table-borderless table-data3">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.RequestId)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.User.Email)
-                    </th>
-                    <th>
-                        From class
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Content)
-                    </th>
-                    <th>
-                        To class
-                    </th>
-                    <th class="text-center">
-                        Status
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null)
+    <table class="table table-borderless table-data3">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.RequestId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.User.Email)
+                </th>
+                <th>
+                    From class
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Content)
+                </th>
+                <th>
+                    To class
+                </th>
+                <th class="text-center">
+                    Status
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+
+                @foreach (var item in Model)
                 {
-
-                    @foreach (var item in Model)
-                    {
-                        <tr data-item="@JsonConvert.SerializeObject(item)">
-                            <!-- table row content -->
-                            <td>
-                                @Html.DisplayFor(modelItem => item.RequestId)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.User.Email)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Class.ClassName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Content)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.RequestClass.ClassName)
-                            </td>
-                            <td>
-                                @if (item.IsApproved == -1)
-                                {
-                                    <button class="btn btn-success accept-btn" data-value="1">Approve</button>
-                                    <button class="btn btn-danger deny-btn" data-value="0">Deny</button>
-                                }
-                                else if (item.IsApproved == 1)
-                                {
-                                    <div class="btn btn-success">Approved</div>
-                                }
-                                else if (item.IsApproved == 0)
-                                {
-                                    <div class="btn btn-danger">Denied</div>
-                                }
-                            </td>
-                        </tr>
-                    }
+                    <tr data-item="@JsonConvert.SerializeObject(item)">
+                        <!-- table row content -->
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RequestId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.User.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Class.ClassName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Content)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RequestClass.ClassName)
+                        </td>
+                        <td>
+                            @if (item.IsApproved == -1)
+                            {
+                                <button class="btn btn-success accept-btn" data-value="1">Approve</button>
+                                <button class="btn btn-danger deny-btn" data-value="0">Deny</button>
+                            }
+                            else if (item.IsApproved == 1)
+                            {
+                                <div class="btn btn-success">Approved</div>
+                            }
+                            else if (item.IsApproved == 0)
+                            {
+                                <div class="btn btn-danger">Denied</div>
+                            }
+                        </td>
+                    </tr>
                 }
+            }
 
-            </tbody>
-        </table>
+        </tbody>
+    </table>
     @*</form>*@
 </div>
 
@@ -115,7 +127,7 @@
                 e.preventDefault();
                 var $row = $(this).closest('tr');
                 var item = $row.data('item');
-               
+
                 var requestId = $(this).closest('tr').find('td:nth-child(1)').text().trim();
                 var className = $(this).closest('tr').find('td:nth-child(3)').text().trim();
                 var requestClassName = $(this).closest('tr').find('td:nth-child(5)').text().trim();
