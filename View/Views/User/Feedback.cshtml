@@ -17,16 +17,24 @@
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        @foreach (var feedback in Model.Items)
+                        @if (Model.Items.Count == 0)
                         {
-                            <div class="row comment">
-                                <div class="col-auto">
-                                    <img class="avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
+                            <p>You don't have any feedbacks.</p>
+                        }
+                        else
+                        {
+                            @foreach (var feedback in Model.Items)
+                            {
+                                <div class="row comment">
+                                    <div class="col-auto">
+                                        <img class="avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
+                                    </div>
+                                    <div class="col comment-content">
+                                        <p class="student-name">@feedback.Student!.FullName</p>
+                                        <p class="feedback-content">@feedback.Content</p>
+                                    </div>
                                 </div>
-                                <div class="col">
-                                    <p>@feedback.Content</p>
-                                </div>
-                            </div>
+                            }
                         }
                     </div>
                 </div>
@@ -34,7 +42,7 @@
         </div>
     </div>
 </div>
-</div>
+
 <!-- PAGING NAVIGATION -->
 <nav class="text-center">
     <ul class="pagination justify-content-center">
@@ -60,12 +68,14 @@
     </ul>
 </nav>
 <!-- END PAGING NAVIGATION -->
-
 <style>
     .comment {
         display: flex;
         align-items: flex-start;
         margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
     }
 
     .avatar {
@@ -75,7 +85,16 @@
         margin-right: 10px;
     }
 
-    .comment p {
+    .comment-content {
+        padding-left: 10px;
+    }
+
+    .student-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .feedback-content {
         margin: 0;
     }
 </style>

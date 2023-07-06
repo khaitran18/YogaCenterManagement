@@ -235,7 +235,7 @@
                             <td>@classItem.ClassName</td>
                             <td>@classItem.StartDate.ToString("MM/dd/yyyy")</td>
                             <td>@classItem.EndDate.ToString("MM/dd/yyyy")</td>
-                            <td>@classItem.Price.ToString("C", CultureInfo.CurrentCulture).Replace(CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol, "VND ")</td>
+                            <td>@classItem.Price.ToString("N0") VND</td>
                             <td>@classItem.ClassCapacity</td>
                             <td>@(classItem.Lecturer != null ? classItem.Lecturer.FullName : "N/A")</td>
                             <td class="class-status text-left font-weight-bold">@(classItem.ClassStatus.HasValue?((Status)classItem.ClassStatus).ToString() : "Unknown")</td>

@@ -338,13 +338,13 @@ namespace Infrastructure.Repository
 
         public async Task<(List<FeedbackModel>, int)> GetFeedbacks(int id, bool isLecturer, string? sortBy, int page, int pageSize)
         {
-            IQueryable<Feedback> query = _context.Feedbacks.AsQueryable();
+            IQueryable<Feedback> query = _context.Feedbacks.Include(f => f.Student).AsQueryable();
 
             if (isLecturer)
             {
                 query = query
                     .Where(f => f.LecturerId == id)
-                    .Select(f => new Feedback { Content = f.Content });
+                    .Select(f => new Feedback { Student = f.Student, Content = f.Content });
             }
             else
             {
