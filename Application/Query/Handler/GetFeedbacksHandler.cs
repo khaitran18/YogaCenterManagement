@@ -28,7 +28,7 @@ namespace Application.Query.Handler
 
             try
             {
-                ClaimsPrincipal claims = _tokenService.ValidateToken(request.Token ?? "");
+                ClaimsPrincipal? claims = _tokenService.ValidateToken(request.Token ?? "");
                 if (claims != null)
                 {
                     int.TryParse(claims.FindFirst("jti")?.Value, out int userId);

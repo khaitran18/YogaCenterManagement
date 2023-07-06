@@ -79,8 +79,9 @@ namespace View.Controllers
             var queryStringWithoutPage = RemoveQueryStringParameter(queryString, "page");
             var url = classApiUrl + queryString;
             var response = await _httpClient.GetAsync(url);
+            var role = Request.Cookies["Role"];
 
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode && role == "Admin" || role == "Staff")
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions
@@ -514,6 +515,7 @@ namespace View.Controllers
         [HttpGet("users/create")]
         public IActionResult Create()
         {
+
             string? role = GetRoleFromCookie();
             if (role == null) 
             {

@@ -143,8 +143,9 @@ namespace View.Controllers
             AddAuthTokenToRequestHeaders();
             var url = apiUrl + $"/feedback?page={page}&pageSize={pageSize}";
             var response = await _httpClient.GetAsync(url);
+            var role = Request.Cookies["Role"];
 
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode && role == "Lecturer")
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions
@@ -162,6 +163,10 @@ namespace View.Controllers
                     ViewBag.ErrorMessage = baseResponse.Message;
                     return View();
                 }
+            }
+            else if (role == "Admin" || role == "Staff")
+            {
+                return RedirectToAction("Index", "Admin");
             }
             else
             {

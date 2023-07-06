@@ -20,18 +20,26 @@ namespace View.Controllers
         public IActionResult Index()
         {
             string? authToken = Request.Cookies["AuthToken"];
-
             if (authToken != null)
             {
                 _httpClient.DefaultRequestHeaders.Add("Authorization", authToken);
                 string authorizationHeader = _httpClient.DefaultRequestHeaders.Authorization!.ToString();
                 Console.WriteLine("Token in header:"+authorizationHeader);
             }
+            string? role = Request.Cookies["Role"];
+            if (role.Equals("Staff")||(role.Equals("Admin"))) return RedirectToAction("Index", "Admin");
+            if (role.Equals("User")||(role.Equals("Lecturer"))) return View();
+            TempData["Error"] = "An error has occured";
             return View();
         }
 
         public IActionResult AboutUs()
         {
+            var role = Request.Cookies["Role"];
+            if (role == "Admin" || role == "Staff")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             return View();
         }
         public IActionResult Privacy()

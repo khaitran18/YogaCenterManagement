@@ -40,36 +40,35 @@
                         <div class="mb-2 mx-5 text-start  align-items-center justify-content-center">
                             <div class="mx-2">
                                 <p class="font-weight-bold">Class Name:<p />
-                                <input type="text" id="class-name" name="ClassName" class="ml-3 border"/>
+                                <input type="text" id="class-name" name="ClassName" class="form-control ml-3 border" required/>
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">Class Capacity:<p />
-                                <input type="number" min="10" max="50" id="class-capacity" name="ClassCapacity" class="ml-3 border" />
+                                <input type="number" min="10" max="50" id="class-capacity" name="ClassCapacity" class="form-control ml-3 border" required/>
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">Price:<p />
-                                <input type="number" min="100000" max="5000000" id="price" name="Price" class="ml-3 border" />
+                                <input type="number" min="100000" max="5000000" id="price" name="Price" class="form-control ml-3 border" required/>
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">Description:<p />
-                                <textarea id="description" name="Description" class="ml-3 border"></textarea>
+                                <textarea id="description" name="Description" class="form-control ml-3 border" required></textarea>
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">Image:<p />
-                                <input type="file" id="image" name="Image" class="ml-3 border"/>
+                                <input type="file" id="image" name="Image" class="form-control ml-3 border"/>
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">Start Date:<p />
-                                <input type="date" id="start-date" name="StartDate" class="ml-3 border" />
+                                <input type="date" id="start-date" name="StartDate" class="form-control ml-3 border" required/>
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">End Date:<p />
-                                <input type="date" id="end-date" name="EndDate" class="ml-3 border" />
+                                <input type="date" id="end-date" name="EndDate" class="form-control ml-3 border" required/>
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">Select the study slot:<p />
-                                <select id="selectSlot" name="SlotId">
-                                    <option value="" selected>None</option>
+                                <select id="selectSlot" name="SlotId" required>
                                 </select>
                             </div>
                         </div>
@@ -105,23 +104,23 @@
                     <input type="hidden" id="update-class-id" name="classId" style="display: none;"/>
                     <div class="form-group">
                       <label for="className">Class Name</label>
-                      <input type="text" class="form-control" id="update-class-name" name="className">
+                      <input type="text" class="form-control" id="update-class-name" name="className" required>
                     </div>
                     <div class="form-group">
                       <label for="price">Price</label>
-                      <input type="number" class="form-control" id="update-price" name="price">
+                      <input type="number" min="100000" max="5000000" class="form-control" id="update-price" name="price" required>
                     </div>
                     <div class="form-group">
                       <label for="capacity">Capacity</label>
-                      <input type="number" class="form-control" id="update-capacity" name="classCapacity">
+                      <input type="number" min="10" max="50" class="form-control" id="update-capacity" name="classCapacity" required>
                     </div>
                     <div class="form-group">
                       <label for="description">Description</label>
-                      <textarea class="form-control" id="update-description" name="description" rows="3"></textarea>
+                      <textarea class="form-control" id="update-description" name="description" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
                       <label for="image">Image</label>
-                      <input type="file" class="form-control-file" id="update-image" name="image">
+                      <input type="file" class="form-control-file" id="update-image" name="image" required>
                     </div>
                     <div class="form-group">
                         <select id="update-class-status" name="classStatus" class="form-control">
@@ -582,7 +581,7 @@
               },
               error: function(jqXHR, textStatus, errorThrown) {
                 console.log('Error assigning lecturer:', errorThrown);
-                alert('Fail to assign the lecturer! Make sure that the lecturer is available for the slot and not currently assigned to the slot.');
+                alert(jqXHR.responseText || 'Fail to assign the lecturer! Make sure that the lecturer is available for the slot and not currently assigned to the slot.');
               }
             });
           }
@@ -607,7 +606,7 @@
               error: function(jqXHR, textStatus, errorThrown) {
                 console.log('Error updating basic info:', errorThrown);
                 //$('#updateModal').modal('hide');
-                alert('Fail to update the information!');
+                alert(jqXHR.responseText || 'Fail to update the information!');
               }
             });
           }

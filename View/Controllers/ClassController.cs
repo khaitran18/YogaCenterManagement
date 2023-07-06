@@ -52,8 +52,9 @@ namespace View.Controllers
             var queryStringWithoutPage = RemoveQueryStringParameter(queryString, "page");
             var url = apiUrl + queryString;
             var response = await _httpClient.GetAsync(url);
+            var role = Request.Cookies["Role"];
 
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode && role != "Admin" && role != "Staff")
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions
@@ -73,6 +74,10 @@ namespace View.Controllers
                     return View();
                 }
             }
+            else if (role == "Admin" || role == "Staff")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             else
             {
                 return View();
@@ -85,8 +90,9 @@ namespace View.Controllers
             var url = $"{apiUrl}/{id}";
 
             var response = await _httpClient.GetAsync(url);
+            var role = Request.Cookies["Role"];
 
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode && role != "Admin" && role != "Staff")
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions
@@ -104,6 +110,10 @@ namespace View.Controllers
                     ViewBag.ErrorMessage = baseResponse.Message;
                     return View();
                 }
+            }
+            else if (role == "Admin" || role == "Staff")
+            {
+                return RedirectToAction("Index", "Admin");
             }
             else
             {
