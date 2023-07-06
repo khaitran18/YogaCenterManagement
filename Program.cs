@@ -173,6 +173,7 @@ builder.Services.AddScoped<IValidator<CreateNotificationCommand>, CreateNotifica
 builder.Services.AddScoped<IValidator<SignUpCommand>, SignupCommandValidator>();
 builder.Services.AddScoped<IValidator<EditProfileCommand>, EditProfileCommandValidator>();
 builder.Services.AddScoped<IValidator<EditUserCommand>, EditUserCommandValidator>();
+builder.Services.AddScoped<IValidator<CreateFeedbackCommand>, CreateFeedbackCommandValidator>();
 
 //Behaviour registration
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

@@ -107,30 +107,33 @@ namespace View.Controllers
 
             var url = apiUrl + "/feedback";
             var response = await _httpClient.PostAsync(url, content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
 
             if (response.IsSuccessStatusCode)
             {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
+                
                 var baseResponse = JsonSerializer.Deserialize<BaseResponse<FeedbackDto>>(responseBody, options);
 
                 if (!baseResponse!.Error)
                 {
                     TempData["Success"] = "Send feedback success";
-                    return RedirectToAction("StudyingClasssesById", "Class", new { classId = classId });
+                    return RedirectToAction("StudyingClassesById", "Class", new { classId = classId });
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = baseResponse.Message;
-                    return RedirectToAction("StudyingClasssesById", "Class", new { classId = classId });
+                    TempData["Error"] = baseResponse.Message;
+                    return RedirectToAction("StudyingClassesById", "Class", new { classId = classId });
                 }
             }
             else
             {
-                return RedirectToAction("StudyingClasssesById", "Class", new { classId = classId });
+                var error = JsonSerializer.Deserialize<string>(responseBody, options);
+                TempData["Error"] = string.Join("\n", error);
+                return RedirectToAction("StudyingClassesById", "Class", new { classId = classId });
             }
         }
 
