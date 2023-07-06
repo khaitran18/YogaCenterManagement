@@ -1,4 +1,5 @@
-﻿@using View.Models.Response;
+﻿
+@using View.Models.Response;
 @model View.Models.PaginatedResult<ClassDto>
 
 @{
@@ -12,7 +13,7 @@
         <!-- End Filter Section -->
         <!-- Classes List Section -->
         <div class="col-md-9 col-sm-12 mt-5">
-            <h3 class="yg-details-title animate-box" data-animate-effect="fadeInUp">YOUR CLASSES THAT YOU HAVE ATTENDED</h3>
+            <h3 class="yg-details-title animate-box" data-animate-effect="fadeInUp">YOUR CLASSES THAT YOU HAVE TAUGHT</h3>
             <div></div>
             <div class="row">
                 @if (Model.Items == null || Model.Items.Count == 0)

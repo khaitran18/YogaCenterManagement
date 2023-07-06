@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Command
+namespace Application.Query
 {
-    public class CreateFeedbackCommand : IRequest<BaseResponse<FeedbackDto>>
+    public class GetTaughtClassQuery : IRequest<BaseResponse<PaginatedResult<ClassDto>>>
     {
-        public string? Token { get; set; }
-        public string? Content { get; set; }
         public int LecturerId { get; set; }
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 6;
     }
 }

@@ -114,6 +114,7 @@ namespace View.Controllers
         [HttpGet]
         public async Task<IActionResult> StudySlots()
         {
+            AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync(studySlotApiUrl);
 
             if (response.IsSuccessStatusCode)
@@ -154,6 +155,7 @@ namespace View.Controllers
         [HttpGet]
         public async Task<IActionResult> ChangeClassRequests()
         {
+            AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync(changeClassRequestsApiUrl);
 
             if (response.IsSuccessStatusCode)
@@ -255,9 +257,10 @@ namespace View.Controllers
                 endTime = end.ToString(),
                 dateIds = days
             };
+            AddAuthTokenToRequestHeaders();
             var json = JsonSerializer.Serialize(requestData);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJraGFpdHJhbnF1YW5nIiwianRpIjoiMTgiLCJ1c2VybmFtZSI6ImtoYWl0cmFucXVhbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNjkwOTAyMzY0LCJpc3MiOiJqd3QiLCJhdWQiOiJqd3QifQ.-zZevseiqLHOfIR1pyrlg8mF5tTRx74w6-9aFZ3tyco");
+            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJraGFpdHJhbnF1YW5nIiwianRpIjoiMTgiLCJ1c2VybmFtZSI6ImtoYWl0cmFucXVhbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNjkwOTAyMzY0LCJpc3MiOiJqd3QiLCJhdWQiOiJqd3QifQ.-zZevseiqLHOfIR1pyrlg8mF5tTRx74w6-9aFZ3tyco");
 
             var response = await _httpClient.PostAsync(studySlotApiUrl, content);
             var responseBody = await response.Content.ReadAsStringAsync();
@@ -401,7 +404,7 @@ namespace View.Controllers
                 RequestId = requestId,
                 IsApproved = isApproved
             };
-
+            AddAuthTokenToRequestHeaders();
             var jsonCommand = JsonSerializer.Serialize(requestData);
             var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
 

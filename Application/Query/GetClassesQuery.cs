@@ -13,6 +13,7 @@ namespace Application.Query
 {
     public class GetClassesQuery : IRequest<BaseResponse<PaginatedResult<ClassDto>>>
     {
+        public string? Token { get; set; }
         public string? SearchKeyword { get; set; }
         public string? SortBy { get; set; }
         public DateTime? StartingFromDate { get; set; }

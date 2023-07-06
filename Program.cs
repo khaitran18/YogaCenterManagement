@@ -141,6 +141,7 @@ builder.Services.AddScoped<IRequestHandler<GetTeachingClassQuery, BaseResponse<P
 builder.Services.AddScoped<IRequestHandler<GetTeachingClassByClassIdQuery, BaseResponse<ClassDto>>, GetTeachingClassByClassIdHandler>();
 builder.Services.AddScoped<IRequestHandler<GetAvailableDateByLecturerId, BaseResponse<IEnumerable<AvailableDateDto>>>, GetAvailableDateByLecturerIdHandler>();
 builder.Services.AddScoped<IRequestHandler<GetAllAvailableDatesQuery, BaseResponse<IEnumerable<AvailableDateDto>>>, GetAllAvailableDatesHandler>();
+builder.Services.AddScoped<IRequestHandler<GetTaughtClassQuery, BaseResponse<PaginatedResult<ClassDto>>>, GetTaughtClassHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateClassCommand,BaseResponse<ClassDto>>, CreateClassHandler>();
 builder.Services.AddScoped<IRequestHandler<EditClassCommand,BaseResponse<ClassDto>>, EditClassHandler>();
@@ -172,6 +173,7 @@ builder.Services.AddScoped<IValidator<CreateNotificationCommand>, CreateNotifica
 builder.Services.AddScoped<IValidator<SignUpCommand>, SignupCommandValidator>();
 builder.Services.AddScoped<IValidator<EditProfileCommand>, EditProfileCommandValidator>();
 builder.Services.AddScoped<IValidator<EditUserCommand>, EditUserCommandValidator>();
+builder.Services.AddScoped<IValidator<CreateFeedbackCommand>, CreateFeedbackCommandValidator>();
 
 //Behaviour registration
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
@@ -200,6 +202,7 @@ var mapperConfig = new MapperConfiguration(cfg =>
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

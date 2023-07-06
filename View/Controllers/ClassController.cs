@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 using View.Models;
+using View.Models.Enum;
 using View.Models.Response;
 
 namespace View.Controllers
@@ -173,33 +174,41 @@ namespace View.Controllers
         public async Task<IActionResult> StudyingClasses(int page = 1, int pageSize = 6)
         {
             var studentId = Request.Cookies["Id"];
-            Console.WriteLine(studentId);
-            var response = await _httpClient.GetAsync($"{studyingClassApiUrl}/{studentId}?page={page}&pageSize={pageSize}");
-            Console.WriteLine($"{studyingClassApiUrl}/{studentId}");
-            if (response.IsSuccessStatusCode)
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.User.ToString())
             {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseBody);
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                };
-                var baseResponse = JsonSerializer.Deserialize<BaseResponse<PaginatedResult<ClassDto>>>(responseBody, options);
-                Console.WriteLine(baseResponse.Result);
-                if (!baseResponse!.Error)
-                {
-                    //ViewBag.QueryString = queryStringWithoutPage;
-                    return View(baseResponse.Result);
-                }
-                else
-                {
-                    ViewBag.ErrorMessage = baseResponse.Message;
-                    return View();
-                }
+                return RedirectToAction("Index", "Home");
             }
             else
             {
-                return View();
+                AddAuthTokenToRequestHeaders();
+                var response = await _httpClient.GetAsync($"{studyingClassApiUrl}/{studentId}?page={page}&pageSize={pageSize}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine(responseBody);
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    };
+                    var baseResponse = JsonSerializer.Deserialize<BaseResponse<PaginatedResult<ClassDto>>>(responseBody, options);
+                    Console.WriteLine(baseResponse?.Result);
+                    if (!baseResponse!.Error)
+                    {
+                        //ViewBag.QueryString = queryStringWithoutPage;
+                        return View(baseResponse.Result);
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = baseResponse.Message;
+                        return View();
+                    }
+                }
+                else
+                {
+                    return View();
+                }
             }
 
         }
@@ -236,9 +245,17 @@ namespace View.Controllers
 
         {
             var studentId = Request.Cookies["Id"];
+            var role = Request.Cookies["Role"];
+            if (role == null) return RedirectToAction("Index", "Home");
+            if (role.ToString() != Role.User.ToString())
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync($"{studyingClassApiUrl}?StudentId={studentId}&ClassId={classId}");
-            var changeClassResponse = await _httpClient.GetAsync($"https://localhost:7241/api/Class/changeclasses/{classId}");
-            Console.WriteLine($"{studyingClassApiUrl}?StudentId={studentId}&ClassId={classId}");
+            var changeClassResponse = await _httpClient.GetAsync($"{apiUrl}/changeclasses/{classId}");
+
 
             if (response.IsSuccessStatusCode)
             {
@@ -278,6 +295,7 @@ namespace View.Controllers
         public async Task<IActionResult> CreateChangeRequest(int toClassId, int fromClassId, string content)
         {
             var studentId = Request.Cookies["Id"];
+            AddAuthTokenToRequestHeaders();
             var requestData = new
             {
                 FromClassId = fromClassId,
@@ -328,7 +346,7 @@ namespace View.Controllers
                     method = "Online"
                 }
             };
-
+            AddAuthTokenToRequestHeaders();
             var json = JsonSerializer.Serialize(requestData);
             Console.WriteLine(json);
 
@@ -358,7 +376,7 @@ namespace View.Controllers
             }
             //Console.WriteLine(requestData);
 
-            return RedirectToAction("Details", new {classId = classId});
+            return Redirect(Url.Action("Details", "Class", new { classId = classId }));
         }
 
 
@@ -367,8 +385,7 @@ namespace View.Controllers
         public async Task<IActionResult> TeachingClasses(int page = 1, int pageSize = 6)
         {
             var lecturerId = Request.Cookies["Id"];
-            Console.WriteLine(lecturerId);
-            Console.WriteLine($"{teachingClassApiUrl}/{lecturerId}?page={page}&pageSize={pageSize}");
+            AddAuthTokenToRequestHeaders();
 
             var response = await _httpClient.GetAsync($"{teachingClassApiUrl}/{lecturerId}?page={page}&pageSize={pageSize}");
             if (response.IsSuccessStatusCode)
@@ -403,6 +420,7 @@ namespace View.Controllers
 
         {
             var lecturerId = Request.Cookies["Id"];
+            AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync($"{teachingClassApiUrl}?LecturerId={lecturerId}&ClassId={classId}");
 
             if (response.IsSuccessStatusCode)
@@ -438,7 +456,7 @@ namespace View.Controllers
         public async Task<IActionResult> AvailableDates()
         {
             var lecturerId = Request.Cookies["Id"];
-
+            AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync($"{availableDateApiUrl}/bylecturerid/{lecturerId}");
 
             if (response.IsSuccessStatusCode)
@@ -518,6 +536,7 @@ namespace View.Controllers
         {
             var lecturerId = Request.Cookies["Id"];
             var token = GetAuthTokenFromCookie();
+            AddAuthTokenToRequestHeaders();
             //foreach (var item in selectedSlots)
             //{
             //    Console.WriteLine(item);
@@ -544,7 +563,11 @@ namespace View.Controllers
                 {
                     if (result.Result.Count() != 0)
                     {
-                        TempData["Success"] = "Enroll successfully";
+                        TempData["Success"] = "Add successfully";
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Fail to add";
                     }
                 }
                 else
@@ -558,9 +581,12 @@ namespace View.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> StudySlotsDelete([FromForm] int slotId)
+        public async Task<IActionResult> RemoveAvailableDate([FromForm] int slotId)
         {
-            var response = await _httpClient.DeleteAsync($"{availableDateApiUrl}");
+            var lecturerId = Request.Cookies["Id"];
+            AddAuthTokenToRequestHeaders();
+            var response = await _httpClient.DeleteAsync($"{availableDateApiUrl}?LecturerId={lecturerId}&SlotId={slotId}");
+
             var responseBody = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions
             {
@@ -586,9 +612,42 @@ namespace View.Controllers
         public async Task<IActionResult> StudiedClasses(int page = 1, int pageSize = 6)
         {
             var studentId = Request.Cookies["Id"];
-            Console.WriteLine(studentId);
+            AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync($"{apiUrl}/studiedclass/{studentId}?page={page}&pageSize={pageSize}");
-            Console.WriteLine($"{studyingClassApiUrl}/{studentId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<PaginatedResult<ClassDto>>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    //ViewBag.QueryString = queryStringWithoutPage;
+                    return View(baseResponse.Result);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return View();
+                }
+            }
+            else
+            {
+                return View();
+            }
+
+        }
+
+        public async Task<IActionResult> TaughtClasses(int page = 1, int pageSize = 6)
+        {
+            var lecturerId = Request.Cookies["Id"];
+            AddAuthTokenToRequestHeaders();
+            var response = await _httpClient.GetAsync($"{apiUrl}/taughtclass/{lecturerId}?page={page}&pageSize={pageSize}");
+
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
