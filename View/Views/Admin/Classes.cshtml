@@ -1,4 +1,6 @@
-﻿@using View.Models.Response;
+﻿@using System.Globalization
+@using View.Models.Enum
+@using View.Models.Response;
 @model View.Models.PaginatedResult<ClassDto>
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -40,11 +42,11 @@
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">Class Capacity:<p />
-                                <input type="number" id="class-capacity" name="ClassCapacity" class="ml-3 border" />
+                                <input type="number" min="10" max="50" id="class-capacity" name="ClassCapacity" class="ml-3 border" />
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">Price:<p />
-                                <input type="number" id="price" name="Price" class="ml-3 border" />
+                                <input type="number" min="100000" max="5000000" id="price" name="Price" class="ml-3 border" />
                             </div>
                             <div class="mx-2">
                                 <p class="font-weight-bold">Description:<p />
@@ -222,6 +224,7 @@
                         <th>Price</th>
                         <th>Class Capacity</th>
                         <th>Lecturer</th>
+                        <th>Status</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -232,9 +235,10 @@
                             <td>@classItem.ClassName</td>
                             <td>@classItem.StartDate.ToString("MM/dd/yyyy")</td>
                             <td>@classItem.EndDate.ToString("MM/dd/yyyy")</td>
-                            <td>@classItem.Price</td>
+                            <td>@classItem.Price.ToString("C", CultureInfo.CurrentCulture).Replace(CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol, "VND ")</td>
                             <td>@classItem.ClassCapacity</td>
                             <td>@(classItem.Lecturer != null ? classItem.Lecturer.FullName : "N/A")</td>
+                            <td class="class-status text-left font-weight-bold">@(classItem.ClassStatus.HasValue?((Status)classItem.ClassStatus).ToString() : "Unknown")</td>
                             <td>
                                 <div class="table-data-feature">
                                     <button class="item edit-class-btn" data-class-id='@classItem.ClassId' data-placement="top" title="Edit">
@@ -355,6 +359,68 @@
 
             window.location.href = url;
         }
+        //date validator
+        $(document).ready(function() {
+        $('#start-date').on('change', function() {
+        var startDate = new Date($(this).val());
+        var endDateInput = $('#end-date');
+        if (startDate) {
+            startDate.setDate(startDate.getDate() + 1); // Add one day to start date
+            endDateInput.attr('min', startDate.toISOString().split('T')[0]);
+        } else {
+            endDateInput.attr('min', null); // Remove the minimum constraint
+        }
+        });
+
+        $('#end-date').on('change', function() {
+        var endDate = new Date($(this).val());
+        var startDateInput = $('#start-date');
+        if (endDate) {
+            endDate.setDate(endDate.getDate() - 1); // Subtract one day from end date
+            startDateInput.attr('max', endDate.toISOString().split('T')[0]);
+        } else {
+            startDateInput.attr('max', null); // Remove the maximum constraint
+        }
+        });
+    });
+        //input number validator
+          $('#class-capacity').on('change', function() {
+            var value = $(this).val();
+            var min = parseFloat($(this).attr('min'));
+            var max = parseFloat($(this).attr('max'));
+
+            if (value < min) {
+              $(this).val(min);
+            } else if (value > max) {
+              $(this).val(max);
+            }
+          });                                                      
+          $('#price').on('change', function() {
+            var value = $(this).val();
+            var min = parseFloat($(this).attr('min'));
+            var max = parseFloat($(this).attr('max'));
+
+            if (value < min) {
+              $(this).val(min);
+            } else if (value > max) {
+              $(this).val(max);
+            }
+          });
+
+
+
+        //Style with status
+        $('.class-status').each(function(index, element) {
+            console.log('Check');
+            console.log($(element).text());
+            switch($(element).text()){
+                case 'NotStarted': $(element).addClass('text-warning'); break;
+                case 'Started': $(element).addClass('text-primary'); break;
+                case 'Ended': $(element).addClass('text-success'); break;
+                default: $(element).addClass('text-secondary'); break;
+            };
+          //$(element).addClass('badge badge-primary');
+        });
         //fetch study slot
         $.ajax({
           url: 'https://localhost:7241/api/Class/slot',

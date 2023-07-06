@@ -1,8 +1,9 @@
 ﻿@using View.Models.Enum
 @using View.Models.Response;
 @model View.Models.Response.ClassDto
-
+@using Newtonsoft.Json
 @{
+    @addTagHelper "*, Microsoft.AspNetCore.Mvc.TagHelpers"
     ViewData["Title"] = "StudyingClasssesById";
     var changeClassList = ViewBag.ChangeClassList as List<ClassDto>;
     var listSchedule = ViewBag.ScheduleList as List<ScheduleDto>;
@@ -13,6 +14,31 @@
 <div class="yg-img-section">
     <div class="row">
         <div class="col-md-12 col-sm-12"> <img src="@Model.Image" class="img-fluid animate-box" data-animate-effect="fadeInUp" alt=""> </div>
+    </div>
+</div>
+<!-- Modal HTML -->
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal header -->
+            <div class="modal-header">
+                <h5 class="modal-title">Create notification</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form id="myForm" onsubmit="submitForm(event)" asp-controller="Class" asp-action="CreateNotification" method="post">
+                    <div class="form-group">
+                        <label for="name">Your note:</label>
+                        <input type="text" id="Content" name="Content" value="">
+                        <input type="hidden" name="ScheduleId" id="ScheduleId" value="">
+                        <input type="hidden" name="ClassId" id="ClassId" value="">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 <!-- Schedule Section -->
@@ -78,7 +104,7 @@
                                     if (item.Date.DayOfWeek == (DayOfWeek)i)
                                     {
                                         c = true;
-                                        <td class="yg-schedule-empty schedule-notification"><b>@item.DailyNote</b></td>
+                                        <td class="yg-schedule-empty schedule-notification" data-toggle="modal" data-target="#myModal" style="cursor: pointer;" onmouseover="this.style.backgroundColor='#f1f1f1';" onmouseout="this.style.backgroundColor='transparent';" data-item="@JsonConvert.SerializeObject(item)"><b>@item.DailyNote</b></td>
                                     }
                                 }
                                 @if (!c)
@@ -91,8 +117,8 @@
                 </table>
             </div>
         </div>
-        <div class="row mr-2">
-            <button class="ml-auto yg-button" id="createNotification" style="cursor: pointer;">Create notification</button>
+        <div class="row ml-2">
+            <div class="mr-auto" id="createNotification">(Click on empty box to create note)</div>
         </div>
     </div>
 </div>
@@ -188,7 +214,7 @@
     <div class="container yg-container-full">
         <div class="row yg-gutter-0">
             <div class="col-md-7 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
-                <div class=""> <img src="images/testimonial.jpg" class="img-fluid" alt=""> </div>
+                <div class=""> <img src="~/images/testimonial.jpg" class="img-fluid" alt=""> </div>
             </div>
             <div class="col-md-5 col-sm-12 animate-box" data-animate-effect="fadeInRight">
                 <div class="yg-text-block yg-text-block-h700">
@@ -202,29 +228,6 @@
     </div>
 </div>
 
-<script>
-    // Get the current URL
-    var currentURL = window.location.href;
-
-    // Extract the value of the 's' variable from the URL
-    var urlParams = new URLSearchParams(currentURL);
-    var sValue = urlParams.get('s');
-
-    // Check if the 's' value is not present or not a number, default it to 0
-    var s = isNaN(parseInt(sValue)) ? 0 : parseInt(sValue);
-
-    // Increment the 's' value by 1
-    var incrementedS = s + 1;
-
-    // Update the URL for the 'Next week' link with the incremented 's' value
-    var nextWeekURL = currentURL;
-    if (sValue) {
-        nextWeekURL = nextWeekURL.replace('s=' + sValue, 's=' + incrementedS);
-    } else {
-        nextWeekURL += nextWeekURL.includes('?') ? '&s=' + incrementedS : '?s=' + incrementedS;
-    }
-    document.getElementById('nextWeekLink').setAttribute('href', nextWeekURL);
-</script>
 
 
 @section Scripts{
@@ -251,4 +254,76 @@
         }
         document.getElementById('previousWeekLink').setAttribute('href', previousWeekURL);
     </script>
-}
+    <script>
+        // Get the current URL
+        var currentURL = window.location.href;
+
+        // Extract the value of the 's' variable from the URL
+        var urlParams = new URLSearchParams(currentURL);
+        var sValue = urlParams.get('s');
+
+        // Check if the 's' value is not present or not a number, default it to 0
+        var s = isNaN(parseInt(sValue)) ? 0 : parseInt(sValue);
+
+        // Increment the 's' value by 1
+        var incrementedS = s + 1;
+
+        // Update the URL for the 'Next week' link with the incremented 's' value
+        var nextWeekURL = currentURL;
+        if (sValue) {
+            nextWeekURL = nextWeekURL.replace('s=' + sValue, 's=' + incrementedS);
+        } else {
+            nextWeekURL += nextWeekURL.includes('?') ? '&s=' + incrementedS : '?s=' + incrementedS;
+        }
+        document.getElementById('nextWeekLink').setAttribute('href', nextWeekURL);
+    </script>
+    <script>
+        // Get all the elements with the class "myCell"
+        var cells = document.querySelectorAll(".schedule-notification");
+        // Get the reference to the modal
+        var modal = document.getElementById("myModal");
+        // Get the reference to the form within the modal
+        var form = document.getElementById("myForm");
+        // Get the reference to the cancel button
+        var cancelButton = document.getElementById("cancelButton");
+        var scheduleIdInput = document.getElementById("ScheduleId");
+        var classId = document.getElementById("ClassId");
+        var notiValue = document.getElementById("Content");
+        // Add an event listener to each cell
+        cells.forEach(function(cell) {
+            cell.addEventListener("click", function() {
+                // Display the modal when a cell is clicked
+                modal.style.display = "block";
+                var $row = $(this).closest('td');
+                var item = $row.data('item');
+                scheduleIdInput.value = item.Id;
+                notiValue.value = item.DailyNote;
+                classId.value = item.ClassId;
+            });
+        });
+
+        // Close the modal when the close button or cancel button is clicked
+        closeButton.addEventListener("click", closeModal);
+        cancelButton.addEventListener("click", closeModal);
+
+        // Function to close the modal
+        var closeButton = document.getElementsByClassName("close")[0];
+        closeButton.addEventListener("click", function() {
+            modal.style.display = "none";
+        });
+        // Close the modal when the user clicks outside the modal content
+        window.addEventListener("click", function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        });
+
+        // Handle the form submission
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+            // Perform your desired actions here
+            console.log("Form submitted!");
+        });
+
+    </script>
+    }

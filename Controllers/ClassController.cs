@@ -540,5 +540,24 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
+
+        [HttpGet("studiedclass/{studentId}")]
+        public async Task<IActionResult> GetStudiedClass([FromRoute] int studentId, [FromQuery] int page, [FromQuery] int pageSize)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(new GetStudiedClassQuery { StudentId = studentId, Page = page, PageSize = pageSize });
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
     }
 }
