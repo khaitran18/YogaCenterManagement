@@ -479,6 +479,7 @@ namespace View.Controllers
         [HttpGet("users/create")]
         public IActionResult Create()
         {
+
             string? role = GetRoleFromCookie();
             if (role == null) 
             {

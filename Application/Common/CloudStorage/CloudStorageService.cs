@@ -28,8 +28,8 @@ namespace Application.Common.CloudStorage
                 {
                     Random rnd = new Random();
                     var bucketName = "yoga-guru-391213.appspot.com";
-                    var uploadedFile = await storageClient.UploadObjectAsync(bucketName, fileName, "image/jpeg", memoryStream);
-                    string downloadUrl = $"https://firebasestorage.googleapis.com/v0/b/{bucketName}/o/{Uri.EscapeDataString(uploadedFile.Name)}{rnd.Next()}?alt=media&token={uploadedFile.Generation}";
+                    var uploadedFile = await storageClient.UploadObjectAsync(bucketName, fileName+rnd.Next(), "image/jpeg", memoryStream);
+                    string downloadUrl = $"https://firebasestorage.googleapis.com/v0/b/{bucketName}/o/{Uri.EscapeDataString(uploadedFile.Name)}?alt=media&token={uploadedFile.Generation}";
                     return downloadUrl;
                 }
 
