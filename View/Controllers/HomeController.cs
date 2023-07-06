@@ -27,9 +27,12 @@ namespace View.Controllers
                 Console.WriteLine("Token in header:"+authorizationHeader);
             }
             string? role = Request.Cookies["Role"];
-            if (role.Equals("Staff")||(role.Equals("Admin"))) return RedirectToAction("Index", "Admin");
-            if (role.Equals("User")||(role.Equals("Lecturer"))) return View();
-            TempData["Error"] = "An error has occured";
+            if (role!=null)
+            {
+                if (role.Equals("Staff") || (role.Equals("Admin"))) return RedirectToAction("Index", "Admin");
+                if (role.Equals("User") || (role.Equals("Lecturer"))) return View();
+                TempData["Error"] = "An error has occured";
+            }
             return View();
         }
 
