@@ -668,7 +668,7 @@ namespace Infrastructure.Repository
             try
             {
                 var classes = await _context.Classes
-                                                    .Where(c => c.ClassStatus == 2 && c.LecturerId == lecturerId)
+                                                    .Where(c => (c.ClassStatus == 2 || c.ClassStatus == 1) && c.LecturerId == lecturerId)
                                                     .ToListAsync();
                 classModels = _mapper.Map<List<ClassModel>>(classes.Skip((page - 1) * pageSize).Take(pageSize));
                 totalCount = classes.Count;
@@ -694,7 +694,7 @@ namespace Infrastructure.Repository
                             .ThenInclude(sl => sl.Days)
                     .Include(c => c.Lecturer)
                     .Include(c => c.Students)
-                    .FirstOrDefaultAsync(c => c.ClassStatus == 2
+                    .FirstOrDefaultAsync(c => (c.ClassStatus == 2 || c.ClassStatus==1)
                                                                  && c.ClassId == classId
                                                                  && c.LecturerId == lecturerId);
                 classModel = _mapper.Map<ClassModel>(@class);

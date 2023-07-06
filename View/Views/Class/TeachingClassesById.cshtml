@@ -183,26 +183,6 @@
                         </ul>
                     </div>
                 </div>
-                <div class="yg-class-box animate-box" data-animate-effect="fadeInUp">
-                    <h3>Class Hours</h3>
-                    <div class="yg-class-table">
-                        <ul>
-                            @if (Model.Schedules != null)
-                            {
-                                @foreach (var schedule in Model.Schedules)
-                                {
-                                    foreach (var day in schedule.Slot.Day)
-                                    {
-                                        <li>
-                                            <span class="yg-class-table-light-text">@((Days)day.DayId)</span>
-                                            <span>@schedule.Slot.StartTime.ToString("hh\\:mm") - @schedule.Slot.EndTime.ToString("hh\\:mm")</span>
-                                        </li>
-                                    }
-                                }
-                            }
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

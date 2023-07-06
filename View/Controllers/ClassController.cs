@@ -279,7 +279,7 @@ namespace View.Controllers
 
                 if (!baseResponse!.Error)
                 {
-                    if (baseResponse.Result.ClassId == 0) return RedirectToAction(nameof(StudyingClasses));
+                    if (baseResponse.Result == null) return RedirectToAction(nameof(StudyingClasses));
 
                     if (changeClassResponse.IsSuccessStatusCode)
                     {
