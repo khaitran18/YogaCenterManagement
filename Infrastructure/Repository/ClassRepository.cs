@@ -593,11 +593,11 @@ namespace Infrastructure.Repository
 
             foreach (var @class in classes)
             {
-                if (today >= @class.StartDate && today <= @class.EndDate)
+                if ((today >= @class.StartDate && today <= @class.EndDate) && @class.ClassStatus != 0)
                 {
                     @class.ClassStatus = 2;
                 }
-                else if (today > @class.EndDate)
+                else if (today > @class.EndDate && @class.ClassStatus != 0)
                 {
                     @class.ClassStatus = 3;
                 }
@@ -699,6 +699,29 @@ namespace Infrastructure.Repository
                 throw;
             }
             return classModel;
+        }
+        #endregion
+
+        #region Get classes that lecturer has taught
+        public async Task<(IEnumerable<ClassModel>, int)> GetTaughtClass(int lecturerId, int page, int pageSize)
+        {
+            var classModels = new List<ClassModel>();
+            int totalCount = 0;
+            try
+            {
+                var classes = await _context.Classes
+                                                    .Include(c => c.Students)
+                                                    .Where(c => c.ClassStatus == 3 && c.Students.Any(s => s.Uid == lecturerId))
+                                                    .ToListAsync();
+                classModels = _mapper.Map<List<ClassModel>>(classes.Skip((page - 1) * pageSize).Take(pageSize));
+                totalCount = classes.Count;
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error in GetStudiedClass");
+            }
+            return (classModels, totalCount);
         }
         #endregion
     }

@@ -140,6 +140,7 @@ builder.Services.AddScoped<IRequestHandler<GetTeachingClassQuery, BaseResponse<P
 builder.Services.AddScoped<IRequestHandler<GetTeachingClassByClassIdQuery, BaseResponse<ClassDto>>, GetTeachingClassByClassIdHandler>();
 builder.Services.AddScoped<IRequestHandler<GetAvailableDateByLecturerId, BaseResponse<IEnumerable<AvailableDateDto>>>, GetAvailableDateByLecturerIdHandler>();
 builder.Services.AddScoped<IRequestHandler<GetAllAvailableDatesQuery, BaseResponse<IEnumerable<AvailableDateDto>>>, GetAllAvailableDatesHandler>();
+builder.Services.AddScoped<IRequestHandler<GetTaughtClassQuery, BaseResponse<PaginatedResult<ClassDto>>>, GetTaughtClassHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateNotificationCommand,BaseResponse<ClassNotificationDto>>, CreateNotificationHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateClassCommand,BaseResponse<ClassDto>>, CreateClassHandler>();
 builder.Services.AddScoped<IRequestHandler<EditClassCommand,BaseResponse<ClassDto>>, EditClassHandler>();
@@ -198,6 +199,7 @@ var mapperConfig = new MapperConfiguration(cfg =>
 });
 var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

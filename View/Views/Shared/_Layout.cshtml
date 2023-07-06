@@ -56,6 +56,20 @@
                         {
                             <li><a asp-controller="User" asp-action="Feedback">Feedback</a></li>
                         }
+                        @if (Context.Request.Cookies["AuthToken"] != null)
+                        {
+                            @if (Context.Request.Cookies["Role"] == "User")
+                            {
+                                <li><a asp-controller="Class" asp-action="StudyingClasses">Your studying classes</a></li>
+                                <li><a asp-controller="Class" asp-action="StudiedClasses">Your studied classes</a></li>
+                            }
+                            else if (Context.Request.Cookies["Role"] == "Lecturer")
+                            {
+                                <li><a asp-controller="Class" asp-action="TeachingClasses">Your teaching classes</a></li>
+                                <li><a asp-controller="Class" asp-action="TeachingClasses">Your teaching classes</a></li>
+                                <li><a asp-controller="Class" asp-action="AvailableDates">Your available dates</a></li>
+                            }
+                        }
                         <li><a asp-controller="Home" asp-action="AboutUs">About Us</a></li>
                     </ul>
                     <a href="classes-page.html#" class="yg-nav-overlay-close" id="yg-nav-overlay-close">

@@ -190,6 +190,9 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "Staff,Admin,Lecturer")]
         [HttpGet("slot")]
         [ProducesDefaultResponseType(typeof(StudySlotDto))]
         public async Task<IActionResult> GetAllStudySlots(
@@ -271,7 +274,8 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "Lecturer")]
         [HttpPost("availabledate")]
         public async Task<IActionResult> AddAvailableDate(
         //[FromHeader] string? Authorization
@@ -311,8 +315,10 @@ namespace Api.Controllers
                 };
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
-        }        
-        
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "User")]
         [HttpGet("studyclass/{studentId}")]
         public async Task<IActionResult> GetStudyingClass([FromRoute] int studentId, [FromQuery] int page, [FromQuery] int pageSize)
         {
@@ -332,6 +338,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "User")]
         [HttpGet("studyclass")]
         public async Task<IActionResult> GetStudyingClass([FromQuery] GetStudyingClassByClassIdQuery query)
         {
@@ -351,6 +359,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "Lecturer")]
         [HttpGet("availabledate/bylecturerid/{lecturerId}")]
         public async Task<IActionResult> GetAvailableDateByLecturerId([FromRoute] int lecturerId)
         {
@@ -370,6 +380,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "User")]
         [HttpPost("changeclass")]
         public async Task<IActionResult> CreateChangeClassRequest([FromBody] CreateChangeRequestCommand command)
         {
@@ -389,6 +401,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "Staff, Admin")]
         [HttpGet("changeclass")]
         public async Task<IActionResult> GetChangeClassRequests()
         {
@@ -408,6 +422,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "User")]
         [HttpGet("changeclasses/{fromClassId}")]
         public async Task<IActionResult> GetChangeClass([FromRoute] int fromClassId)
         {
@@ -427,6 +443,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "Staff, Admin")]
         [HttpPut("changeclass")]
         public async Task<IActionResult> UpdateApprovalStatus([FromBody] UpdateApprovalStatusCommand command)
         {
@@ -446,6 +464,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "User")]
         [HttpPost("enroll")]
         public async Task<IActionResult> EnrollStudentToClass([FromBody] StudentEnrollToClassCommand command, [FromHeader] string? Authorization)
         {
@@ -465,6 +485,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "Lecturer")]
         [HttpGet("teachclass/{lecturerId}")]
         public async Task<IActionResult> GetTeachingClass([FromRoute] int lecturerId, [FromQuery] int page, [FromQuery] int pageSize)
         {
@@ -484,6 +506,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "Lecturer")]
         [HttpGet("teachclass")]
         public async Task<IActionResult> GetTeachingClassByClassID([FromQuery] GetTeachingClassByClassIdQuery query)
         {
@@ -522,6 +546,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "Lecturer")]
         [HttpDelete("availabledate")]
         public async Task<IActionResult> RemoveLecturerAvailableDate([FromQuery] RemoveAvailableDateCommand command)
         {
@@ -541,6 +567,8 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "User")]
         [HttpGet("studiedclass/{studentId}")]
         public async Task<IActionResult> GetStudiedClass([FromRoute] int studentId, [FromQuery] int page, [FromQuery] int pageSize)
         {
@@ -559,5 +587,27 @@ namespace Api.Controllers
                 return new ErrorHandling<Exception>(ErrorResponse);
             }
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(Roles = "User")]
+        [HttpGet("taughtclass/{lecturerId}")]
+        public async Task<IActionResult> GetTaughtClass([FromRoute] int lecturerId, [FromQuery] int page, [FromQuery] int pageSize)
+        {
+            //command.token = Authorization;
+
+            var response = await _mediator.Send(new GetTaughtClassQuery { LecturerId = lecturerId, Page = page, PageSize = pageSize });
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var ErrorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(ErrorResponse);
+            }
+        }
+
     }
 }

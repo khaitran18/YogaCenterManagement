@@ -154,6 +154,7 @@ namespace View.Controllers
         [HttpGet]
         public async Task<IActionResult> ChangeClassRequests()
         {
+            AddAuthTokenToRequestHeaders();
             var response = await _httpClient.GetAsync(changeClassRequestsApiUrl);
 
             if (response.IsSuccessStatusCode)
@@ -360,7 +361,7 @@ namespace View.Controllers
                 RequestId = requestId,
                 IsApproved = isApproved
             };
-
+            AddAuthTokenToRequestHeaders();
             var jsonCommand = JsonSerializer.Serialize(requestData);
             var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
 

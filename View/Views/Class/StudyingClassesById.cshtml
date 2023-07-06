@@ -17,7 +17,7 @@
                 <img src="@Model.Image" class="img-fluid" alt="">
             </div>
             <div class="yg-slider-caption">
-                <div class="yg-class-title" >@Model.ClassName</div>
+                <div class="yg-class-title">@Model.ClassName</div>
             </div>
         </div>
     </div>
@@ -110,19 +110,25 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Change Class</h5>
                         @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>*@
+                            <span aria-hidden="true">&times;</span>
+                            </button>*@
                     </div>
 
                     <div class="modal-body">
-                        <form asp-action="CreateChangeRequest" asp-controller="Class">
-                            <label for="content">Reason</label>
-                            <textarea id="content" name="content" placeholder="Reason"></textarea>
-                            <div id="classList">
-                                <!-- Class list will be dynamically populated here -->
-                            </div>
-                            <button type="submit" class="btn btn-success">Submit</button>
-                        </form>
+                        @if (changeClassList == null || changeClassList.Count == 0)
+                        {
+                            <div><p>*No class with the same progress for changing</p></div>}
+                        else
+                        { <form asp-action="CreateChangeRequest" asp-controller="Class">
+                                <label for="content">Reason</label>
+                                <textarea id="content" name="content" placeholder="Reason"></textarea>
+                                <div id="classList">
+                                    <!-- Class list will be dynamically populated here -->
+                                </div>
+                                <button type="submit" class="btn btn-success" @if (changeClassList == null || changeClassList.Count == 0) { <text> disabled</text> }>Submit</button>
+                            </form>
+                        }
+
                     </div>
                 </div>
             </div>
@@ -207,30 +213,30 @@
                         </ul>
                     </div>
                 </div>
-                <div class="yg-class-box">
-                    <h3>Class Hours</h3>
-                    <div class="yg-class-table">
-                        <ul>
-                            @if (Model.Schedules != null)
-                            {
-                                var groupedSchedules = Model.Schedules
-                                .GroupBy(s => new { Day = s.Date.DayOfWeek, SlotId = s.SlotId })
-                                .OrderBy(g => g.Key.Day)
-                                .Select(g => new { Day = g.Key.Day, Schedules = g.ToList() });
-
-                                foreach (var group in groupedSchedules)
+                @*<div class="yg-class-box">
+                        <h3>Class Hours</h3>
+                        <div class="yg-class-table">
+                            <ul>
+                                @if (Model.Schedules != null)
                                 {
-                                    var day = group.Day;
-                                    var slot = group.Schedules.First().Slot;
-                                    <li>
-                                        <span class="yg-class-table-light-text">@day</span>
-                                        <span>@slot.StartTime.ToString("hh\\:mm") - @slot.EndTime.ToString("hh\\:mm")</span>
-                                    </li>
+                                    var groupedSchedules = Model.Schedules
+                                    .GroupBy(s => new { Day = s.Date.DayOfWeek, SlotId = s.SlotId })
+                                    .OrderBy(g => g.Key.Day)
+                                    .Select(g => new { Day = g.Key.Day, Schedules = g.ToList() });
+
+                                    foreach (var group in groupedSchedules)
+                                    {
+                                        var day = group.Day;
+                                        var slot = group.Schedules.First().Slot;
+                                        <li>
+                                            <span class="yg-class-table-light-text">@day</span>
+                                            <span>@slot.StartTime.ToString("hh\\:mm") - @slot.EndTime.ToString("hh\\:mm")</span>
+                                        </li>
+                                    }
                                 }
-                            }
-                        </ul>
-                    </div>
-                </div>
+                            </ul>
+                        </div>
+                    </div>*@
             </div>
         </div>
     </div>
@@ -264,12 +270,13 @@
                 $("#classList").empty();
 
                 // Populate the class list dynamically
-        @if (changeClassList != null)
+        @if (changeClassList != null || changeClassList.Count != 0)
         {
+
             foreach (var classDto in changeClassList)
             {
                 <text>
-                                                                                                                                                                                                                                                        var classId = @classDto.ClassId;
+                        var classId = @classDto.ClassId;
                         var className = '@classDto.ClassName';
                         var imageUrl = '@classDto.Image';
 
@@ -288,7 +295,11 @@
                 </text>
             }
         }
-
+        else {
+            <text>
+                $("#classList").append('<p>*No class with the same progress for changing</p>');
+            </text>
+        }
                     // Show the modal
                     $("#changeClassModal").modal("show");
             });
