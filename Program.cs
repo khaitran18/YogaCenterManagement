@@ -124,6 +124,7 @@ builder.Services.AddScoped<IRequestHandler<EditProfileCommand, BaseResponse<User
 builder.Services.AddScoped<IRequestHandler<EditUserCommand, BaseResponse<UserDto>>, EditUserHandler>();
 builder.Services.AddScoped<IRequestHandler<GetUsersQuery, BaseResponse<PaginatedResult<UserDto>>>, GetUsersHandler>();
 builder.Services.AddScoped<IRequestHandler<DisableUserCommand, BaseResponse<UserDto>>, DisableUserHandler>();
+builder.Services.AddScoped<IRequestHandler<EnableUserCommand, BaseResponse<UserDto>>, EnableUserHandler>();
 builder.Services.AddScoped<IRequestHandler<CreateFeedbackCommand, BaseResponse<FeedbackDto>>, CreateFeedbackHandler>();
 builder.Services.AddScoped<IRequestHandler<GetFeedbacksQuery, BaseResponse<PaginatedResult<FeedbackDto>>>, GetFeedbacksHandler>();
 builder.Services.AddScoped<IRequestHandler<ClassNotificationQuery, BaseResponse<ClassNotificationDto>>, ClassNotificationHandler>();
@@ -171,6 +172,7 @@ builder.Services.AddScoped<IValidator<AuthCommand>, AuthCommandValidator>();
 builder.Services.AddScoped<IValidator<CreateNotificationCommand>, CreateNotificationCommandValidator>();
 builder.Services.AddScoped<IValidator<SignUpCommand>, SignupCommandValidator>();
 builder.Services.AddScoped<IValidator<EditProfileCommand>, EditProfileCommandValidator>();
+builder.Services.AddScoped<IValidator<EditUserCommand>, EditUserCommandValidator>();
 
 //Behaviour registration
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

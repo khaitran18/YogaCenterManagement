@@ -135,7 +135,7 @@ namespace View.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Feedback(int page = 1, int pageSize = 6)
+        public async Task<IActionResult> Feedback(int page = 1, int pageSize = 5)
         {
             AddAuthTokenToRequestHeaders();
             var url = apiUrl + $"/feedback?page={page}&pageSize={pageSize}";

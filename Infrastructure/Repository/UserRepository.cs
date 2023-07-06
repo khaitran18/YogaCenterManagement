@@ -118,9 +118,6 @@ namespace Infrastructure.Repository
                     existingUser.FullName = user.FullName;
                     existingUser.Address = user.Address;
                     existingUser.Phone = user.Phone;
-                    existingUser.Email = user.Email;
-                    existingUser.UserName = user.UserName;
-                    existingUser.RoleId = user.RoleId;
 
                     return _mapper.Map<UserModel>(existingUser);
                 }
@@ -194,6 +191,30 @@ namespace Infrastructure.Repository
                 {
                     existingUser.IsDisabled = true;
                     existingUser.DisabledReason = reason;
+
+                    return _mapper.Map<UserModel>(existingUser);
+                }
+                else
+                {
+                    throw new NotFoundException("User not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<UserModel> EnableUser(int id)
+        {
+            try
+            {
+                var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Uid == id);
+
+                if (existingUser != null)
+                {
+                    existingUser.IsDisabled = false;
+                    existingUser.DisabledReason = null;
 
                     return _mapper.Map<UserModel>(existingUser);
                 }
@@ -317,13 +338,13 @@ namespace Infrastructure.Repository
 
         public async Task<(List<FeedbackModel>, int)> GetFeedbacks(int id, bool isLecturer, string? sortBy, int page, int pageSize)
         {
-            IQueryable<Feedback> query = _context.Feedbacks.AsQueryable();
+            IQueryable<Feedback> query = _context.Feedbacks.Include(f => f.Student).AsQueryable();
 
             if (isLecturer)
             {
                 query = query
                     .Where(f => f.LecturerId == id)
-                    .Select(f => new Feedback { Content = f.Content });
+                    .Select(f => new Feedback { Student = f.Student, Content = f.Content });
             }
             else
             {

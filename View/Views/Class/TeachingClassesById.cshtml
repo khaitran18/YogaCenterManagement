@@ -17,17 +17,28 @@
     </div>
 </div>
 <!-- Modal HTML -->
-<div id="myModal" class="modal" style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4);">
-    <div class="modal-content" style="background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 80%;">
-        <form id="myForm" asp-controller="Class" asp-action="CreateNotification" method="post">
-            <!-- Add your form fields here -->
-            <label for="name">Your note:</label>
-            <input type="text" id="Content" name="Content">
-            <input type="hidden" name="ScheduleId" id="ScheduleId" value="">
-            <input id="submitButton" type="submit" value="Submit">
-            <button id="cancelButton" type="button" style="margin-top: 10px;">Cancel</button>
-        </form>
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal header -->
+            <div class="modal-header">
+                <h5 class="modal-title">Create notification</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
 
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form id="myForm" onsubmit="submitForm(event)" asp-controller="Class" asp-action="CreateNotification" method="post">
+                    <div class="form-group">
+                        <label for="name">Your note:</label>
+                        <input type="text" id="Content" name="Content" value="">
+                        <input type="hidden" name="ScheduleId" id="ScheduleId" value="">
+                        <input type="hidden" name="ClassId" id="ClassId" value="">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 <!-- Schedule Section -->
@@ -93,7 +104,7 @@
                                     if (item.Date.DayOfWeek == (DayOfWeek)i)
                                     {
                                         c = true;
-                                        <td class="yg-schedule-empty schedule-notification" style="cursor: pointer;" onmouseover="this.style.backgroundColor='#f1f1f1';" onmouseout="this.style.backgroundColor='transparent';"  data-item="@JsonConvert.SerializeObject(item)"><b>@item.DailyNote</b></td>
+                                        <td class="yg-schedule-empty schedule-notification" data-toggle="modal" data-target="#myModal" style="cursor: pointer;" onmouseover="this.style.backgroundColor='#f1f1f1';" onmouseout="this.style.backgroundColor='transparent';" data-item="@JsonConvert.SerializeObject(item)"><b>@item.DailyNote</b></td>
                                     }
                                 }
                                 @if (!c)
@@ -276,6 +287,8 @@
         // Get the reference to the cancel button
         var cancelButton = document.getElementById("cancelButton");
         var scheduleIdInput = document.getElementById("ScheduleId");
+        var classId = document.getElementById("ClassId");
+        var notiValue = document.getElementById("Content");
         // Add an event listener to each cell
         cells.forEach(function(cell) {
             cell.addEventListener("click", function() {
@@ -284,6 +297,8 @@
                 var $row = $(this).closest('td');
                 var item = $row.data('item');
                 scheduleIdInput.value = item.Id;
+                notiValue.value = item.DailyNote;
+                classId.value = item.ClassId;
             });
         });
 
@@ -292,10 +307,10 @@
         cancelButton.addEventListener("click", closeModal);
 
         // Function to close the modal
-        function closeModal() {
+        var closeButton = document.getElementsByClassName("close")[0];
+        closeButton.addEventListener("click", function() {
             modal.style.display = "none";
-        }
-
+        });
         // Close the modal when the user clicks outside the modal content
         window.addEventListener("click", function(event) {
             if (event.target == modal) {

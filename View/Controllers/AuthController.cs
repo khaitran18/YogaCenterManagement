@@ -72,7 +72,7 @@ namespace View.Controllers
                 }
                 else if (loginResult.Result.Role.Equals("Staff"))
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Admin");
                 }
                 else if (loginResult.Result.Role.Equals("Admin"))
                 {
@@ -137,6 +137,16 @@ namespace View.Controllers
                 TempData["Error"] = string.Join("\n", error);
                 return View();
             }
+        }
+
+        [HttpGet("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("AuthToken");
+            Response.Cookies.Delete("Role");
+            Response.Cookies.Delete("Id");
+            TempData["Success"] = "Logout success";
+            return RedirectToAction("Index", "Home");
         }
     }
 }
