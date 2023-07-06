@@ -20,6 +20,11 @@ namespace View.Controllers
         public IActionResult Index()
         {
             string? authToken = Request.Cookies["AuthToken"];
+            var role = Request.Cookies["Role"];
+            if (role == "Admin" || role == "Staff")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
 
             if (authToken != null)
             {
@@ -32,6 +37,11 @@ namespace View.Controllers
 
         public IActionResult AboutUs()
         {
+            var role = Request.Cookies["Role"];
+            if (role == "Admin" || role == "Staff")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             return View();
         }
         public IActionResult Privacy()
