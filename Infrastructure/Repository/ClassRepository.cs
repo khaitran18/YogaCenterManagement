@@ -199,6 +199,7 @@ namespace Infrastructure.Repository
                     {
                         existingClass.Image = model.Image;
                     }
+                    existingClass.ClassStatus = model.ClassStatus;
                     _context.Classes.Update(existingClass);
                     await _context.SaveChangesAsync();
                     var updatedClass = await _context.Classes.FirstOrDefaultAsync(c => c.ClassId == existingClass.ClassId);

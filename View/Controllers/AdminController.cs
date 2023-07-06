@@ -88,10 +88,10 @@ namespace View.Controllers
                     PropertyNameCaseInsensitive = true,
                 };
                 var baseResponse = JsonSerializer.Deserialize<BaseResponse<PaginatedResult<ClassDto>>>(responseBody, options);
-
                 if (!baseResponse!.Error)
                 {
                     ViewBag.QueryString = queryStringWithoutPage;
+                    ViewBag.MyToken = GetAuthTokenFromCookie();
                     return View(baseResponse.Result);
                 }
                 else

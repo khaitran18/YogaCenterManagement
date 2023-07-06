@@ -51,7 +51,8 @@ namespace Application.Command.Handler
                         Price = request.Price,
                         ClassCapacity = request.ClassCapacity,
                         Description = request.Description,
-                        Image = ImageUrl
+                        Image = ImageUrl,
+                        ClassStatus = request.ClassStatus,
                     };
                     var newClass = await _unitOfWork.ClassRepository.EditClass(model);
                     var classDto = _mapper.Map<ClassDto>(newClass);
