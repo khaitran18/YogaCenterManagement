@@ -324,7 +324,7 @@ namespace Infrastructure.Repository
                 var user = await _context.Users
                     .Include(u => u.Role)
                     .FirstOrDefaultAsync(u => u.Uid == id);
-                if (user != null && user.Role!.RoleName == "Admin")
+                if (user != null && (user.Role!.RoleName == "Admin"|| user.Role!.RoleName == "Staff"))
                 {
                     return true;
                 }
