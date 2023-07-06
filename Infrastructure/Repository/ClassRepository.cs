@@ -139,7 +139,7 @@ namespace Infrastructure.Repository
                 var theClass = _context.Classes.Find(classId);
                 if (theClass == null)
                 {
-                    throw new Exception("Class not found");
+                    throw new BadRequestException("Class not found");
                 }
                 //set null to lecturer
                 if(lecId == 0)
@@ -153,7 +153,7 @@ namespace Infrastructure.Repository
                 var lecturer = _context.Users.Single(u => u.Uid == lecId && u.RoleId == 2);
                 if (lecturer == null)
                 {
-                    throw new Exception("Lecturer not found");
+                    throw new BadRequestException("Lecturer not found");
                 }
                 //get assigning schedule from the classId
                 var assigningSchedule = await _context.Schedules.FirstAsync(s => s.ClassId == classId);
@@ -163,7 +163,7 @@ namespace Infrastructure.Repository
                 var currentTeachingClass = await _context.Classes.Include(c => c.Schedules).FirstOrDefaultAsync(c => c.ClassStatus != 3 && c.LecturerId == lecId);
                 if(currentTeachingClass != null && currentTeachingClass.Schedules.First().SlotId == assigningSchedule.SlotId)
                 {
-                    throw new Exception("This slot is currently assigned to the lecturer.");
+                    throw new BadRequestException("This slot is currently assigned to the lecturer.");
                 }
                 //check availableDate then assign the lecturer to the class
                 if(availableDate.Where(ad => ad.SlotId == assigningSchedule.SlotId).Any())
@@ -175,7 +175,7 @@ namespace Infrastructure.Repository
                 }
                 else
                 {
-                    throw new Exception("Lecturer is not available for the class schedules.");
+                    throw new BadRequestException("Lecturer is not available for the class schedules.");
                 }
             }
             catch (Exception e)
