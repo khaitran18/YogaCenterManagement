@@ -54,7 +54,7 @@
                         {
                             <li><a asp-controller="Auth" asp-action="Login">Login/Signup</a></li>
                         }
-                        <li><a class="active" asp-controller="Class" asp-action="Index">Classes</a></li>
+                        <li><a asp-controller="Class" asp-action="Index">Classes</a></li>
                         @if (Context.Request.Cookies["Role"] == "Lecturer")
                         {
                             <li><a asp-controller="User" asp-action="Feedback">Feedback</a></li>
