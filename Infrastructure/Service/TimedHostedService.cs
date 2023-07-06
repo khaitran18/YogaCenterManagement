@@ -27,7 +27,7 @@ namespace Infrastructure.Service
         {
             _logger.LogInformation("Timed Hosted Service running.");
 
-            // When the timer should have no due-time, then do the work once now.
+            
             await DoWork();
 
             using PeriodicTimer timer = new(TimeSpan.FromMinutes(1));
@@ -45,14 +45,14 @@ namespace Infrastructure.Service
             }
         }
 
-        // Could also be a async method, that can be awaited in ExecuteAsync above
+        
         private async Task DoWork()
         {
             using var scope = _serviceProvider.CreateScope();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             try
             {
-                //await unitOfWork.ClassRepository.UpdateClassStatus();
+                await unitOfWork.ClassRepository.UpdateClassStatus();
                 //_logger.LogInformation(@class.ClassName);
             }
             catch (Exception)

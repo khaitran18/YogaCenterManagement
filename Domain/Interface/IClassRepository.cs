@@ -28,6 +28,6 @@ namespace Domain.Interface
         public Task<(IEnumerable<ClassModel>, int)> GetStudiedClass(int studentId, int page, int pageSize);
         public Task<(IEnumerable<ClassModel>, int)> GetTeachingClass(int lecturerId, int page, int pageSize);
         public Task<ClassModel> GetTeachingClassByClassId(int lecturerId, int classId);
-
+        public Task<(IEnumerable<ClassModel>, int)> GetTaughtClass(int lecturerId, int page, int pageSize);
     }
 }
