@@ -13,8 +13,7 @@ namespace Application.Common.Validation
         public EditUserCommandValidator()
         {
             RuleFor(command => command.FullName)
-                .NotEmpty().WithMessage("Full Name is required")
-                .MinimumLength(10).WithMessage("Full Name must have at least 10 characters");
+                .NotEmpty().WithMessage("Full Name is required");
         }
     }
 }
