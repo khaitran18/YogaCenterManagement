@@ -338,18 +338,59 @@ namespace View.Controllers
 
                 if (!baseResponse!.Error)
                 {
+                    TempData["Success"] = "Disable successfully";
                     return RedirectToAction("Users");
                 }
                 else
                 {
                     ViewBag.ErrorMessage = baseResponse.Message;
-                    return View();
+                    return RedirectToAction("Users");
                 }
             }
             else
             {
                 ViewBag.ErrorMessage = "An error occurred while disabling the user.";
-                return View();
+                return RedirectToAction("Users");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EnableUser(int userId)
+        {
+            AddAuthTokenToRequestHeaders();
+            var enableUserDto = new EnableUserDto();
+
+            var url = apiUrl + $"/enable/{userId}";
+
+            var jsonCommand = JsonSerializer.Serialize(enableUserDto);
+            var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync(url, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var baseResponse = JsonSerializer.Deserialize<BaseResponse<UserDto>>(responseBody, options);
+
+                if (!baseResponse!.Error)
+                {
+                    TempData["Success"] = "Enable successfully";
+                    return RedirectToAction("Users");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = baseResponse.Message;
+                    return RedirectToAction("Users");
+                }
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "An error occurred while disabling the user.";
+                return RedirectToAction("Users");
             }
         }
 
@@ -402,30 +443,32 @@ namespace View.Controllers
             var content = new StringContent(jsonCommand, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PutAsync(apiUrl, content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
 
             if (response.IsSuccessStatusCode)
             {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                };
                 var baseResponse = JsonSerializer.Deserialize<BaseResponse<UserDto>>(responseBody, options);
 
                 if (!baseResponse!.Error)
                 {
+                    TempData["Success"] = "Edit success";
                     return RedirectToAction("Users");
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = baseResponse.Message;
-                    return View();
+                    TempData["Error"] = baseResponse.Message;
+                    return RedirectToAction("Users");
                 }
             }
             else
             {
-                ViewBag.ErrorMessage = "An error occurred while updating the user.";
-                return View();
+                var error = JsonSerializer.Deserialize<string>(responseBody, options);
+                TempData["Error"] = string.Join("\n", error);
+                return RedirectToAction("Users");
             }
         }
 

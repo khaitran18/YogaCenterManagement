@@ -106,6 +106,27 @@ namespace Api.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "Staff,Admin")]
+        [HttpPut("enable/{id}")]
+        [ProducesDefaultResponseType(typeof(UserDto))]
+        public async Task<IActionResult> EnableUser(int id, [FromBody] EnableUserCommand command)
+        {
+            command.UserId = id;
+            var response = await _mediator.Send(command);
+            if (!response.Error)
+                return Ok(response);
+            else
+            {
+                var errorResponse = new BaseResponse<Exception>
+                {
+                    Exception = response.Exception,
+                    Message = response.Message
+                };
+                return new ErrorHandling<Exception>(errorResponse);
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Roles = "User")]
         [HttpPost("feedback")]
         [ProducesDefaultResponseType(typeof(FeedbackDto))]

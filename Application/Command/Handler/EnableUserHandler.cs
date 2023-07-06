@@ -15,38 +15,30 @@ using System.Threading.Tasks;
 
 namespace Application.Command.Handler
 {
-    public class EditUserHandler : IRequestHandler<EditUserCommand, BaseResponse<UserDto>>
+    public class EnableUserHandler : IRequestHandler<EnableUserCommand, BaseResponse<UserDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public EditUserHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public EnableUserHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public async Task<BaseResponse<UserDto>> Handle(EditUserCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse<UserDto>> Handle(EnableUserCommand request, CancellationToken cancellationToken)
         {
             BaseResponse<UserDto> response = new BaseResponse<UserDto>();
 
             try
             {
-                var userModel = new UserModel
-                {
-                    Uid = request.Uid,
-                    FullName = request.FullName,
-                    Address = request.Address,
-                    Phone = request.Phone
-                };
-
-                var editedUser = await _unitOfWork.UserRepository.EditUser(userModel);
+                var enabledUser = await _unitOfWork.UserRepository.EnableUser(request.UserId);
                 await _unitOfWork.Save();
 
-                var userDto = _mapper.Map<UserDto>(editedUser);
+                var userDto = _mapper.Map<UserDto>(enabledUser);
 
                 response.Result = userDto;
-                response.Message = "User information updated successfully!";
+                response.Message = "User enabled successfully!";
             }
             catch (NotFoundException ex)
             {
