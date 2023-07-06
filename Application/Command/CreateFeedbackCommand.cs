@@ -12,7 +12,7 @@ namespace Application.Command
     public class CreateFeedbackCommand : IRequest<BaseResponse<FeedbackDto>>
     {
         public string? Token { get; set; }
-        public string Content { get; set; } = null!;
+        public string? Content { get; set; }
         public int LecturerId { get; set; }
     }
 }
