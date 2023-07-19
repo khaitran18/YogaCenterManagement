@@ -1,8 +1,5 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-     
+﻿@{
+    var error = ViewBag.Error as string;
 }
 <partial name="_Notification"/>
 <div class="yg-testimonial">
@@ -28,6 +25,9 @@
                                     <label for="Password" class="form-label">Password</label>
                                     <input type="password" class="form-control" id="Password" placeholder="Enter your password" name="Password" required>
                                     <small id="passwordError" style="display:none; color:red"></small>
+                                </div>
+                                <div class="mb-3">
+                                     <div id="usernameError" style="display:block; color:red">@error</div>
                                 </div>
                                 <div class="d-grid gap-2">
                                     <button type="submit" class="btn btn-primary">Login</button>
