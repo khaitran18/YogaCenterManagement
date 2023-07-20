@@ -58,6 +58,10 @@ namespace Infrastructure.Repository
                     return _mapper.Map<ClassModel>(newClassWithEmptySchedules);
                 }
                 //auto generate schedules for the class
+                if(startDate >= endDate)
+                {
+                    throw new BadRequestException("StartDate and EndDate are invalid. EndDate must be later than StartDate");
+                }
                 for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
                 {
                     int selectedDay = (int)date.DayOfWeek;
@@ -141,6 +145,10 @@ namespace Infrastructure.Repository
                 {
                     throw new BadRequestException("Class not found");
                 }
+                if(theClass.ClassStatus == 2 || theClass.ClassStatus == 3)
+                {
+                    throw new BadRequestException("Not allow to assign any lecturer to this class. The class status is now Started or Ended.");
+                }
                 //set null to lecturer
                 if(lecId == 0)
                 {
@@ -160,7 +168,7 @@ namespace Infrastructure.Repository
                 //get available date of the assigning lecturer
                 var availableDate = _context.AvailableDates.Where(ad => ad.LecturerId == lecId).ToList();
                 //check if lecturer is free
-                var currentTeachingClass = await _context.Classes.Include(c => c.Schedules).FirstOrDefaultAsync(c => c.ClassStatus != 3 && c.LecturerId == lecId);
+                var currentTeachingClass = await _context.Classes.Include(c => c.Schedules).FirstOrDefaultAsync(c => (c.ClassStatus != 3 && c.ClassStatus != 0) && c.LecturerId == lecId);
                 if(currentTeachingClass != null && currentTeachingClass.Schedules.First().SlotId == assigningSchedule.SlotId)
                 {
                     throw new BadRequestException("This slot is currently assigned to the lecturer.");
@@ -188,7 +196,8 @@ namespace Infrastructure.Repository
             Class result = new Class();
             try
             {
-                var existingClass = await _context.Classes.FirstOrDefaultAsync(c => c.ClassId == model.ClassId);
+                DateTime today = DateTime.Now;
+                var existingClass = await _context.Classes.Include(c => c.Students).FirstOrDefaultAsync(c => c.ClassId == model.ClassId);
                 if (existingClass != null)
                 {
                     existingClass.ClassName = model.ClassName;
@@ -198,6 +207,36 @@ namespace Infrastructure.Repository
                     if(model.Image != null && model.Image != "")
                     {
                         existingClass.Image = model.Image;
+                    }
+                    // unavailable -> not started / started / ended
+                    if(model.ClassStatus != 0  && existingClass.ClassStatus == 0)
+                    {
+                        if(existingClass.LecturerId == 0 || existingClass.LecturerId == null)
+                        {
+                            throw new BadRequestException("The class has no assigned lecturer.");
+                        }
+
+                        if(model.StartDate < today)
+                        {
+                            model.ClassStatus = 1; //not started
+                        }else if(model.StartDate >= today)
+                        {
+                            model.ClassStatus = 2; //started
+                        }
+                        if(model.EndDate < today)
+                        {
+                            model.ClassStatus = 3; //ended
+                        }
+                    }
+                    if(model.ClassStatus == 0 && existingClass.ClassStatus != 0)
+                    {
+                        if(existingClass.ClassStatus == 1 || existingClass.ClassStatus == 2)
+                        {
+                            if (existingClass.Students != null && existingClass.Students?.Count() > 0)
+                            {
+                                throw new BadRequestException("The class has enrolled student(s)");
+                            }
+                        }
                     }
                     existingClass.ClassStatus = model.ClassStatus;
                     _context.Classes.Update(existingClass);

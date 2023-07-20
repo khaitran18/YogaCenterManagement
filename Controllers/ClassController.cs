@@ -42,7 +42,7 @@ namespace Api.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //[Authorize(Roles = "Staff,Admin,Lecturer")]
+        [Authorize(Roles = "Staff,Admin,Lecturer")]
         [HttpPost]
         [ProducesDefaultResponseType(typeof(ClassDto))]
         public async Task<IActionResult> CreateClass(
@@ -105,7 +105,7 @@ namespace Api.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //[Authorize(Roles = "Staff,Admin,Lecturer")]
+        [Authorize(Roles = "Staff,Admin,Lecturer")]
         [HttpPost("assignLecturer")]
         [ProducesDefaultResponseType(typeof(ClassDto))]
         public async Task<IActionResult> AssignLecturer(
