@@ -288,7 +288,7 @@ namespace Infrastructure.Repository
 
             if (!isAdmin)
             {
-                query = query.Where(c => c.ClassStatus != null && c.ClassStatus != 0);
+                query = query.Where(c => c.ClassStatus != null && c.ClassStatus != 0 && c.ClassStatus != 3);
             }
 
             // Search
