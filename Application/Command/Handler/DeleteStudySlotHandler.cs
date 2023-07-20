@@ -24,7 +24,7 @@ namespace Application.Command.Handler
             try
             {
                 var check = await _unitOfWork.ClassRepository.IsStudySlotUsed(request.StudySlotId);
-                if (check)
+                if (!check)
                 {
                     var resutl = await _unitOfWork.ScheduleRepository.DeleteStudySlot(request.StudySlotId);
                     response.Result = resutl;

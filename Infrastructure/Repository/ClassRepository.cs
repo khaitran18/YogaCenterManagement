@@ -567,7 +567,7 @@ namespace Infrastructure.Repository
                 var allClasses = await _context.Classes.ToListAsync();
                 foreach (var @class in allClasses)
                 {
-                    if (await IsMatchSchedule(fromClassId, @class.ClassId) && @class.ClassId != fromClassId)
+                    if (await IsMatchSchedule(fromClassId, @class.ClassId) && @class.ClassId != fromClassId && (@class.ClassStatus!=0 && @class.ClassStatus != 3)) 
                     {
                         classes.Add(@class);
                     }
@@ -758,7 +758,7 @@ namespace Infrastructure.Repository
             {
                 var classes = await _context.Classes
                                                     .Include(c => c.Students)
-                                                    .Where(c => c.ClassStatus == 3 && c.Students.Any(s => s.Uid == lecturerId))
+                                                    .Where(c => c.ClassStatus == 3 && c.LecturerId==lecturerId)
                                                     .ToListAsync();
                 classModels = _mapper.Map<List<ClassModel>>(classes.Skip((page - 1) * pageSize).Take(pageSize));
                 totalCount = classes.Count;
@@ -782,6 +782,10 @@ namespace Infrastructure.Repository
                 {
                     if (existingSlot.Schedules != null)
                     {
+                        if (existingSlot.Schedules.Count == 0)
+                        {
+                            return false;
+                        }
                         return true;
                     }
                     else

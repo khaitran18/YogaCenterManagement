@@ -27,11 +27,11 @@
                     <div class="mb-2 text-start d-flex flex-row  align-items-center justify-content-center">
                         <div class="mx-2">
                             <p>Start time:</p>
-                            <input type="time" id="start" name="start">
+                            <input type="time" id="start" name="start" value="00:00">
                         </div>
                         <div class="mx-2">
                             <p>End time:<p />
-                            <input type="time" id="end" name="end">
+                            <input type="time" id="end" name="end" value="00:00">
                         </div>
                     </div>
                     <!-- Include the provided section inside the modal body -->
@@ -248,7 +248,7 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Day)
                     </th>
-                    @*<th>Action</th>*@
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
