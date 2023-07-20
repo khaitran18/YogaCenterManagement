@@ -223,10 +223,10 @@ namespace Infrastructure.Repository
                         {
                             model.ClassStatus = 2; //started
                         }
-                        if(model.EndDate < today)
-                        {
-                            model.ClassStatus = 3; //ended
-                        }
+                        //if(model.EndDate < today)
+                        //{
+                        //    model.ClassStatus = 3; //ended
+                        //}
                     }
                     if(model.ClassStatus == 0 && existingClass.ClassStatus != 0)
                     {
