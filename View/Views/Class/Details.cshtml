@@ -10,10 +10,10 @@
     <div class="row">
         <div class="col-md-12 col-sm-12">
             <div class="yg-image-container">
-                <img src="@Model.Image" class="img-fluid animate-box" data-animate-effect="fadeInUp" alt="">
+                <img src="@Model.Image" class="img-fluid" data-animate-effect="fadeInUp" alt="">
             </div>
             <div class="yg-slider-caption">
-                <div class="yg-class-title animate-box" data-animate-effect="fadeInUp">@Model.ClassName</div>
+                <div class="yg-class-title" data-animate-effect="fadeInUp">@Model.ClassName</div>
             </div>
         </div>
     </div>
@@ -55,7 +55,7 @@
         }
 
         <div class="row">
-            <div class="col-md-12 col-sm-12 animate-box d-flex justify-content-between align-items-center mb-3" data-animate-effect="fadeInUp">
+            <div class="col-md-12 col-sm-12 d-flex justify-content-between align-items-center mb-3" data-animate-effect="fadeInUp">
                 <h1>About The Class</h1>
                 @if (Model.ClassStatus == 1 && Context.Request.Cookies["Role"] == "User")
                 {
@@ -106,7 +106,7 @@
 
 
             </div>
-            <div class="col-md-8 col-sm-12 animate-box" data-animate-effect="fadeInUp">
+            <div class="col-md-8 col-sm-12" data-animate-effect="fadeInUp">
                 <p>@Model.Description</p>
                 <br />
                 <!-- Trainer -->
@@ -136,7 +136,7 @@
             </div>
             <!-- Class Details & Class Hours -->
             <div class="col-md-4 col-sm-12">
-                <div class="yg-class-box animate-box" data-animate-effect="fadeInUp">
+                <div class="yg-class-box" data-animate-effect="fadeInUp">
                     <h3>Class Details</h3>
                     <div class="yg-class-table">
                         <ul>
@@ -185,7 +185,7 @@
                     </div>
                 </div>
                 <!-- Class Hours -->
-                <div class="yg-class-box animate-box" data-animate-effect="fadeInUp">
+                <div class="yg-class-box" data-animate-effect="fadeInUp">
                     <h3>Class Hours</h3>
                     <div class="yg-class-table">
                         <ul>
@@ -218,10 +218,10 @@
 <div class="yg-testimonial-section-first">
     <div class="container yg-container-full">
         <div class="row yg-gutter-0">
-            <div class="col-md-7 col-sm-12 animate-box" data-animate-effect="fadeInLeft">
+            <div class="col-md-7 col-sm-12" data-animate-effect="fadeInLeft">
                 <div class=""> <img src="~/images/testimonial.jpg" class="img-fluid" alt=""> </div>
             </div>
-            <div class="col-md-5 col-sm-12 animate-box" data-animate-effect="fadeInRight">
+            <div class="col-md-5 col-sm-12" data-animate-effect="fadeInRight">
                 <div class="yg-text-block yg-text-block-h700">
                     <div class="yg-text-block-center yg-text-block-w60">
                         <div class="yg-testimonial-section-first-title">"Great teacher, great environment, great energy. Awesome specials for new yogis."</div>
