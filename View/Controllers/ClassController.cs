@@ -101,14 +101,14 @@ namespace View.Controllers
                 };
                 var baseResponse = JsonSerializer.Deserialize<BaseResponse<ClassDto>>(responseBody, options);
 
-                if (!baseResponse!.Error)
+                if (baseResponse!.Result != null)
                 {
                     return View(baseResponse.Result);
                 }
                 else
                 {
                     ViewBag.ErrorMessage = baseResponse.Message;
-                    return View();
+                    return RedirectToAction("Index");
                 }
             }
             else if (role == "Admin" || role == "Staff")
@@ -117,7 +117,7 @@ namespace View.Controllers
             }
             else
             {
-                return View();
+                return RedirectToAction("Index");
             }
         }
 
