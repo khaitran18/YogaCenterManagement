@@ -28,12 +28,12 @@ namespace Application.Query.Handler
 
             try
             {
-                ClaimsPrincipal claims = _tokenService.ValidateToken(request.Token ?? "");
+                ClaimsPrincipal? claims = _tokenService.ValidateToken(request.Token ?? "");
                 if (claims != null)
                 {
                     int.TryParse(claims.FindFirst("jti")?.Value, out int userId);
 
-                    var isAdmin = await _unitOfWork.UserRepository.IsUserAdmin(userId);
+                    var isStaff = await _unitOfWork.UserRepository.IsUserStaff(userId);
 
                     var (userModels, totalCount) = await _unitOfWork.UserRepository.GetUsers(
                         request.SearchKeyword,
@@ -43,7 +43,7 @@ namespace Application.Query.Handler
                         request.SortBy,
                         request.Page,
                         request.PageSize,
-                        isAdmin
+                        isStaff
                     );
 
                     var userDtos = _mapper.Map<List<UserDto>>(userModels);

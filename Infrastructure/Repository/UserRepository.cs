@@ -132,12 +132,12 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<(List<UserModel>, int)> GetUsers(string? searchKeyword, int? roleId, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isAdmin)
+        public async Task<(List<UserModel>, int)> GetUsers(string? searchKeyword, int? roleId, bool? disabled, bool? verified, string? sortBy, int page, int pageSize, bool isStaff)
         {
             IQueryable<User> query = _context.Users.Include(u => u.Role).AsQueryable();
 
             // Filtering
-            if (!isAdmin)
+            if (isStaff)
             {
                 query = query.Where(u => u.Role!.RoleName == "User" || u.Role.RoleName == "Lecturer");
             }
@@ -325,6 +325,25 @@ namespace Infrastructure.Repository
                     .Include(u => u.Role)
                     .FirstOrDefaultAsync(u => u.Uid == id);
                 if (user != null && (user.Role!.RoleName == "Admin" || user.Role!.RoleName == "Staff"))
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> IsUserStaff(int id)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.Uid == id);
+                if (user != null && (user.Role!.RoleName == "Staff"))
                 {
                     return true;
                 }
