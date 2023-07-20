@@ -640,11 +640,11 @@ namespace Infrastructure.Repository
 
             foreach (var @class in classes)
             {
-                if ((today >= @class.StartDate && today <= @class.EndDate) && @class.ClassStatus != 0)
+                if ((today >= @class.StartDate && today <= @class.EndDate) && @class.ClassStatus == 1)
                 {
                     @class.ClassStatus = 2;
                 }
-                else if (today > @class.EndDate && @class.ClassStatus != 0)
+                else if (today > @class.EndDate && @class.ClassStatus == 2)
                 {
                     @class.ClassStatus = 3;
                 }
