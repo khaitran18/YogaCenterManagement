@@ -21,7 +21,7 @@ namespace Infrastructure.Repository
         }
 
 
-        public async Task<ClassModel> CreateClassSchedule(string name, double price, int capacity,string description,string image, DateTime startDate, DateTime endDate, int? slotId)
+        public async Task<ClassModel> CreateClassSchedule(string name, double price, int capacity, string description, string image, DateTime startDate, DateTime endDate, int? slotId)
 
         {
             Class newClass = new Class();
@@ -65,7 +65,7 @@ namespace Infrastructure.Repository
                 for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
                 {
                     int selectedDay = (int)date.DayOfWeek;
-                    if(selectedDay == 0)
+                    if (selectedDay == 0)
                     {
                         selectedDay = 7;
                     }
@@ -150,7 +150,7 @@ namespace Infrastructure.Repository
                     throw new BadRequestException("Not allow to assign any lecturer to this class. The class status is now Started or Ended.");
                 }
                 //set null to lecturer
-                if(lecId == 0)
+                if (lecId == 0)
                 {
                     theClass.LecturerId = null;
                     _context.Classes.Update(theClass);
@@ -174,7 +174,7 @@ namespace Infrastructure.Repository
                     throw new BadRequestException("This slot is currently assigned to the lecturer.");
                 }
                 //check availableDate then assign the lecturer to the class
-                if(availableDate.Where(ad => ad.SlotId == assigningSchedule.SlotId).Any())
+                if (availableDate.Where(ad => ad.SlotId == assigningSchedule.SlotId).Any())
                 {
                     theClass.LecturerId = lecturer.Uid;
                     _context.Classes.Update(theClass);
@@ -204,7 +204,7 @@ namespace Infrastructure.Repository
                     existingClass.Price = model.Price;
                     existingClass.ClassCapacity = model.ClassCapacity;
                     existingClass.Description = model.Description;
-                    if(model.Image != null && model.Image != "")
+                    if (model.Image != null && model.Image != "")
                     {
                         existingClass.Image = model.Image;
                     }
@@ -592,7 +592,7 @@ namespace Infrastructure.Repository
             {
                 var classes = await _context.Classes
                                                     .Include(c => c.Students)
-                                                    .Where(c => (c.ClassStatus == 2|| c.ClassStatus==1) && c.Students.Any(s => s.Uid == studentId))
+                                                    .Where(c => (c.ClassStatus == 2 || c.ClassStatus == 1) && c.Students.Any(s => s.Uid == studentId))
                                                     .ToListAsync();
                 classModels = _mapper.Map<List<ClassModel>>(classes.Skip((page - 1) * pageSize).Take(pageSize));
                 totalCount = classes.Count;
@@ -617,7 +617,8 @@ namespace Infrastructure.Repository
                         .ThenInclude(sc => sc.Slot)
                             .ThenInclude(sl => sl.Days)
                     .Include(c => c.Lecturer)
-                    .FirstOrDefaultAsync(c => (c.ClassStatus == 2 || c.ClassStatus==1)
+                    .Include(c => c.Students)
+                    .FirstOrDefaultAsync(c => (c.ClassStatus == 2 || c.ClassStatus == 1)
                                                                  && c.ClassId == classId
                                                                  && c.Students.Any(s => s.Uid == studentId));
                 classModel = _mapper.Map<ClassModel>(@class);
@@ -669,7 +670,7 @@ namespace Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                // Handle the exception appropriately (e.g., logging, error handling)
+                
                 throw new Exception("Error in ExistChangeClassRequest", ex);
             }
         }
@@ -734,7 +735,7 @@ namespace Infrastructure.Repository
                             .ThenInclude(sl => sl.Days)
                     .Include(c => c.Lecturer)
                     .Include(c => c.Students)
-                    .FirstOrDefaultAsync(c => (c.ClassStatus == 2 || c.ClassStatus==1)
+                    .FirstOrDefaultAsync(c => (c.ClassStatus == 2 || c.ClassStatus == 1)
                                                                  && c.ClassId == classId
                                                                  && c.LecturerId == lecturerId);
                 classModel = _mapper.Map<ClassModel>(@class);
@@ -768,6 +769,37 @@ namespace Infrastructure.Repository
                 throw new Exception("Error in GetStudiedClass");
             }
             return (classModels, totalCount);
+        }
+        #endregion
+
+        #region Check if study slot used for any class
+        public async Task<bool> IsStudySlotUsed(int slotId)
+        {
+            var existingSlot = await _context.StudySlots.Include(ss => ss.Schedules).FirstOrDefaultAsync(ss => ss.SlotId == slotId);
+            try
+            {
+                if (existingSlot != null)
+                {
+                    if (existingSlot.Schedules != null)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error in IsStudySlotUsed", ex);
+            }
+
         }
         #endregion
     }

@@ -23,82 +23,106 @@
     </div>
 </div>
 <!-- Schedule Section -->
+
 <div class="yg-schedule-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 col-sm-12">
-                <div class="yg-details-block yg-text-center">
-                    <h3 class="yg-details-title">OUR SCHEDULE</h3>
+    @if (listSchedule == null)
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="yg-details-block yg-text-center">
+                        <h3 class="yg-details-title" style="color:red">Something went wrong. Please refresh page</h3>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="row d-flex justify-content-between">
-            <span class="pl-3">
-                <a id="previousWeekLink" style="cursor: pointer;" href=""> < Previous week</a>
-            </span>
-            <span class="pr-3">
-                <a id="nextWeekLink" style="cursor: pointer;" href="">Next week ></a>
-            </span>
-        </div>
-        <div class="row">
-            <div class="col-md-12 col-sm-12">
-                <table class="table table-bordered">
-                    <thead class="yg-thead">
-                        <tr>
-                            <th scope="col"></th>
-                            <th scope="col">MONDAY</th>
-                            <th scope="col">TUESDAY</th>
-                            <th scope="col">WEDNESDAY</th>
-                            <th scope="col">THURSTDAY</th>
-                            <th scope="col">FRIDAY</th>
-                            <th scope="col">SATURDAY</th>
-                            <th scope="col">SUNDAY</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row" class="yg-thead">Date</th>
-                            @for (int i = 1; i <= 7; i++)
-                            {
-                                bool c = false;
-                                @foreach (var item in listSchedule)
+    }
+    else
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="yg-details-block yg-text-center">
+                        <h3 class="yg-details-title">OUR SCHEDULE</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-between">
+                <span class="pl-3">
+                    <a id="previousWeekLink" style="cursor: pointer;" href=""> &#60; Previous week</a>
+                </span>
+                <span class="pr-3">
+                    <a id="nextWeekLink" style="cursor: pointer;" href="">Next week &#62;</a>
+                </span>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <table class="table table-bordered">
+                        <thead class="yg-thead">
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">MONDAY</th>
+                                <th scope="col">TUESDAY</th>
+                                <th scope="col">WEDNESDAY</th>
+                                <th scope="col">THURSTDAY</th>
+                                <th scope="col">FRIDAY</th>
+                                <th scope="col">SATURDAY</th>
+                                <th scope="col">SUNDAY</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="yg-thead">Date</th>
+                                @for (int i = 1; i <= 7; i++)
                                 {
-                                    if (item.Date.DayOfWeek == (DayOfWeek)i)
+                                    bool c = false;
+                                    @foreach (var item in listSchedule)
                                     {
-                                        c = true;
-                                        <td class="yg-schedule-full">@Model.ClassName<br />@item.Date.ToString("dd/MM") <br />@item.Slot.StartTime.ToString(@"hh\:mm") - @item.Slot.EndTime.ToString(@"hh\:mm")<br /><i class="ti-user"></i> @Model.Lecturer.FullName</td>
+                                        if (item.Date.DayOfWeek == (DayOfWeek)i)
+                                        {
+                                            c = true;
+                                            <td class="yg-schedule-full">
+                                                @Model.ClassName<br />
+                                                @item.Date.ToString("dd/MM") <br />
+                                                @item.Slot.StartTime.ToString(@"hh\:mm") - @item.Slot.EndTime.ToString(@"hh\:mm")<br />
+                                                @if (@Model.Lecturer != null)
+                                                {
+                                                    <i class="ti-user"></i> @Model.Lecturer.FullName
+                                                }
+                                            </td>
+                                        }
+                                    }
+                                    @if (!c)
+                                    {
+                                        <td class="yg-schedule-empty">No Activities</td>
                                     }
                                 }
-                                @if (!c)
+                            </tr>
+                            <tr>
+                                <th scope="row" class="yg-thead">Notification</th>
+                                @for (int i = 1; i <= 7; i++)
                                 {
-                                    <td class="yg-schedule-empty">No Activities</td>
-                                }
-                            }
-                        </tr>
-                        <tr>
-                            <th scope="row" class="yg-thead">Notification</th>
-                            @for (int i = 1; i <= 7; i++)
-                            {
-                                bool c = false;
-                                @foreach (var item in listSchedule)
-                                {
-                                    if (item.Date.DayOfWeek == (DayOfWeek)i)
+                                    bool c = false;
+                                    @foreach (var item in listSchedule)
                                     {
-                                        c = true;
-                                        <td class="yg-schedule-empty"><b>@item.DailyNote</b></td>
+                                        if (item.Date.DayOfWeek == (DayOfWeek)i)
+                                        {
+                                            c = true;
+                                            <td class="yg-schedule-empty"><b>@item.DailyNote</b></td>
+                                        }
+                                    }
+                                    @if (!c)
+                                    {
+                                        <td class="yg-schedule-empty"></td>
                                     }
                                 }
-                                @if (!c)
-                                {
-                                    <td class="yg-schedule-empty"></td>
-                                }
-                            }
-                        </tr>
-                    </tbody>
-                </table>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+    }
 </div>
 <!-- About The Class -->
 <div class="yg-description-section">
@@ -109,23 +133,24 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Change Class</h5>
-                        @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>*@
                     </div>
 
                     <div class="modal-body">
                         @if (changeClassList == null || changeClassList.Count == 0)
                         {
-                            <div><p>*No class with the same progress for changing</p></div>}
+                            <div><p>*No class with the same progress for changing</p></div>
+                        }
                         else
-                        { <form asp-action="CreateChangeRequest" asp-controller="Class">
+                        {
+                            <form asp-action="CreateChangeRequest" asp-controller="Class">
                                 <label for="content">Reason</label>
                                 <textarea id="content" name="content" placeholder="Reason"></textarea>
                                 <div id="classList">
                                     <!-- Class list will be dynamically populated here -->
                                 </div>
-                                <button type="submit" class="btn btn-success" @if (changeClassList == null || changeClassList.Count == 0) { <text> disabled</text> }>Submit</button>
+                                <button type="submit" class="btn btn-success" @if (changeClassList == null || changeClassList.Count == 0) {
+                            <text> disabled</text>
+ }>Submit</button>
                             </form>
                         }
 
@@ -215,29 +240,29 @@
                     </div>
                 </div>
                 @*<div class="yg-class-box">
-                        <h3>Class Hours</h3>
-                        <div class="yg-class-table">
-                            <ul>
-                                @if (Model.Schedules != null)
-                                {
-                                    var groupedSchedules = Model.Schedules
-                                    .GroupBy(s => new { Day = s.Date.DayOfWeek, SlotId = s.SlotId })
-                                    .OrderBy(g => g.Key.Day)
-                                    .Select(g => new { Day = g.Key.Day, Schedules = g.ToList() });
+                <h3>Class Hours</h3>
+                <div class="yg-class-table">
+                <ul>
+                @if (Model.Schedules != null)
+                {
+                var groupedSchedules = Model.Schedules
+                .GroupBy(s => new { Day = s.Date.DayOfWeek, SlotId = s.SlotId })
+                .OrderBy(g => g.Key.Day)
+                .Select(g => new { Day = g.Key.Day, Schedules = g.ToList() });
 
-                                    foreach (var group in groupedSchedules)
-                                    {
-                                        var day = group.Day;
-                                        var slot = group.Schedules.First().Slot;
-                                        <li>
-                                            <span class="yg-class-table-light-text">@day</span>
-                                            <span>@slot.StartTime.ToString("hh\\:mm") - @slot.EndTime.ToString("hh\\:mm")</span>
-                                        </li>
-                                    }
-                                }
-                            </ul>
-                        </div>
-                    </div>*@
+                foreach (var group in groupedSchedules)
+                {
+                var day = group.Day;
+                var slot = group.Schedules.First().Slot;
+                <li>
+                <span class="yg-class-table-light-text">@day</span>
+                <span>@slot.StartTime.ToString("hh\\:mm") - @slot.EndTime.ToString("hh\\:mm")</span>
+                </li>
+                }
+                }
+                </ul>
+                </div>
+                </div>*@
             </div>
         </div>
     </div>
@@ -277,7 +302,7 @@
             foreach (var classDto in changeClassList)
             {
                 <text>
-                        var classId = @classDto.ClassId;
+                                                                        var classId = @classDto.ClassId;
                         var className = '@classDto.ClassName';
                         var imageUrl = '@classDto.Image';
 
@@ -296,9 +321,10 @@
                 </text>
             }
         }
-        else {
+        else
+        {
             <text>
-                $("#classList").append('<p>*No class with the same progress for changing</p>');
+                        $("#classList").append('<p>*No class with the same progress for changing</p>');
             </text>
         }
                     // Show the modal
@@ -308,71 +334,71 @@
     </script>
 
 }
-<script>
-    // Get the current URL
-    var currentURL = window.location.href;
+    <script>
+        // Get the current URL
+        var currentURL = window.location.href;
 
-    // Extract the value of the 's' variable from the URL
-    var urlParams = new URLSearchParams(currentURL);
-    var sValue = urlParams.get('s');
+        // Extract the value of the 's' variable from the URL
+        var urlParams = new URLSearchParams(currentURL);
+        var sValue = urlParams.get('s');
 
-    // Check if the 's' value is not present or not a number, default it to 0
-    var s = isNaN(parseInt(sValue)) ? 0 : parseInt(sValue);
+        // Check if the 's' value is not present or not a number, default it to 0
+        var s = isNaN(parseInt(sValue)) ? 0 : parseInt(sValue);
 
-    // Increment the 's' value by 1
-    var incrementedS = s + 1;
+        // Increment the 's' value by 1
+        var incrementedS = s + 1;
 
-    // Update the URL for the 'Next week' link with the incremented 's' value
-    var nextWeekURL = currentURL;
-    if (sValue) {
-        nextWeekURL = nextWeekURL.replace('s=' + sValue, 's=' + incrementedS);
-    } else {
-        nextWeekURL += nextWeekURL.includes('?') ? '&s=' + incrementedS : '?s=' + incrementedS;
-    }
-    document.getElementById('nextWeekLink').setAttribute('href', nextWeekURL);
-</script>
+        // Update the URL for the 'Next week' link with the incremented 's' value
+        var nextWeekURL = currentURL;
+        if (sValue) {
+            nextWeekURL = nextWeekURL.replace('s=' + sValue, 's=' + incrementedS);
+        } else {
+            nextWeekURL += nextWeekURL.includes('?') ? '&s=' + incrementedS : '?s=' + incrementedS;
+        }
+        document.getElementById('nextWeekLink').setAttribute('href', nextWeekURL);
+    </script>
 
-<script>
-    // Get the current URL
-    var currentURL = window.location.href;
+    <script>
+        // Get the current URL
+        var currentURL = window.location.href;
 
-    // Extract the value of the 's' variable from the URL
-    var urlParams = new URLSearchParams(currentURL);
-    var sValue = urlParams.get('s');
+        // Extract the value of the 's' variable from the URL
+        var urlParams = new URLSearchParams(currentURL);
+        var sValue = urlParams.get('s');
 
-    // Check if the 's' value is not present or not a number, default it to 0
-    var s = isNaN(parseInt(sValue)) ? 0 : parseInt(sValue);
+        // Check if the 's' value is not present or not a number, default it to 0
+        var s = isNaN(parseInt(sValue)) ? 0 : parseInt(sValue);
 
-    // Reduce the 's' value by 1
-    var reducedS = s - 1;
+        // Reduce the 's' value by 1
+        var reducedS = s - 1;
 
-    // Update the URL for the 'Previous week' link with the reduced 's' value
-    var previousWeekURL = currentURL;
-    if (sValue) {
-        previousWeekURL = previousWeekURL.replace('s=' + sValue, 's=' + reducedS);
-    } else {
-        previousWeekURL += previousWeekURL.includes('?') ? '&s=' + reducedS : '?s=' + reducedS;
-    }
-    document.getElementById('previousWeekLink').setAttribute('href', previousWeekURL);
-</script>
-<style>
-    .yg-class-title {
-        font-size: 60px;
-        line-height: 1.5em;
-        font-weight: 400;
-        margin-bottom: 10px;
-        color: #fff;
-        padding: 0 20px;
-        font-family: 'Oswald', sans-serif;
-        text-transform: uppercase;
-    }
+        // Update the URL for the 'Previous week' link with the reduced 's' value
+        var previousWeekURL = currentURL;
+        if (sValue) {
+            previousWeekURL = previousWeekURL.replace('s=' + sValue, 's=' + reducedS);
+        } else {
+            previousWeekURL += previousWeekURL.includes('?') ? '&s=' + reducedS : '?s=' + reducedS;
+        }
+        document.getElementById('previousWeekLink').setAttribute('href', previousWeekURL);
+    </script>
+    <style>
+        .yg-class-title {
+            font-size: 60px;
+            line-height: 1.5em;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: #fff;
+            padding: 0 20px;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
 
-    .yg-image-container {
-        height: 100vh;
-        overflow: hidden;
-    }
+        .yg-image-container {
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    .yg-schedule-section {
-        padding-bottom: 0;
-    }
-</style>
+        .yg-schedule-section {
+            padding-bottom: 0;
+        }
+    </style>

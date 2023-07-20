@@ -88,7 +88,7 @@ namespace Infrastructure.Repository
             var studySlotModels = new List<StudySlotModel>();
             try
             {
-                var studySlots = await _context.StudySlots.Include(ss => ss.Days).ToListAsync();
+                var studySlots = await _context.StudySlots.Include(ss => ss.Days).Include(ss => ss.Schedules).ToListAsync();
                 studySlotModels = _mapper.Map<List<StudySlotModel>>(studySlots);
             }
             catch (Exception)

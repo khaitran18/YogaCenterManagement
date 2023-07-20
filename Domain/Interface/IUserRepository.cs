@@ -25,5 +25,7 @@ namespace Domain.Interface
         Task<bool> IsUserAdmin(int id);
         Task<(List<FeedbackModel>, int)> GetFeedbacks(int id, bool isLecturer, string? sortBy, int page, int pageSize);
         Task<UserModel> GetUserDetail(int userId);
+        Task<string?> GetDisableReason(int userId);
+        Task<int> GetUserByUsername(string userName);
     }
 }

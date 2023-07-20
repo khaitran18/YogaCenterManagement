@@ -1,4 +1,5 @@
 ﻿@using View.Models.Response;
+@using View.Models.Enum
 @model View.Models.PaginatedResult<ClassDto>
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -90,6 +91,7 @@
                                 <p class="yg-classes-date">
                                     <span class="ti-time"></span> @classItem.StartDate.ToString("MM/dd/yyyy")
                                     <span class="ti-medall-alt"></span> @classItem.Price.ToString("N0") VND
+                                    <span class="class-status">@(classItem.ClassStatus.HasValue ? ((Status)classItem.ClassStatus).ToString() : "Unknown")</span> 
                                 </p>
                             </div>
                         </div>
@@ -219,6 +221,15 @@
 
         $(window).on('beforeunload', function () {
             localStorage.setItem('scrollPosition', $(window).scrollTop());
+        });
+
+        $('.class-status').each(function(index, element) {
+            switch($(element).text()){
+                case 'NotStarted': $(element).addClass('text-warning'); break;
+                case 'Started': $(element).addClass('text-primary'); break;
+                case 'Ended': $(element).addClass('text-success'); break;
+                default: $(element).addClass('text-secondary'); break;
+            };
         });
     });
 </script>

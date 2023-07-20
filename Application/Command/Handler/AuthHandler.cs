@@ -41,7 +41,8 @@ namespace Application.Command.Handler
                 else if(userId == -3)
                 {
                     authResponse.Error = true;
-                    authResponse.Exception = new BadRequestException("User is banned");
+                    string? r = await _unitOfWork.UserRepository.GetDisableReason(await _unitOfWork.UserRepository.GetUserByUsername(request.UserName));
+                    authResponse.Exception = new BadRequestException("Your account is banned \r\n Reason:" + r+ "\r\n Please contact us for more details");
                 }
                 else
                 {

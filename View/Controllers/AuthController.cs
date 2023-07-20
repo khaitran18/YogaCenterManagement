@@ -86,7 +86,9 @@ namespace View.Controllers
             else
             {
                 var error = JsonSerializer.Deserialize<string>(resultJson, options);
-                TempData["Error"] = string.Join("\n", error);
+                //TempData["Error"] = string.Join("\n", error);
+                TempData["Error"] = "An error occur";
+                ViewBag.Error = error;
                 return View();
             }
         }

@@ -394,5 +394,48 @@ namespace Infrastructure.Repository
             }
             return await Task.FromResult(user);
         }
+
+        public async Task<string?> GetDisableReason(int userId)
+        {
+            string r = null;
+            try
+            {
+                User u = _context.Users.FirstOrDefault(u => u.Uid == userId);
+                if (u == null)
+                {
+                    throw new Exception("User not found");
+                }
+                if (u.IsDisabled) r = u.DisabledReason;
+                else throw new Exception("Error in retrieve user data");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return await Task.FromResult(r);
+        }
+
+        public Task<int> GetUserByUsername(string userName)
+        {
+            int i = -1;
+            try
+            {
+                User u = _context.Users.FirstOrDefault(u => u.UserName.Equals(userName));
+                if (u == null)
+                {
+                    throw new Exception("User not found");
+                }
+                else
+                {
+                    i = u.Uid;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return Task.FromResult(i);
+        }
     }
 }

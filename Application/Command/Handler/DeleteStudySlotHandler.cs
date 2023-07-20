@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using MediatR;
 using System;
@@ -22,8 +23,17 @@ namespace Application.Command.Handler
             var response = new BaseResponse<bool>();
             try
             {
-                var resutl = await _unitOfWork.ScheduleRepository.DeleteStudySlot(request.StudySlotId);
-                response.Result = resutl;
+                var check = await _unitOfWork.ClassRepository.IsStudySlotUsed(request.StudySlotId);
+                if (check)
+                {
+                    var resutl = await _unitOfWork.ScheduleRepository.DeleteStudySlot(request.StudySlotId);
+                    response.Result = resutl;
+                }
+                else
+                {
+                    response.Exception = new BadRequestException("Study slot have been used");
+                    response.Error = true;
+                }
             }
             catch (Exception)
             {
